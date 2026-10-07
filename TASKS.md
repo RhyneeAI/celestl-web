@@ -101,6 +101,13 @@ charts, Users, Game management, Activity log, CSV import, Testing tools — yang
 kosong "coming soon" dulu kalau vision/ belum ada). Songs & charts: tabel level-lagu (No/Song/Composer/Jacket
 designer/Release date/Source) + panel detail per-difficulty saat baris diklik. Packs: grid pack dengan jumlah
 lagu. Kolom `composer`, `jacket_designer`, `released_at` sudah ada dari Task 1.2.
+
+**Progres:** layout (`web/resources/js/layouts/admin-layout.tsx`) + ke-8 route Inertia (`routes/admin.php`,
+prefix `/admin`) sudah ada, dicek lewat `php artisan serve` + headless screenshot — cocok visual dengan mockup
+(warna, font Poppins/Exo 2, sidebar grouping, active state). Semua 8 halaman masih placeholder "Coming soon".
+Belum: isi Home/Packs/Songs & charts sungguhan (DB-backed), belum ada flag `is_admin`/middleware proteksi
+(belum ada sistem akun — Fase 4 — jadi `/admin` masih bisa diakses siapa saja untuk sekarang, **sengaja**,
+bukan lupa).
 **Selesai jika:** Songs & charts dan Packs bisa dicari/difilter, detail per-difficulty tampil benar, responsif.
 
 ### [ ] 5.2 Admin: Users, Activity log, Game management

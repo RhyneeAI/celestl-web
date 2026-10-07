@@ -593,3 +593,32 @@ atas. Celestl tetap pakai placeholder gradien, bukan gambar asli, di mana pun.
 - `design/account-top50.html` — alur Sign in / Register / Profile dan halaman Top 50.
 
 Keduanya dibuat karena desain Figma belum mencakup halaman itu. Teks UI di mockup memakai bahasa Inggris; keterangan di luar bingkai ponsel berbahasa Indonesia dan bukan bagian dari produk.
+
+### Port admin mockup ke Laravel/Inertia/React sungguhan (Task 5.1, sebagian ditarik maju)
+
+`design/admin-dashboard.html` sedang diporting jadi halaman Inertia + React asli di `web/`, bukan lagi mockup
+statis. Routing: route Inertia asli per halaman (`routes/admin.php`, prefix `/admin`) berbagi satu
+`AdminLayout` (`web/resources/js/layouts/admin-layout.tsx`) — BUKAN port 1:1 dari pola `goto()` satu-halaman
+mockup-nya (toggle `hidden` antar section), karena itu bukan pola Inertia yang lazim. Packs & Songs & charts
+akan **DB-backed sungguhan** (dari skema + importer Task 1.2/1.3), bukan data statis seperti mockup — ini
+permintaan eksplisit pemilik, bukan keputusan sepihak. Users/Game management/Activity log/CSV import/Testing
+tools tetap statis/contoh (sistem aslinya — akun, importer CSV, `vision/` — belum ada), diporting belakangan.
+
+Warna & font diekspos lewat Tailwind v4 `@theme` di `resources/css/app.css` sebagai token `--color-*`
+(`bg-bg`, `text-pst`, dst) dan `--font-sans`/`--font-brand` (Exo 2 / Poppins, lewat mekanisme Bunny Fonts
+starter kit yang sudah ada — gantiin Instrument Sans bawaan, bukan ditambah di sampingnya, karena
+`body.font-sans` berlaku ke seluruh app).
+
+**Bug nyata ditemukan & diperbaiki: `text-text` jadi no-op karena `--color-text` tidak pernah didefinisikan**
+— semua teks yang warnanya diwariskan dari `text-text` (termasuk wordmark "CELESTL" dan nama user di topbar)
+tampil HITAM, bukan putih, karena Tailwind v4 cuma generate utility class untuk token yang benar-benar ada di
+`@theme`; token yang hilang bikin class itu senyap tidak digenerate sama sekali (bukan error build). Ketahuan
+dari screenshot headless yang di-zoom pixel-per-pixel — pada ukuran penuh kelihatannya putih (ilusi optik dari
+font tebal+kecil), baru jelas hitam setelah di-crop 3-4x. **Pelajaran: kalau warna custom Tailwind v4 terasa
+"kadang tidak kena", curigai token `@theme` yang belum didefinisikan dulu**, bukan cuma masalah spesifisitas
+CSS — dan jangan percaya screenshot ukuran penuh untuk soal warna teks kecil, selalu crop & zoom dulu.
+
+**Gotcha lain:** komentar CSS multi-baris (`/* ... */` dengan baris lanjutan berawalan `*`, atau yang
+mengandung apostrof `'`) bikin parser CSS pipeline proyek ini (Tailwind v4 lewat lightningcss) gagal/salah
+parse di dalam blok `@theme` — satu kali error fatal ("Unterminated string"), satu kali lolos build tapi
+dengan warning aneh. Sekarang dibiasakan: komentar CSS di `app.css` single-line saja, tanpa apostrof.

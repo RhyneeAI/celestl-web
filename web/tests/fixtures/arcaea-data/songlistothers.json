@@ -1,36 +1,53 @@
 {
-  "deleted": {
-    "deletedstub": {
-      "deleted": "5.0.0",
-      "id": "deletedstub",
-      "title_localized": {"en": "Deleted Stub Song"}
-    }
-  },
-  "special": [
-    {
-      "id": "tutorialsong",
-      "title_localized": {"en": "Word Problems"},
-      "artist": "ak+q",
-      "bpm": "128",
-      "set": "tutorial",
-      "side": 0,
-      "version": "1.0.5",
-      "difficulties": [
-        {"ratingClass": 0, "notes": 173, "chartDesigner": "", "jacketDesigner": "", "rating": "1"},
-        {"ratingClass": 1, "notes": 155, "chartDesigner": "", "jacketDesigner": "", "rating": "4"}
-      ]
+    "deleted": {
+        "deletedstub": {
+            "deleted": "5.0.0",
+            "id": "deletedstub",
+            "title_localized": { "en": "Deleted Stub Song" }
+        }
     },
-    {
-      "id": "aprilfoolssong",
-      "special": true,
-      "title_localized": {"en": "overdead."},
-      "artist": "nitro",
-      "bpm": "180",
-      "set": "aprilfools",
-      "side": 1,
-      "difficulties": [
-        {"ratingClass": 2, "chartDesigner": "joke", "jacketDesigner": "joke", "rating": "?"}
-      ]
-    }
-  ]
+    "special": [
+        {
+            "id": "tutorialsong",
+            "title_localized": { "en": "Word Problems" },
+            "artist": "ak+q",
+            "bpm": "128",
+            "set": "tutorial",
+            "side": 0,
+            "version": "1.0.5",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "notes": 173,
+                    "chartDesigner": "",
+                    "jacketDesigner": "",
+                    "rating": "1"
+                },
+                {
+                    "ratingClass": 1,
+                    "notes": 155,
+                    "chartDesigner": "",
+                    "jacketDesigner": "",
+                    "rating": "4"
+                }
+            ]
+        },
+        {
+            "id": "aprilfoolssong",
+            "special": true,
+            "title_localized": { "en": "overdead." },
+            "artist": "nitro",
+            "bpm": "180",
+            "set": "aprilfools",
+            "side": 1,
+            "difficulties": [
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "joke",
+                    "jacketDesigner": "joke",
+                    "rating": "?"
+                }
+            ]
+        }
+    ]
 }

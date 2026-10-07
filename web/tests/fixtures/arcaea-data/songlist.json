@@ -1,38 +1,65 @@
 {
-  "songs": [
-    {
-      "id": "testsong",
-      "title_localized": {"en": "Test Song"},
-      "artist": "Test Artist",
-      "bpm": "150",
-      "set": "testpack",
-      "side": 1,
-      "date": 1700000000,
-      "version": "6.0",
-      "difficulties": [
-        {"ratingClass": 0, "chartDesigner": "A", "jacketDesigner": "B", "rating": 3},
-        {"ratingClass": 1, "chartDesigner": "A", "jacketDesigner": "B", "rating": 6},
-        {"ratingClass": 2, "chartDesigner": "A", "jacketDesigner": "B", "rating": 9, "ratingPlus": true},
-        {"ratingClass": 3, "chartDesigner": "A", "jacketDesigner": "B", "rating": 11, "ratingClassAlias": 1}
-      ]
-    },
-    {
-      "id": "nopack",
-      "title_localized": {"en": "No Pack Song"},
-      "artist": "Solo Artist",
-      "bpm": "140",
-      "set": "single",
-      "side": 0,
-      "date": 1700000001,
-      "version": "6.0",
-      "difficulties": [
-        {"ratingClass": 0, "chartDesigner": "A", "jacketDesigner": "B", "rating": 2}
-      ]
-    },
-    {
-      "idx": 127,
-      "id": "deletedstub",
-      "deleted": true
-    }
-  ]
+    "songs": [
+        {
+            "id": "testsong",
+            "title_localized": { "en": "Test Song" },
+            "artist": "Test Artist",
+            "bpm": "150",
+            "set": "testpack",
+            "side": 1,
+            "date": 1700000000,
+            "version": "6.0",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "A",
+                    "jacketDesigner": "B",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "A",
+                    "jacketDesigner": "B",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "A",
+                    "jacketDesigner": "B",
+                    "rating": 9,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "A",
+                    "jacketDesigner": "B",
+                    "rating": 11,
+                    "ratingClassAlias": 1
+                }
+            ]
+        },
+        {
+            "id": "nopack",
+            "title_localized": { "en": "No Pack Song" },
+            "artist": "Solo Artist",
+            "bpm": "140",
+            "set": "single",
+            "side": 0,
+            "date": 1700000001,
+            "version": "6.0",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "A",
+                    "jacketDesigner": "B",
+                    "rating": 2
+                }
+            ]
+        },
+        {
+            "idx": 127,
+            "id": "deletedstub",
+            "deleted": true
+        }
+    ]
 }

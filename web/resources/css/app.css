@@ -3,9 +3,31 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
+/* Celestl admin palette, see CLAUDE.md section Palette and section Kontras warna difficulty. */
 @theme {
     --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+        'Exo 2', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-brand: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+
+    --color-bg: #0c0c22;
+    --color-text: #fffafa;
+    --color-card: #1a1d32;
+    --color-card-alt: #1e203a;
+    --color-violet: #16133e;
+    --color-lav: #3f3c68;
+    --color-badge: #7b5d85;
+    --color-dim: #6f6e80;
+    --color-muted: #9a99a8;
+
+    --color-pst: #03a8e6;
+    --color-prs: #acff82;
+    --color-ftr: #f768dd;
+    --color-byd: #e14763;
+    --color-etr: #8975a8;
+    --color-ins: #0000cd;
+
+    --color-ok: #acff82;
+    --color-warn: #ffd76a;
+    --color-bad: #f768dd;
 }

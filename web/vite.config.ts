@@ -13,8 +13,14 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.tsx'],
             refresh: true,
             fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
+                // Exo 2 = body text everywhere (--font-sans), Poppins = app wordmark/brand only
+                // (--font-brand) — confirmed from Figma via get_design_context, see CLAUDE.md
+                // § Bahasa visual Figma. Replaces the starter kit's default Instrument Sans.
+                bunny('Exo 2', {
+                    weights: [400, 500, 600, 700],
+                }),
+                bunny('Poppins', {
+                    weights: [500, 600],
                 }),
             ],
         }),
