@@ -135,6 +135,17 @@ Users: tabel user + identitas game (siapkan kolom untuk banyak identitas per use
 multi-game identity sudah disetujui; kalau belum, cukup satu identitas Arcaea per user). Activity log: linimasa
 gabungan (upload Best 50, import CSV, edit admin, akun baru) dengan filter tipe + "Needs review". Game
 management: boleh dibuat read-only dulu (menampilkan Arcaea saja) kalau multi-game belum diputuskan jalan.
+
+**Progres:** ketiga halaman sudah dibangun dan render data (`web/resources/js/pages/admin/{users,games,log}.tsx`),
+tapi **masih dari fixture statis** `admin-examples.ts` (`USERS`/`GAMES`/`LOG`, port 1:1 dari mockup), bukan
+tabel database. Users: tabel + search nickname/Player ID. Activity log: linimasa + 5 chip filter (All/Best
+50/CSV import/Admin edit/Needs review) — logika filter "Needs review" (state ≠ ok) sudah jalan, diuji lewat
+`npm run types:check`/`vp check`, belum diklik manual di browser. Game management: 2 kartu game (Arcaea
+active, Rotaeno di-hold/opacity redup) + tombol "Add game" (non-fungsional).
+Belum bisa dicentang selesai — kriteria "Activity log menampilkan kejadian nyata" sengaja belum terpenuhi:
+upload Best 50 (Fase 3), import CSV (Task 1.3 jalur CSV, belum dipakai — importer sungguhan pakai JSON
+langsung), dan sistem akun (Fase 4) semuanya belum ada, jadi tidak ada kejadian nyata untuk ditampilkan.
+Menyusul begitu sistem-sistem itu ada.
 **Selesai jika:** Activity log menampilkan kejadian nyata dari task-task sebelumnya (bukan data contoh).
 
 ---
