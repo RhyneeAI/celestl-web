@@ -1,6 +1,7 @@
 # Data resmi game hasil ekstraksi (bukan punya kita, jangan dibagikan ulang) — lihat CLAUDE.md § Data dan hak cipta
 /data/
 
-# Contoh gambar Best 50 (berisi jacket art)
-*.png
-!design/**/*.png
+# Contoh gambar Best 50 (berisi jacket art) — cuma PNG lepas di ROOT repo (tempat contoh begini pernah
+# nyangkut, lihat git history), BUKAN *.png di mana pun (itu sempat tanpa sengaja ikut mengabaikan aset app
+# yang sah, mis. web/public/apple-touch-icon.png bawaan Laravel).
+/*.png
