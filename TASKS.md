@@ -108,9 +108,13 @@ prefix `/admin`) sudah ada, dicek lewat `php artisan serve` + headless screensho
 (`AdminHomeController`): hero stat (total chart, per-difficulty breakdown), "Recently added" (20 lagu terbaru
 by `released_at`, rank diamond top-3), "Recent activity" masih dari fixture statis
 `web/resources/js/data/admin-examples.ts` (port 1:1 const `GAMES`/`USERS`/`LOG` dari mockup — dipakai juga
-nanti oleh Users/Game management/Activity log). Packs & Songs & charts masih placeholder "Coming soon".
-Belum ada flag `is_admin`/middleware proteksi (belum ada sistem akun — Fase 4 — jadi `/admin` masih bisa
-diakses siapa saja untuk sekarang, **sengaja**, bukan lupa).
+nanti oleh Users/Game management/Activity log). Packs juga sudah **DB-backed sungguhan**
+(`AdminPackController`): dikelompokkan per kategori (pita label vertikal), chapter/append tampil di bawah
+kartu induknya, tombol "+ Add pack" buka modal (prototipe, belum submit sungguhan). Klik pack/chapter
+mengarah ke `/admin/songs?pack=<nama>` — filter-nya baru benar-benar jalan setelah halaman Songs & charts
+dibuat. Songs & charts masih placeholder "Coming soon". Belum ada flag `is_admin`/middleware proteksi (belum
+ada sistem akun — Fase 4 — jadi `/admin` masih bisa diakses siapa saja untuk sekarang, **sengaja**, bukan
+lupa).
 **Selesai jika:** Songs & charts dan Packs bisa dicari/difilter, detail per-difficulty tampil benar, responsif.
 
 ### [ ] 5.2 Admin: Users, Activity log, Game management

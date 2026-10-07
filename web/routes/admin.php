@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminHomeController;
+use App\Http\Controllers\Admin\AdminPackController;
 use Illuminate\Support\Facades\Route;
 
 // Route skeleton for Task 5.1/5.2 (porting design/admin-dashboard.html). Home/Packs/Songs & charts
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 // for them yet.
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', AdminHomeController::class)->name('home');
-    Route::inertia('/packs', 'admin/packs')->name('packs');
+    Route::get('/packs', AdminPackController::class)->name('packs');
     Route::inertia('/songs', 'admin/songs')->name('songs');
     Route::inertia('/users', 'admin/users')->name('users');
     Route::inertia('/games', 'admin/games')->name('games');
