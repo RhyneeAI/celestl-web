@@ -4,7 +4,9 @@ Kerjakan berurutan. Fokus **Arcaea saja**; Rotaeno dan deteksi game otomatis dit
 kecil (lihat CLAUDE.md § Akun) — prioritas pemilik: content management (data Arcaea) dan rating engine/OCR
 dulu, sistem akun digeser belakangan. Aturan rating ada di CLAUDE.md. Centang task yang sudah selesai.
 
-Sebelum Fase 2 ada dua hal yang harus terjawab: urutan clamp minimum 0 vs bonus, dan rumus PTT total (lihat CLAUDE.md).
+Urutan clamp minimum 0 vs bonus **sudah terjawab** (`max(0, constant + modifier) + bonus`, lihat CLAUDE.md) dan
+sudah diterapkan di Task 2.1. Rumus PTT total masih belum terverifikasi — pemilik menegaskan itu tidak
+menghalangi, yang penting perhitungan per lagu; PTT total baru relevan di Task 2.4.
 
 ---
 
@@ -51,9 +53,16 @@ Halaman daftar lagu Arcaea sesuai desain Figma: pencarian, grid, pengelompokan p
 
 ## Fase 2 — Rating engine & kalkulator
 
-### [ ] 2.1 Rating engine Arcaea
-Service murni `ArcaeaRating` (tanpa database): `modifier(int $score)`, `grade(int $score)`, `playRating(float $constant, int $score, Lamp $lamp)` termasuk bonus +0.2 untuk semua lamp clear. Tulis test untuk SEMUA nilai uji di CLAUDE.md dulu, pastikan gagal, lalu implementasi. Tambah test batas 9.800.000, 9.900.000, 10.000.000 dan di atasnya, serta tiap lamp.
-**Selesai jika:** semua nilai uji lolos.
+### [x] 2.1 Rating engine Arcaea
+Service murni `App\Services\ArcaeaRating` (tanpa database): `modifier(int $score)`, `grade(int $score)`,
+`playRating(float $constant, int $score, Lamp $lamp)` termasuk bonus +0.2 untuk semua lamp clear. Enum baru:
+`App\Lamp` (6 lamp + `isClear()` + `fromPrivateServerClearType()` untuk segmen Unofficial) dan `App\Grade`.
+Semua aturan **berasal dari pemilik** (CLAUDE.md § Aturan rating Arcaea), bukan wiki dan bukan simpulan dari
+gambar — contoh Extradimensional dipakai sebagai pembuktian, bukan sumber rumus.
+**Selesai jika:** semua nilai uji lolos. ✅ `tests/Unit/ArcaeaRatingTest.php` (34 test): 7 nilai uji wajib,
+contoh asli dari game, tiap lamp, batas 9.8M/9.9M/10M dan di atasnya, clamp nol, dan semua batas grade.
+Test ditulis dulu dan dipastikan gagal sebelum implementasi. Angkanya juga diverifikasi silang dengan
+hitungan ulang presisi tinggi di luar PHP, bukan cuma "kode cocok dengan dirinya sendiri".
 
 ### [ ] 2.2 Kalkulator + log perhitungan
 Form kalkulator (cari lagu, difficulty, skor, lamp) dengan play rating real-time. Sediakan juga **section "Drop Image"** sesuai desain Figma, tapi non-aktif/placeholder dulu — logika CV baru ada di Fase 3. Tiap perhitungan disimpan sebagai log di tabel `plays` (chart_id, score, lamp enum, played_at, source enum manual/scan) dan bisa dilihat di halaman riwayat. Sebelum ada akun (Fase 4), log boleh tanpa `user_id` atau diasosiasikan ke satu identitas default — putuskan dengan pemilik saat task ini mulai.
