@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminHomeController;
 use Illuminate\Support\Facades\Route;
 
 // Route skeleton for Task 5.1/5.2 (porting design/admin-dashboard.html). Home/Packs/Songs & charts
@@ -8,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 // mockup's own "contoh" status for those pages — no real system (accounts/CSV import/vision) exists
 // for them yet.
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::inertia('/', 'admin/home')->name('home');
+    Route::get('/', AdminHomeController::class)->name('home');
     Route::inertia('/packs', 'admin/packs')->name('packs');
     Route::inertia('/songs', 'admin/songs')->name('songs');
     Route::inertia('/users', 'admin/users')->name('users');
