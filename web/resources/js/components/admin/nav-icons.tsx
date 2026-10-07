@@ -89,6 +89,15 @@ export function TestingIcon(props: SVGProps<SVGSVGElement>) {
     );
 }
 
+export function UnofficialIcon(props: SVGProps<SVGSVGElement>) {
+    return (
+        <Icon {...props}>
+            <path d="M12 2 2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+        </Icon>
+    );
+}
+
 export function SearchIcon(props: SVGProps<SVGSVGElement>) {
     return (
         <svg

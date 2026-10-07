@@ -155,6 +155,42 @@ Menyusul begitu sistem-sistem itu ada.
 
 ---
 
+## Fase 6 — Unofficial (private server)
+
+Arah baru di luar rencana awal (lihat CLAUDE.md § Unofficial). Dikerjakan sejajar/menyelip di antara fase
+lain atas permintaan pemilik, bukan menggantikan urutan Fase 1-5. **Dua clone lokal sudah ada** di
+`Arcaea-server/` dan `ArcaeaServerFork/` (gitignored, repo git sendiri-sendiri, lihat CLAUDE.md).
+
+### [x] 6.1 Admin: upload custom chart (`/admin/unofficial`)
+Tabel `unofficial_songs`/`unofficial_charts` (terpisah total dari `songs`/`charts` resmi), halaman admin
+upload `.aff` + constant per difficulty (5 slot: PST/PRS/FTR/BYD/ETR, sesuai batas skema private server
+dasar). File `.aff` disimpan di `storage/app/private/unofficial-charts/`. **Belum terhubung ke server** —
+baru tersimpan di Celestl.
+**Selesai jika:** bisa tambah custom song, upload/replace `.aff` per difficulty tanpa duplikasi, hapus song
+ikut hapus filenya. ✅ `tests/Feature/AdminUnofficialControllerTest.php` (7 test).
+
+### [ ] 6.2 Jalankan private server, sambungkan ke game Arcaea
+Clone & jalankan `Arcaea-server`/`ArcaeaServerFork` (config.py, cek kebutuhan data chart tambahan di luar
+kode Python-nya). Lanjut: cara menyambungkan client Arcaea asli ke server ini (lihat `data/server-arcaea.md`
++ riset proxy/sertifikat yang sudah dibahas sesi sebelumnya). "Aku + beberapa teman" — disarankan lewat
+VPN/jaringan privat, bukan port publik (permintaan README resmi proyeknya).
+**Selesai jika:** server jalan lokal, minimal satu device bisa login & main lewat server ini.
+
+### [ ] 6.3 Push custom chart ke private server
+Dari data yang sudah terkumpul di 6.1: panggil `POST/PUT /songs` (API admin bawaan private server) buat
+constant, taruh file `.aff` ke `database/songs/<song_id>/<difficulty>.aff` di filesystem server. Catat kolom
+`pushed_at` (sudah disiapkan di skema 6.1) setelah berhasil.
+**Selesai jika:** custom chart yang di-upload lewat 6.1 bisa benar-benar dimainkan di server (6.2).
+
+### [ ] 6.4 Baca skor dari private server (read-only)
+Koneksi DB kedua Laravel (read-only) ke SQLite private server, baca `best_score`/`user`. **Jangan percaya
+rating/grade bawaan server** — hitung ulang pakai rating engine sendiri (Task 2.1, lihat catatan dependency
+di CLAUDE.md § Unofficial). Tampil di halaman/Top 50 terpisah, tidak campur dengan data OCR resmi.
+**Selesai jika:** skor dari server private muncul di Celestl dengan rating yang dihitung ulang (bukan ambil
+langsung dari kolom `rating` server), di halaman yang jelas terpisah dari Top 50 resmi.
+
+---
+
 ## Ditunda
 
 - Rotaeno (rumus, data, UI) dan deteksi game otomatis

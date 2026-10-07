@@ -5,3 +5,8 @@
 # nyangkut, lihat git history), BUKAN *.png di mana pun (itu sempat tanpa sengaja ikut mengabaikan aset app
 # yang sah, mis. web/public/apple-touch-icon.png bawaan Laravel).
 /*.png
+
+# Clone lokal private server Arcaea (proyek Python terpisah, repo git sendiri-sendiri, lisensi beda) —
+# referensi/eksperimen "Unofficial" segment, bukan bagian dari riwayat Celestl. Lihat CLAUDE.md.
+/Arcaea-server/
+/ArcaeaServerFork/

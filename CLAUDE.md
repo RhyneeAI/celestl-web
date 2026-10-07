@@ -450,6 +450,80 @@ tidak mengizinkan unduhan file sama sekali, dan tidak ada gunanya tombol terliha
 apa-apa saat diklik. Saat diimplementasikan sungguhan (bukan mockup), file `.zip`/`.aff` perlu disimpan di
 object storage (S3-like), bukan kolom database — catat ini saat task penyimpanan file dibuat nanti.
 
+**Beda dengan § Unofficial di bawah:** section ini soal charter unofficial men-download `.aff` **resmi**
+sebagai referensi (masih mockup, belum dikerjakan). § Unofficial di bawah soal meng-upload `.aff` **buatan
+sendiri** ke private server — sudah mulai dikerjakan, fitur yang beda meski sama-sama soal `.aff`.
+
+## Unofficial: segmen private server (katalog custom chart)
+
+Arah baru yang dikonfirmasi pemilik: Celestl bukan cuma OCR Best 50 — ada segmen kedua, **"Unofficial"**,
+yang dikelola pemilik sendiri lewat **private server Arcaea** (server pihak ketiga, bukan punya lowiro) buat
+chart buatan sendiri/komunitas. Istilah yang dipakai pemilik: **"OCR"** = app web/mobile Celestl yang sudah
+direncanakan dari awal (data resmi + upload Best 50), **"Private Server"** = server game terpisah yang
+dijalankan sendiri. Keduanya terhubung, tapi datanya **sengaja dipisah total** — tidak pernah campur
+query/ranking dengan katalog resmi (`songs`/`charts`, Task 1.2/1.3).
+
+**Clone referensi** (lokal, gitignored, lihat `.gitignore`): `Arcaea-server/` (`Lost-MSth/Arcaea-server`,
+basisnya) dan `ArcaeaServerFork/` (`IoIiro/ArcaeaServerFork`, patch komunitas di atasnya — dukungan versi
+client lebih baru). Keduanya Python/Flask + **SQLite murni** (`sqlite3` stdlib dipakai langsung di 28+ file,
+bukan lewat ORM) — lihat `data/server-arcaea.md` buat link asalnya, dan percakapan sesi ini buat riset skema
+yang sudah dilakukan (lihat § Skema private server yang sudah dipetakan di bawah kalau perlu diringkas ulang).
+
+**Kenapa server ini tidak bisa "baca database yang sama" secara harfiah dengan Celestl:** sqlite3 dipakai
+langsung di puluhan file, bukan lewat abstraction layer — ganti ke MySQL berarti fork + rewrite besar ke kode
+orang lain, bukan sekadar ganti connection string. **Keputusan: Celestl buka koneksi DB kedua (read-only)**
+langsung ke file SQLite-nya buat baca `best_score`/`user` nanti (skor pemain) — belum dikerjakan, masih di
+tahap langkah berikutnya setelah fitur upload ini.
+
+**Prinsip penting:** jangan percaya kolom `rating`/grade bawaan private server buat perhitungan — sudah
+dicek, ambang grade-nya beda dari yang sudah tervalidasi Celestl dari gambar resmi (mis. grade C mulai
+8.600.000 di sana, 8.800.000 di Celestl). Private server diperlakukan murni sebagai **sumber skor mentah**
+(score, clear_type, song_id, difficulty); Celestl yang hitung ulang rating pakai rumus sendiri (Task 2.1,
+rating engine — **belum dibangun**, jadi perlu duluan karena dipakai 2 jalur: OCR & Unofficial).
+
+### Fitur pertama yang dikerjakan: upload custom chart (`/admin/unofficial`)
+
+Katalog lagu di private server itu **benar-benar custom** (chart buatan sendiri/komunitas), bukan subset data
+resmi — makanya tabelnya (`unofficial_songs`, `unofficial_charts`) terpisah total dari `songs`/`charts`,
+bukan nambah kolom "is_custom" atau semacamnya ke tabel resmi.
+
+- `unofficial_songs`: `slug` (dipakai juga sebagai `song_id` di private server nanti, bebas pilih asal unik),
+  `title`, `artist` nullable.
+- `unofficial_charts`: per `unofficial_song_id` + `difficulty` (string, unique bareng). **Cuma 5 nilai
+  diizinkan: PST/PRS/FTR/BYD/ETR** — bukan `App\Difficulty` penuh (yang punya INS) — karena skema `chart`
+  bawaan private server dasar (`Lost-MSth/Arcaea-server`) cuma punya 5 kolom (`rating_pst/prs/ftr/byn/etr`),
+  tidak ada slot INS. Kolom lain: `constant` decimal(4,1) nullable, `aff_original_filename`,
+  `aff_storage_path`, `pushed_at` nullable (disiapkan buat nanti, belum dipakai).
+- File `.aff` disimpan di disk `local` Laravel (`storage/app/private/unofficial-charts/<slug>/<difficulty>.aff`).
+  **Ini AMAN disimpan di Celestl** — beda dari larangan simpan jacket/aset resmi di § Data dan hak cipta,
+  karena ini chart buatan sendiri/komunitas, bukan aset asli lowiro.
+- Halaman admin: `web/resources/js/pages/admin/unofficial.tsx`, menu sidebar sendiri ("Unofficial" group,
+  bukan digabung ke "Content") — lihat `AdminLayout`. Form per-difficulty: constant + upload `.aff`, upsert
+  (upload ulang di difficulty yang sama meng-update, bukan duplikat).
+- **Belum terhubung ke server beneran** — baru tersimpan di Celestl. Langkah berikutnya (belum dikerjakan):
+  push ke private server, lewat **API admin bawaan mereka** yang sudah ditemukan saat riset —
+  `POST /songs` / `PUT /songs/<id>` dengan body `{song_id, name?, charts:[{difficulty, chart_const}]}` buat
+  constant (butuh token admin dari server itu, **tidak perlu tulis SQLite langsung**) — dan menaruh file
+  `.aff` langsung ke `database/songs/<song_id>/<difficulty>.aff` di filesystem server (tidak ada endpoint API
+  buat ini di kode dasarnya, jadi untuk sekarang selama masih satu mesin, ditulis langsung ke path itu).
+
+### Skema private server yang sudah dipetakan (dari riset `Lost-MSth/Arcaea-server`)
+
+- `best_score(user_id, song_id, difficulty, score, shiny_perfect_count, perfect_count, near_count, miss_count,
+  clear_type, best_clear_type, rating, score_v2, ...)` — `song_id`+`difficulty` (0=PST..4=ETR) pakai
+  konvensi **sama persis** dengan `songlist.json` resmi/`ratingClass` Celestl, jadi join langsung cocok tanpa
+  mapping manual kalau nanti baca tabel ini.
+- `clear_type` (int) → lamp Celestl: `0=lost, 1=normal_clear, 2=full_recall (FC/Full Combo), 3=pure_memory
+  (PM), 4=easy_clear, 5=hard_clear` — dari `core/score.py`.
+- `chart(song_id, name, rating_pst, rating_prs, rating_ftr, rating_byn, rating_etr)` — tiap kolom rating
+  adalah **`constant * 10`** (integer), bukan level tampilan. Diisi lewat tool bawaan `tools/update_song.py`
+  (baca file `arcsong.db` terpisah) atau API `POST/PUT /songs` di atas.
+- Song/chart data buat melayani client (`database/songs/songlist` + folder per-lagu berisi `.aff`) itu
+  **terpisah** dari tabel `chart` (yang khusus constant) — private server sudah butuh salinan datanya sendiri
+  dari awal buat jalan sebagai server, lepas dari Celestl.
+- "Aku + beberapa teman" (bukan cuma lokal) → README resminya eksplisit minta **jangan taruh di internet
+  terbuka** (belum ada uji keamanan). Saran: lewat VPN/jaringan privat (Tailscale dsb.), bukan port publik.
+
 ## Rencana jauh: multi-game identity (dampak ke skema `users`)
 
 Saat Rotaeno (atau game lain) menyusul, identitas in-game per game bisa berbeda bentuk (Arcaea: Player ID 9 digit

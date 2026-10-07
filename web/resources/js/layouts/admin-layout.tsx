@@ -7,6 +7,7 @@ import {
     SearchIcon,
     SongsIcon,
     TestingIcon,
+    UnofficialIcon,
     UsersIcon,
 } from '@/components/admin/nav-icons';
 import { cn } from '@/lib/utils';
@@ -24,8 +25,10 @@ type NavGroup = {
     items: NavItem[];
 };
 
-// Mirrors design/admin-dashboard.html's sidebar exactly: 8 pages, same 4 groups
-// (ungrouped Home, then Content / People / Operations).
+// Mirrors design/admin-dashboard.html's sidebar (8 pages, Content/People/Operations) plus one
+// group the mockup never had: "Unofficial" (private server custom charts) -- kept as its own
+// group, not folded into Content, because its data is deliberately segmented from the official
+// songs/packs/charts catalog above it. See CLAUDE.md § Unofficial.
 const NAV_GROUPS: NavGroup[] = [
     { label: null, items: [{ href: '/admin', label: 'Home', icon: HomeIcon }] },
     {
@@ -33,6 +36,16 @@ const NAV_GROUPS: NavGroup[] = [
         items: [
             { href: '/admin/packs', label: 'Packs', icon: PacksIcon },
             { href: '/admin/songs', label: 'Songs & charts', icon: SongsIcon },
+        ],
+    },
+    {
+        label: 'Unofficial',
+        items: [
+            {
+                href: '/admin/unofficial',
+                label: 'Custom charts',
+                icon: UnofficialIcon,
+            },
         ],
     },
     {
