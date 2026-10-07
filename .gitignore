@@ -1,0 +1,6 @@
+# Data resmi game hasil ekstraksi (bukan punya kita, jangan dibagikan ulang) — lihat CLAUDE.md § Data dan hak cipta
+/data/
+
+# Contoh gambar Best 50 (berisi jacket art)
+*.png
+!design/**/*.png

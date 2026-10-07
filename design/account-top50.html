@@ -1,0 +1,426 @@
+<title>Celestl Account Flow</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Exo+2:wght@400;500;600;700&display=swap">
+<style>
+/* Semua warna di bawah disampel dari render per-layar Figma (bukan dari board),
+   supaya tidak tercampur warna kanvas Figma. Tidak ada warna karangan. */
+:root{
+  --bg:#0C0C22;        /* latar layar */
+  --card:#1A1D32;      /* kartu besar (Song Detail) */
+  --card-alt:#1E203A;  /* kartu daftar (History) */
+  --violet:#16133E;    /* sel data tabel difficulty */
+  --lav:#3F3C68;       /* sel label tabel difficulty */
+  --badge:#7B5D85;     /* badge bulat di History */
+  --text:#FFFAFA;
+  --muted:#9A99A8;
+  --dim:#6F6E80;
+  --pst:#03A8E6;       /* Past */
+  --prs:#ACFF82;       /* Present */
+  --ftr:#F768DD;       /* Future */
+  --teal:#4CAED1;      /* titik ke-1 di Song Detail */
+  --brand:"Poppins","Segoe UI",system-ui,sans-serif; /* nama aplikasi — dikonfirmasi dari Figma */
+  --font:"Exo 2","Segoe UI",system-ui,sans-serif;     /* semua teks lain — dikonfirmasi dari Figma */
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font);margin:0;
+  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{margin:0;font-weight:600;text-wrap:balance}
+.tab{font-variant-numeric:tabular-nums}
+
+.page{padding-block:34px 56px;padding-inline:20px;max-width:1500px;margin:0 auto}
+.masthead{display:flex;flex-direction:column;gap:9px}
+.masthead .eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.masthead h1{font-size:27px;font-weight:700;letter-spacing:.01em}
+.masthead p{margin:0;color:var(--muted);max-width:66ch;font-size:13.5px}
+.legend{background:var(--card);border-radius:16px;padding:14px 17px;margin:20px 0 32px}
+.legend p{margin:0;font-size:12.5px;color:var(--text);max-width:82ch;opacity:.86}
+.legend b{color:var(--prs);font-weight:700}
+.swatches{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.sw{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--muted)}
+.sw i{width:13px;height:13px;border-radius:4px;display:block}
+
+.board{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,336px));gap:30px 26px;justify-content:start}
+.slot{display:flex;flex-direction:column;gap:11px;min-width:0}
+.cap b{display:block;font-size:14px;font-weight:700;letter-spacing:.02em}
+.cap{min-height:92px}
+.cap span{display:block;font-size:12px;color:var(--muted);line-height:1.5;margin-top:3px}
+
+/* ---------- phone ---------- */
+.phone{background:var(--bg);border-radius:26px;overflow:hidden;height:668px;
+  display:flex;flex-direction:column;box-shadow:0 0 0 1px #191a30}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px 2px;
+  font-size:10.5px;color:var(--dim);flex:none}
+.bar .dots{display:flex;gap:3px}
+.bar .dots i{width:3px;height:3px;border-radius:50%;background:var(--dim);display:block}
+.scr{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 20px 22px;display:flex;flex-direction:column;gap:16px}
+.scr::-webkit-scrollbar{width:0}
+.nav{display:flex;align-items:center;gap:12px;flex:none;padding-top:8px}
+.nav .back{font-size:22px;line-height:1;color:var(--text);font-weight:500}
+.nav h2{font-size:19px;font-weight:500;letter-spacing:.01em}
+
+/* brand block, mengikuti komposisi Opening App */
+.brand{display:flex;flex-direction:column;align-items:center;gap:6px;padding:30px 0 6px}
+.brand .glyph{width:50px;height:50px;border-radius:12px;background:var(--lav);transform:rotate(45deg)}
+.brand b{font-family:var(--brand);font-size:21px;font-weight:600;letter-spacing:.18em;margin-top:14px}
+.brand span{font-size:12px;color:var(--muted)}
+
+/* kartu besar bergaya Song Detail: tanpa garis tepi, radius besar */
+.card{background:var(--card);border-radius:24px;padding:20px 18px;display:flex;flex-direction:column;gap:15px}
+.card.tight{padding:16px}
+
+/* segmented, memakai warna sel tabel difficulty */
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--violet);border-radius:13px;padding:4px}
+.seg button{font:inherit;font-size:12.5px;font-weight:600;padding:8px;border:0;border-radius:10px;
+  background:transparent;color:var(--muted);cursor:pointer;font-family:var(--font)}
+.seg button[aria-pressed="true"]{background:var(--lav);color:var(--text)}
+.seg button:focus-visible{outline:2px solid var(--pst);outline-offset:2px}
+
+.field{display:flex;flex-direction:column;gap:7px}
+.field label{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.field input{background:var(--violet);border:0;border-radius:13px;padding:13px 15px;color:var(--text);
+  font:inherit;font-family:var(--font);font-size:15px;font-weight:600;width:100%}
+.field input.wide{letter-spacing:.14em}
+.field input::placeholder{color:var(--dim);font-weight:500}
+.field input:focus{outline:2px solid var(--pst);outline-offset:2px}
+.field .hint{font-size:11.5px;color:var(--dim);line-height:1.5}
+
+/* tombol: isi solid memakai --lav, dan gaya garis putus persis "Drop Image" */
+.btn{font:inherit;font-family:var(--font);font-size:15px;font-weight:700;letter-spacing:.03em;
+  border:0;border-radius:14px;padding:13px;cursor:pointer;width:100%;background:var(--lav);color:var(--text)}
+.btn:focus-visible{outline:2px solid var(--pst);outline-offset:2px}
+.btn.dashed{background:transparent;border:1px dashed var(--lav);color:var(--text);font-weight:600}
+.or{display:flex;align-items:center;gap:11px;color:var(--dim);font-size:11px}
+.or::before,.or::after{content:"";height:1px;background:var(--card);flex:1}
+.foot{font-size:11.5px;color:var(--dim);text-align:center;line-height:1.6;margin:0}
+.foot a{color:var(--pst);text-decoration:none;font-weight:600}
+.ver{text-align:center;font-size:12px;color:var(--muted);margin-top:auto;padding-top:8px}
+
+/* baris "key : value", pola khas kartu History */
+.kv{display:grid;grid-template-columns:auto 10px 1fr;gap:3px 4px;font-size:13px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:600}
+.kv .c{color:var(--muted)}
+
+/* profil */
+.pcard{background:var(--card);border-radius:24px;padding:22px 18px;
+  display:flex;flex-direction:column;align-items:center;gap:4px}
+.pcard .av{width:64px;height:64px;border-radius:50%;background:var(--violet);
+  display:grid;place-items:center;font-size:24px;font-weight:700;color:var(--text)}
+.pcard b{font-size:18px;font-weight:700;margin-top:10px}
+.pcard .pid{font-size:13.5px;color:var(--muted);letter-spacing:.12em;font-weight:600}
+.pcard .chg{font-size:12px;color:var(--pst);text-decoration:none;margin-top:8px;font-weight:600}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--card-alt);border-radius:16px;padding:13px 15px;display:flex;flex-direction:column;gap:3px}
+.stat .v{font-size:21px;font-weight:700;line-height:1.1}
+.stat .k{font-size:10.5px;color:var(--muted);font-weight:600}
+.note{background:var(--violet);border-radius:16px;padding:14px 16px}
+.note b{display:block;font-size:12px;color:var(--prs);letter-spacing:.06em;margin-bottom:5px;font-weight:700}
+.note p{margin:0;font-size:11.5px;color:var(--text);line-height:1.55;opacity:.88}
+.menu{display:flex;flex-direction:column;gap:8px}
+.menu a{display:flex;align-items:center;gap:13px;padding:14px 16px;color:var(--text);text-decoration:none;
+  font-size:14px;font-weight:600;background:var(--card-alt);border-radius:16px}
+.menu a:hover{background:var(--card)}
+.menu a .ar{margin-left:auto;color:var(--dim);font-size:17px}
+.menu a .ic{width:8px;height:8px;border-radius:50%;background:var(--teal);flex:none}
+.menu a.out .ic{background:var(--ftr)}
+
+/* Top 50 */
+.sum{background:var(--card);border-radius:24px;padding:19px 18px;display:flex;flex-direction:column;gap:4px}
+.sum .row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.sum .big{font-size:34px;font-weight:700;line-height:1;letter-spacing:.01em}
+.sum .who{text-align:right}
+.sum .who b{display:block;font-size:13px;font-weight:700}
+.sum .who span{font-size:11px;color:var(--muted);letter-spacing:.08em;font-weight:600}
+.sum .lab{font-size:12px;color:var(--muted);margin-top:5px}
+.sum .warn{font-size:11.5px;color:var(--dim);line-height:1.5;margin-top:7px}
+.tools{display:flex;gap:7px;flex-wrap:wrap}
+.pill{font:inherit;font-family:var(--font);font-size:12px;font-weight:600;background:transparent;
+  color:var(--muted);border:1px dashed var(--lav);padding:6px 13px;border-radius:11px;cursor:pointer}
+.pill[aria-pressed="true"]{background:var(--lav);color:var(--text);border-style:solid}
+.pill:focus-visible{outline:2px solid var(--pst);outline-offset:2px}
+
+.plays{display:flex;flex-direction:column;gap:9px}
+.more{text-align:center;font-size:12px;color:var(--dim);padding-top:2px}
+
+/* jacket slot: placeholder gradien dari warna palette (gambar asli tidak dipakai — hak cipta) */
+.jk{width:58px;height:58px;border-radius:12px;flex:none;position:relative;overflow:hidden}
+.jk::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 28% 22%,rgba(255,255,255,.35),transparent 55%)}
+.jk.lg{width:84px;height:84px;border-radius:16px}
+.rk{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:var(--badge);
+  display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--text)}
+.play{background:var(--card-alt);border-radius:16px;position:relative;display:flex;align-items:center;gap:13px;padding:11px 44px 11px 11px}
+.play .txt{min-width:0;flex:1}
+.play .ttl{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.play .row2{display:flex;align-items:center;gap:8px;margin-top:2px;font-size:11.5px;color:var(--muted)}
+.play .row2 .dif{font-weight:700;letter-spacing:.04em}
+.play .pot{font-size:18px;font-weight:700;line-height:1.1;margin-top:3px}
+.play .pot small{font-size:10.5px;font-weight:600;color:var(--muted);margin-left:6px;letter-spacing:.06em}
+
+/* profil */
+.best{display:flex;align-items:center;gap:15px;background:var(--card);border-radius:24px;padding:15px}
+.best .txt{min-width:0}
+.best .eb{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.best .t{font-size:15px;font-weight:700;margin-top:2px;line-height:1.3}
+.best .m{font-size:12px;color:var(--muted);margin-top:2px}
+.best .m .dif{font-weight:700}
+.best .big{font-size:23px;font-weight:700;margin-top:4px}
+.blk{background:var(--card);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:11px}
+.blk h3{font-size:15px;font-weight:600}
+.blk .sub{font-size:11.5px;color:var(--muted);margin-top:-6px}
+.mix{display:flex;height:14px;border-radius:7px;overflow:hidden;gap:3px}
+.mix i{display:block;height:100%}
+.leg{display:flex;flex-direction:column;gap:6px;font-size:12.5px}
+.leg div{display:flex;align-items:center;gap:9px}
+.leg i{width:10px;height:10px;border-radius:3px;display:block;flex:none}
+.leg span{margin-left:auto;font-weight:700}
+.since{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+.since span{font-size:11px;color:var(--muted);background:var(--violet);padding:3px 11px;border-radius:9px;font-weight:600}
+.spark{width:100%;height:auto;display:block}
+.spark text{font-family:var(--font);font-size:10px;fill:var(--muted);font-weight:600}
+.exm{font-size:10.5px;color:var(--dim)}
+
+@media (max-width:700px){
+  .cap{min-height:0}
+  .page{padding-inline:16px}
+  .board{grid-template-columns:1fr;gap:26px}
+  .phone{height:628px}
+  .masthead h1{font-size:22px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div class="eyebrow">Celestl · desain sisi pengguna</div>
+    <h1>Sign in, Profile, Top 50</h1>
+    <p>Empat layar yang belum ada di Figma, dibangun ulang mengikuti bahasa visual layar mobile-mu.</p>
+  </header>
+
+  <div class="legend">
+    <p><b>Warna diambil dari render tiap layar Figma, bukan dari tangkapan layar board.</b>
+    Mengikuti kebiasaan desainmu: kartu dibedakan lewat isian warna tanpa garis tepi, sudutnya besar dan lembut,
+    difficulty tampil sebagai warna teks (bukan chip terisi), dan tombol memakai gaya garis putus “Drop Image”.
+    Font Poppins (nama aplikasi) + Exo 2 (teks lain) — dikonfirmasi langsung dari Figma lewat get_design_context, bukan tebakan. Teks di dalam ponsel berbahasa Inggris;
+    keterangan di luar bingkai untukmu, bukan bagian aplikasi.</p>
+    <div class="swatches">
+      <span class="sw"><i style="background:#0C0C22"></i>0C0C22</span>
+      <span class="sw"><i style="background:#1A1D32"></i>1A1D32</span>
+      <span class="sw"><i style="background:#1E203A"></i>1E203A</span>
+      <span class="sw"><i style="background:#16133E"></i>16133E</span>
+      <span class="sw"><i style="background:#3F3C68"></i>3F3C68</span>
+      <span class="sw"><i style="background:#03A8E6"></i>03A8E6 Past</span>
+      <span class="sw"><i style="background:#ACFF82"></i>ACFF82 Present</span>
+      <span class="sw"><i style="background:#F768DD"></i>F768DD Future</span>
+    </div>
+  </div>
+
+  <div class="board">
+
+    <!-- 1 SIGN IN -->
+    <div class="slot">
+      <div class="cap"><b>1 · Sign in</b>
+        <span>Komposisi tengah meniru Opening App. Tombol tamu memakai gaya garis putus “Drop Image”,
+        jadi hadir tanpa bersaing dengan tombol utama.</span></div>
+      <div class="phone">
+        <div class="bar"><span class="tab">9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="scr">
+          <div class="brand"><div class="glyph"></div><b>CELESTL</b><span>Arcaea rating tracker</span></div>
+          <div class="card">
+            <div class="seg" role="group" aria-label="Sign in method">
+              <button type="button" aria-pressed="true">Player ID</button>
+              <button type="button" aria-pressed="false">Nickname</button>
+            </div>
+            <div class="field">
+              <label for="si">Player ID</label>
+              <input id="si" class="wide tab" inputmode="numeric" placeholder="000 000 000" value="160 500 737">
+              <span class="hint">The 9-digit number under your username in Arcaea.</span>
+            </div>
+            <button class="btn" type="button">Sign in</button>
+          </div>
+          <div class="or">or</div>
+          <button class="btn dashed" type="button">Continue as guest</button>
+          <p class="foot">Guest mode calculates ratings but saves nothing.<br>
+            No account yet? <a href="#">Create one</a></p>
+          <div class="ver">ver 1.xx</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 REGISTER -->
+    <div class="slot">
+      <div class="cap"><b>2 · Create account</b>
+        <span>Player ID dikunci setelah dibuat, nickname bisa berubah — sama seperti di game. Peringatan soal
+        tanpa password ditulis terus terang.</span></div>
+      <div class="phone">
+        <div class="bar"><span class="tab">9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="scr">
+          <div class="nav"><span class="back">‹</span><h2>Create account</h2></div>
+          <div class="card">
+            <div class="field">
+              <label for="r1">Player ID</label>
+              <input id="r1" class="wide tab" inputmode="numeric" placeholder="000 000 000">
+              <span class="hint">Permanent — this identifies your account and cannot be changed later.</span>
+            </div>
+            <div class="field">
+              <label for="r2">In-game nickname</label>
+              <input id="r2" placeholder="AnisphiaaaUwU">
+              <span class="hint">Used to check the Best 50 images you upload. Update it here whenever you
+                rename yourself in Arcaea.</span>
+            </div>
+            <button class="btn" type="button">Create account</button>
+          </div>
+          <div class="note"><b>Heads up</b>
+            <p>Celestl has no passwords. Your Player ID and nickname both appear on any Best 50 image you share,
+              so anyone who has seen one can open your history.</p></div>
+          <p class="foot">Already registered? <a href="#">Sign in</a></p>
+          <div class="ver">ver 1.xx</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 PROFILE -->
+    <div class="slot">
+      <div class="cap"><b>3 · Profile</b>
+        <span>Diisi hanya dengan data yang memang kita punya: rata-rata Top 50, play terbaik, komposisi clear (dibaca dari gambar Best 50-mu), dan grafik antar-upload. PTT in-game tetap kosong dan alasannya ditulis.</span></div>
+      <div class="phone">
+        <div class="bar"><span class="tab">9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="scr">
+          <div class="nav"><h2>Profile</h2></div>
+          <div class="pcard">
+            <div class="av">A</div><b>AnisphiaaaUwU</b>
+            <span class="pid tab">160 500 737</span>
+            <div class="since"><span>Joined Sep 2026</span><span>Last upload 18 Sep</span></div>
+            <a class="chg" href="#">Update nickname</a>
+          </div>
+          <div class="duo">
+            <div class="stat"><span class="v tab">12.640</span><span class="k">Top 50 average</span></div>
+            <div class="stat"><span class="v tab">3</span><span class="k">Best 50 uploads</span></div>
+          </div>
+          <div class="best">
+            <div class="jk lg" id="bestjk"></div>
+            <div class="txt"><div class="eb">Best play</div>
+              <div class="t">Extradimensional Cosmic Phenomenon</div>
+              <div class="m"><span class="dif" style="color:var(--ftr)">FTR</span> · <span class="tab">09'900'167</span></div>
+              <div class="big tab">13.001</div></div>
+          </div>
+          <div class="blk">
+            <h3>Clear types in Top 50</h3>
+            <div class="sub">Read from your Best 50 image</div>
+            <div class="mix" role="img" aria-label="45 clear, 3 full recall, 2 pure memory">
+              <i style="width:90%;background:var(--pst)"></i><i style="width:6%;background:var(--prs)"></i><i style="width:4%;background:var(--ftr)"></i>
+            </div>
+            <div class="leg">
+              <div><i style="background:var(--pst)"></i>Clear<span class="tab">45</span></div>
+              <div><i style="background:var(--prs)"></i>Full Recall<span class="tab">3</span></div>
+              <div><i style="background:var(--ftr)"></i>Pure Memory<span class="tab">2</span></div>
+            </div>
+          </div>
+          <div class="blk">
+            <h3>Top 50 average over time</h3>
+            <div class="sub">One point per Best 50 upload</div>
+            <svg class="spark" id="spark" viewBox="0 0 300 110" role="img" aria-label="Top 50 average rising from 12.41 to 12.64 over six uploads"></svg>
+            <div class="exm">Example history — only the last point (12.640) is real. Upload more Best 50 images to build yours.</div>
+          </div>
+          <div class="note"><b>Why no Potential?</b>
+            <p>Arcaea shows 12.668 for this account, but these 50 plays average 12.640. Something else feeds the
+              in-game number, so Celestl won’t print a Potential until that rule is confirmed.</p></div>
+          <div class="menu">
+            <a href="#"><span class="ic"></span>Top 50<span class="ar">›</span></a>
+            <a href="#"><span class="ic"></span>Calculation history<span class="ar">›</span></a>
+            <a href="#"><span class="ic"></span>Best 50 uploads<span class="ar">›</span></a>
+            <a href="#" class="out"><span class="ic"></span>Sign out<span class="ar">›</span></a>
+          </div>
+          <div class="ver">ver 1.xx</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 TOP 50 -->
+    <div class="slot">
+      <div class="cap"><b>4 · Top 50</b>
+        <span>Jacket di kiri, badge rank bulat di kanan atas mengikuti kartu History. Kotak jacket masih <em style="font-style:normal;color:var(--text);font-weight:700">placeholder gradien</em> dari warna palette — gambar aslinya tidak ikut.</span></div>
+      <div class="phone">
+        <div class="bar"><span class="tab">9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="scr">
+          <div class="nav"><span class="back">‹</span><h2>Top 50</h2></div>
+          <div class="sum">
+            <div class="row">
+              <div><div class="big tab">12.640</div><div class="lab">Average of 50 best plays</div></div>
+              <div class="who"><b>AnisphiaaaUwU</b><span class="tab">160 500 737</span></div>
+            </div>
+            <div class="warn">Not your in-game Potential — see Profile for why.</div>
+          </div>
+          <div class="tools">
+            <button class="pill" type="button" aria-pressed="true">Rating</button>
+            <button class="pill" type="button" aria-pressed="false">Score</button>
+            <button class="pill" type="button" aria-pressed="false">Constant</button>
+          </div>
+          <div class="plays" id="plays"></div>
+          <div class="more">40 more plays</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Skor & potential asli dari gambar Best 50 milik pemilik; constant diturunkan dengan max(0,c+m)+0.2.
+const ROWS=[
+ [1,"Extradimensional Cosmic Phenomenon","FTR",9900167,13.001],
+ [2,"DREAD AREA","FTR",9872215,12.961],
+ [3,"Cataclysm Cry","FTR",9747034,12.823],
+ [4,"Grievous Lady","FTR",9901303,12.807],
+ [5,"Vicious [ANTI] Heroism","FTR",9880308,12.802],
+ [6,"ouroboros -twin stroke of-","FTR",9975702,12.779],
+ [7,"KYOREN ROMANCE","FTR",9975095,12.775],
+ [8,"Misdeed -la bonté de Dieu-","FTR",9929127,12.746],
+ [9,"Distorted Fate","FTR",9947823,12.739],
+ [10,"Heavenly caress","FTR",9922933,12.715],
+];
+// Hanya tiga difficulty ini yang punya warna resmi di Figma.
+const COL={PST:"--pst",PRS:"--prs",FTR:"--ftr"};
+// Grade diturunkan dari skor, tidak disimpan — sesuai CLAUDE.md.
+function grade(s){return s>=9900000?"EX+":s>=9800000?"EX":s>=9500000?"AA":s>=9200000?"A":
+  s>=9000000?"B":s>=8800000?"C":"D";}
+// Format skor gaya Arcaea: 09'900'167
+function fmt(s){return String(s).padStart(8,"0").replace(/\B(?=(\d{3})+(?!\d))/g,"\u2019");}
+
+// Jacket placeholder: gradien dua warna palette, dipilih dari hash judul (tetap sama untuk lagu yang sama).
+const PAL=["#03A8E6","#ACFF82","#F768DD","#4CAED1","#7B5D85"];
+function jacket(t){let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))>>>0;
+  const a=h%PAL.length, b=(a+1+(h>>4)%(PAL.length-1))%PAL.length; // b selalu beda dari a
+  return `linear-gradient(${h%360}deg,${PAL[a]},${PAL[b]})`;}
+document.getElementById('bestjk').style.background=jacket("Extradimensional Cosmic Phenomenon");
+document.getElementById('plays').innerHTML=ROWS.map(([r,t,d,sc,pot])=>`
+  <div class="play">
+    <div class="jk" style="background:${jacket(t)}"></div>
+    <div class="txt">
+      <div class="ttl">${t}</div>
+      <div class="row2"><span class="dif" style="color:var(${COL[d]})">${d}</span>
+        <span class="tab">${fmt(sc)}</span><span>${grade(sc)}</span></div>
+      <div class="pot tab">${pot.toFixed(3)}<small>RATING</small></div>
+    </div>
+    <div class="rk tab">${r}</div>
+  </div>`).join('');
+
+// Sparkline: satu skala untuk garis, grid, dan label. Titik terakhir ditekankan.
+(function(){
+  const v=[12.41,12.47,12.52,12.58,12.61,12.640], lab=["12 Aug","24 Aug","2 Sep","9 Sep","14 Sep","18 Sep"];
+  const W=300,H=110,L=34,R=10,T=10,B=24, lo=12.4, hi=12.7;
+  const x=i=>L+i*(W-L-R)/(v.length-1), y=n=>T+(hi-n)/(hi-lo)*(H-T-B);
+  let g=[12.4,12.55,12.7].map(n=>`<line x1="${L}" x2="${W-R}" y1="${y(n)}" y2="${y(n)}" stroke="#3F3C68" stroke-dasharray="3 4"/>
+    <text x="${L-6}" y="${y(n)+3}" text-anchor="end">${n.toFixed(2)}</text>`).join('');
+  const pts=v.map((n,i)=>`${x(i)},${y(n)}`).join(' ');
+  const area=`${L},${H-B} ${pts} ${x(v.length-1)},${H-B}`;
+  const ends=`<text x="${x(0)}" y="${H-6}" text-anchor="middle">${lab[0]}</text>
+    <text x="${x(v.length-1)}" y="${H-6}" text-anchor="end">${lab[v.length-1]}</text>`;
+  document.getElementById('spark').innerHTML=g+`<polygon points="${area}" fill="#03A8E6" fill-opacity=".16"/>
+    <polyline points="${pts}" fill="none" stroke="#03A8E6" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${x(v.length-1)}" cy="${y(v[v.length-1])}" r="4.5" fill="#ACFF82" stroke="#1A1D32" stroke-width="2"/>`+ends;
+})();
+
+document.querySelectorAll('.seg,.tools').forEach(g=>g.addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+}));
+</script>

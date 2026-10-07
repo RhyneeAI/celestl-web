@@ -1,0 +1,1165 @@
+<title>Celestl Admin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Exo+2:wght@400;500;600;700&display=swap">
+<script src="admin-data.js"></script>
+<style>
+/* Font dikonfirmasi dari Figma (get_design_context): Poppins = nama aplikasi, Exo 2 = teks lain.
+   Warna dasar sama seperti mockup mobile account-top50.html — lihat CLAUDE.md § Palette.
+   Isi Packs & Songs & charts sekarang dari data/songlist.json + data/packlist.json asli (lihat admin-data.js),
+   bukan contoh karangan lagi — lihat CLAUDE.md § Data resmi ditemukan di data/. */
+:root{
+  --bg:#0C0C22; --card:#1A1D32; --card-alt:#1E203A; --violet:#16133E; --lav:#3F3C68;
+  --badge:#7B5D85; --text:#FFFAFA; --muted:#9A99A8; --dim:#6F6E80;
+  --pst:#03A8E6; --prs:#ACFF82; --ftr:#F768DD;
+  --byd:#E14763; --etr:#8975A8; --ins:#0000CD; /* BYD: hue sama dengan usulan pemilik (#BA1130, hue 349°),
+     lightness dinaikkan dari 40%->58% supaya kontras terhadap latar sepadan dengan warna lain (lihat CLAUDE.md
+     § Kontras warna difficulty). ETR dikonfirmasi pemilik. INS = MediumBlue wiki, KONTRASNYA RENDAH, lihat
+     catatan yang sama. */
+  --neutral:#8886A0;
+  --ok:#ACFF82; --warn:#FFD76A; --bad:#F768DD;
+  --brand:"Poppins","Segoe UI",system-ui,sans-serif;
+  --font:"Exo 2","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font);margin:0;font-size:15px;line-height:1.55;
+  -webkit-font-smoothing:antialiased}
+h1,h2,h3{margin:0;font-weight:600}
+.tab{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--pst);outline-offset:2px}
+a,button{cursor:pointer}
+[hidden]{display:none!important}
+
+/* ---------- shell ---------- */
+.shell{display:grid;grid-template-columns:224px 1fr;min-height:100%}
+.side{background:var(--card);display:flex;flex-direction:column;gap:2px;
+  padding:20px 14px calc(16px + env(safe-area-inset-bottom,0px));
+  position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow-y:auto}
+.mark{display:flex;align-items:center;gap:10px;padding:4px 8px 20px}
+.mark .glyph{width:28px;height:28px;border-radius:9px;background:var(--lav);transform:rotate(45deg);flex:none}
+.mark b{font-family:var(--brand);font-size:17px;font-weight:600;letter-spacing:.02em}
+nav{display:flex;flex-direction:column;gap:2px}
+nav .grp{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  font-weight:700;padding:14px 12px 4px}
+nav button.navlink{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;
+  color:var(--muted);text-decoration:none;font-weight:600;font-size:13.5px;width:100%;
+  background:none;border:0;font-family:inherit;text-align:left}
+nav button.navlink svg{flex:none;opacity:.85}
+nav button.navlink:hover{background:var(--card-alt);color:var(--text)}
+nav button.navlink[aria-current]{background:var(--violet);color:var(--text)}
+nav button.navlink[aria-current] svg{opacity:1;color:var(--pst)}
+.side footer{margin-top:auto;padding:10px 12px 0;color:var(--dim);font-size:11px}
+
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 24px;
+  background:var(--bg);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.crumb{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px}
+.crumb b{color:var(--text);font-weight:600}
+.crumb .sep{color:var(--dim)}
+.search{flex:1;min-width:160px;max-width:360px;margin-left:auto;position:relative}
+.search input{width:100%;background:var(--card);border:0;color:var(--text);border-radius:12px;
+  padding:9px 14px 9px 36px;font:inherit;font-size:13.5px}
+.search input::placeholder{color:var(--dim)}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--dim)}
+.whoami{display:flex;align-items:center;gap:9px}
+.whoami .av{width:30px;height:30px;border-radius:50%;background:var(--badge);
+  display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.whoami div{line-height:1.25}
+.whoami .nm{font-size:12.5px;font-weight:700}
+.whoami .rl{font-size:10.5px;color:var(--muted)}
+
+.wrap{padding-block:16px 36px;padding-inline:24px;display:flex;flex-direction:column;gap:18px}
+.view{display:flex;flex-direction:column;gap:18px}
+
+.notice{background:var(--violet);border-radius:14px;padding:11px 15px;font-size:12.5px;
+  color:var(--text);line-height:1.6;opacity:.92}
+.notice b{color:var(--prs);font-weight:700}
+.notice.warn b{color:var(--warn)}
+.notice.ok b{color:var(--ok)}
+
+/* dense stat tiles */
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tile{background:var(--card);border-radius:14px;padding:13px 15px;display:flex;flex-direction:column;gap:4px;
+  border:0;text-align:left;color:var(--text);font-family:inherit}
+.tile .k{font-size:11px;font-weight:700;color:var(--muted)}
+.tile .v{font-size:25px;font-weight:700;line-height:1.1}
+.tile .d{font-size:11px;color:var(--dim)}
+.tile .d i{font-style:normal;color:var(--prs);font-weight:600}
+.tile.attn{outline:1px solid rgba(255,215,106,.35)}
+.tile.attn .v{color:var(--warn)}
+.tile.attn .d i{color:var(--warn)}
+.tile.clickable:hover{background:var(--card-alt)}
+
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+.panel{background:var(--card);border-radius:16px;overflow:hidden}
+.phead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:13px 16px}
+.phead h2{font-size:15px;font-weight:600}
+.phead p{margin:2px 0 0;font-size:11.5px;color:var(--muted);width:100%}
+.phead .count{font-size:11px;font-weight:700;color:var(--muted);background:var(--card-alt);
+  padding:2px 9px;border-radius:20px}
+.phead .sp{margin-left:auto}
+.btn{font:inherit;font-family:var(--font);font-size:12.5px;font-weight:600;padding:8px 14px;
+  border-radius:11px;background:var(--lav);color:var(--text);border:0}
+.btn:hover{background:#4a4780}
+.btn.ghost{background:transparent;border:1px dashed var(--lav);color:var(--muted)}
+.btn.ghost:hover{color:var(--text);border-color:var(--text)}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 13px;align-items:center}
+.chip{font:inherit;font-family:var(--font);font-size:11.5px;font-weight:700;letter-spacing:.02em;
+  background:var(--card-alt);color:var(--muted);border:0;padding:6px 12px;border-radius:9px}
+.chip[aria-pressed="true"]{background:var(--c,var(--lav));color:var(--text)}
+.chip.rm{display:flex;align-items:center;gap:6px;background:var(--violet);color:var(--prs)}
+.chip.rm button{background:none;border:0;color:inherit;font:inherit;font-weight:700;padding:0;line-height:1}
+
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:420px}
+th{text-align:left;padding:8px 16px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--dim);font-weight:700;background:var(--card-alt);position:sticky;top:0}
+td{padding:11px 16px;border-top:1px solid var(--bg);white-space:nowrap}
+.dim{color:var(--dim)}
+.src{font-size:10.5px;font-weight:700;color:var(--muted);background:var(--violet);padding:2px 8px;border-radius:7px}
+.empty{padding:36px 16px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--text);font-size:14px;margin-bottom:4px}
+
+.side-col{display:flex;flex-direction:column;gap:16px}
+.list{display:flex;flex-direction:column}
+.row{display:flex;gap:10px;align-items:center;padding:10px 16px;border-top:1px solid var(--bg)}
+.row:first-child{border-top:0}
+.row .av{width:28px;height:28px;border-radius:50%;background:var(--badge);display:grid;place-items:center;
+  font-size:11px;font-weight:700;flex:none}
+.row .who{min-width:0;flex:1}
+.row .who b{display:block;font-size:12.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .who span{font-size:10.5px;color:var(--muted)}
+.state{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap;flex:none}
+.state.ok{color:var(--ok);background:rgba(172,255,130,.12)}
+.state.warn{color:var(--warn);background:rgba(255,215,106,.12)}
+.state.bad{color:var(--bad);background:rgba(247,104,221,.12)}
+.imp{padding:11px 16px;border-top:1px solid var(--bg);display:flex;flex-direction:column;gap:5px}
+.imp:first-child{border-top:0}
+.imp .t{display:flex;align-items:center;gap:8px}
+.imp .t b{font-size:12.5px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.imp .m{font-size:10.5px;color:var(--dim)}
+.bar{height:4px;background:var(--bg);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%}
+
+/* ---- Home ---- */
+.quick{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.qbtn{background:var(--card);border:1px dashed var(--lav);border-radius:14px;padding:13px;color:var(--text);
+  display:flex;flex-direction:column;gap:8px;font-family:inherit;text-align:left}
+.qbtn:hover{border-style:solid;background:var(--card-alt)}
+.qbtn svg{color:var(--pst)}
+.qbtn b{font-size:12.5px;font-weight:700}
+.feed{display:flex;flex-direction:column}
+.fitem{display:flex;gap:11px;padding:11px 16px;border-top:1px solid var(--bg)}
+.fitem:first-child{border-top:0}
+.fitem .dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex:none}
+.fitem .tx{min-width:0;flex:1}
+.fitem .tx b{font-weight:700}
+.fitem .tx span{display:block;font-size:11px;color:var(--dim);margin-top:2px}
+
+/* ---- Packs: dikelompokkan per kategori dengan pita label vertikal, meniru struktur
+   arcaea.miraheze.org/wiki/Pack_list (layout saja — warna/font tetap Celestl, bukan tema wiki) ---- */
+.packsections{display:flex;flex-direction:column;gap:28px;padding:18px}
+.packsection{display:flex;gap:16px;align-items:flex-start}
+.ribbon{flex:none;width:30px;align-self:stretch;border-radius:8px;background:var(--violet);
+  display:flex;align-items:center;justify-content:center;min-height:160px}
+.ribbon span{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--brand);font-size:12px;
+  font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--prs);white-space:nowrap}
+.packrow{display:flex;flex-wrap:wrap;gap:16px 14px;flex:1;min-width:0}
+.packcard{display:flex;flex-direction:column;gap:7px;width:168px}
+.packcard .n{font-size:10.5px;color:var(--muted);text-align:center;font-weight:600}
+.pack{position:relative;aspect-ratio:168/150;border-radius:14px;overflow:hidden;border:0;padding:0;text-align:left;
+  font-family:inherit;color:var(--text);width:100%}
+.pack .fill{position:absolute;inset:0}
+.pack .fill::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(12,12,34,0) 35%,rgba(12,12,34,.92) 100%)}
+.pack .meta{position:absolute;left:12px;right:12px;bottom:12px}
+.pack .meta b{display:block;font-size:13.5px;font-weight:700;line-height:1.25}
+.pack:hover .meta b{text-decoration:underline}
+.chapters{display:flex;flex-direction:column;gap:4px}
+.chaptertag{position:relative;height:26px;border-radius:6px;overflow:hidden;background-size:cover,cover;
+  background-position:center,center;width:100%;border:0;padding:0;font-family:inherit;display:block}
+.chaptertag::after{content:"";position:absolute;inset:0;background:rgba(12,12,34,.55)}
+.chaptertag b{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;height:100%;
+  font-size:10px;font-weight:600;color:var(--text);padding:0 8px;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;text-align:center}
+.chaptertag:hover::after{background:rgba(63,60,104,.55)}
+.chaptertag:hover b{text-decoration:underline;cursor:pointer}
+
+/* ---- Games ---- */
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;padding:16px}
+.game{background:var(--card-alt);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.game.hold{opacity:.55}
+.game .top{display:flex;align-items:center;gap:10px}
+.game .ic{width:38px;height:38px;border-radius:11px;background:var(--lav);flex:none}
+.game .nm{font-size:15px;font-weight:700;flex:1}
+.pill{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px}
+.pill.active{color:var(--ok);background:rgba(172,255,130,.12)}
+.pill.hold{color:var(--muted);background:var(--violet)}
+.idrow{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:7px 0;border-top:1px dashed var(--bg)}
+.idrow .l{color:var(--muted)}
+.idrow .v{color:var(--text);font-weight:600;text-align:right}
+.gadd{background:transparent;border:1px dashed var(--lav);border-radius:16px;min-height:150px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted)}
+.gadd:hover{color:var(--text);border-color:var(--text)}
+
+/* ---- Users ---- */
+.idchip{font-size:10.5px;font-weight:700;background:var(--violet);color:var(--pst);padding:2px 9px;border-radius:8px}
+
+/* ---- CSV import / testing ---- */
+.drop{border:1px dashed var(--lav);border-radius:16px;padding:28px 16px;text-align:center;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;gap:8px;margin:16px}
+.drop b{color:var(--text);font-size:13.5px}
+.conf{display:flex;flex-direction:column;gap:9px;padding:16px}
+.conf .row2{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.conf .row2 b{font-weight:700}
+
+/* ---- Songs & charts: master-detail (list kiri + panel kanan permanen, bukan drawer) ---- */
+.md-cols{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(400px,1fr);gap:16px;align-items:start}
+.songlist{display:flex;flex-direction:column;height:calc(100vh - 150px);overflow-y:auto}
+.songrow{display:flex;align-items:center;gap:12px;padding:10px 16px;border-top:1px solid var(--bg);
+  width:100%;background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;color:var(--text);
+  font-family:inherit;cursor:pointer}
+.songlist .songrow:first-child{border-top:0}
+.songrow:hover{background:var(--card-alt)}
+.songrow[aria-current="true"]{background:var(--violet)}
+.songrow .jk{width:38px;height:38px;border-radius:10px;flex:none}
+.songrow .tx{min-width:0;flex:1}
+.songrow .tx b{display:block;font-size:14.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.songrow .tx span{display:block;font-size:12px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.difftags{display:flex;gap:6px;flex:none;flex-wrap:nowrap}
+.difftags b{font-size:11.5px;font-weight:700}
+
+.detailpanel{position:sticky;top:76px;height:calc(100vh - 150px);overflow-y:auto}
+.dpad{padding:18px}
+.djk{width:100%;aspect-ratio:16/9;border-radius:14px;margin-bottom:14px}
+/* ---- elemen gambar yang bisa diperbesar (lightbox) — jacket di detail panel & preview upload di modal.
+   Background-nya dibaca langsung dari style inline elemen yang diklik (lihat openLightbox di script bawah),
+   jadi tidak perlu menduplikasi logic jacketLayers()/gradient fallback di sini. ---- */
+.zoomable{cursor:zoom-in;position:relative}
+.zoomable:hover{filter:brightness(1.08)}
+.zoomable::after{content:"";position:absolute;right:8px;bottom:8px;width:22px;height:22px;border-radius:7px;
+  background:rgba(12,12,34,.65) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.2'%3E%3Cpath d='M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5'/%3E%3C/svg%3E") center/14px no-repeat;
+  opacity:0;transition:opacity .15s ease}
+.zoomable:hover::after{opacity:1}
+.dmeta{display:flex;flex-direction:column;gap:3px;margin-bottom:14px}
+.dmeta .t{font-size:24px;font-weight:700;line-height:1.2}
+.dmeta .s{font-size:13.5px;color:var(--muted)}
+.dmeta .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin-top:12px}
+.dmeta .kv div{display:flex;flex-direction:column;gap:3px}
+.dmeta .kv span{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.dmeta .kv b{color:var(--text);font-weight:600;font-size:13px}
+.dtable{width:100%;min-width:560px;border-collapse:collapse;font-size:13.5px}
+.dtable th{background:var(--card-alt);color:var(--dim);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.06em;padding:7px 9px;text-align:left}
+.dtable td{padding:8px 9px;border-top:1px solid var(--bg);white-space:normal}
+.dtable .dif{font-weight:700}
+.dempty{padding:40px 20px;text-align:center;color:var(--muted);font-size:13px}
+
+/* ---- Home: hero stat + leaderboard (pola dari referensi ArcaeaNap, warna/aset tetap Celestl) ---- */
+.hero-cols{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:stretch}
+.hero{background:var(--card);border-radius:20px;padding:26px 24px;display:flex;flex-direction:column;gap:18px}
+.hero .eb{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.hero .big{font-family:var(--brand);font-size:52px;font-weight:700;line-height:1;letter-spacing:-.01em;margin-top:6px}
+.hero .sub{font-size:12.5px;color:var(--muted);margin-top:6px}
+.hero .splitrow{display:flex;gap:28px;margin-top:4px;flex-wrap:wrap}
+.hero .splitrow div{display:flex;flex-direction:column;gap:2px}
+.hero .splitrow .v{font-size:20px;font-weight:700}
+.hero .splitrow .k{font-size:10.5px;color:var(--dim)}
+.diffbreak{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.diffbreak .r{display:flex;align-items:center;gap:10px;font-size:13px}
+.diffbreak .r b{width:36px;flex:none;font-weight:700;letter-spacing:.04em}
+.diffbreak .r .bar{flex:1;height:6px;background:var(--bg);border-radius:4px;overflow:hidden}
+.diffbreak .r .bar i{display:block;height:100%;border-radius:4px}
+.diffbreak .r .n{width:52px;text-align:right;color:var(--muted);flex:none}
+
+.lb{display:flex;flex-direction:column}
+.lbrow{display:flex;align-items:center;gap:13px;padding:11px 0;border-top:1px dashed var(--bg);width:100%;
+  background:none;border-left:0;border-right:0;text-align:left;font-family:inherit;color:var(--text)}
+.lbrow:first-child{border-top:0}
+.lbrow:hover .lbtx b{text-decoration:underline}
+.lbrank{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex:none;
+  font-size:12px;font-weight:700;color:var(--muted);background:var(--card-alt)}
+.lbrank.g1{background:linear-gradient(145deg,#FFE9A8,#C9962B);color:#2B1D03;transform:rotate(45deg)}
+.lbrank.g1 span{transform:rotate(-45deg);display:block}
+.lbrank.g2{background:linear-gradient(145deg,#E7E9F2,#9A9FB5);color:#20222E;transform:rotate(45deg)}
+.lbrank.g2 span{transform:rotate(-45deg);display:block}
+.lbrank.g3{background:linear-gradient(145deg,#E8B78C,#9C5A2E);color:#2B1403;transform:rotate(45deg)}
+.lbrank.g3 span{transform:rotate(-45deg);display:block}
+.lbjk{width:42px;height:42px;border-radius:10px;flex:none}
+.lbtx{min-width:0;flex:1}
+.lbtx b{display:block;font-size:13.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lbtx span{display:block;font-size:11px;color:var(--muted);margin-top:1px}
+.lbval{text-align:right;flex:none}
+.lbval b{display:block;font-size:17px;font-weight:700}
+.lbval span{display:block;font-size:10px;color:var(--dim);letter-spacing:.04em}
+
+/* ---- field editable di panel detail (prototipe — belum tersambung backend) ---- */
+.efield{background:none;border:1px solid transparent;border-radius:8px;color:var(--text);font:inherit;
+  font-family:inherit;width:100%;padding:4px 6px;margin:-4px -6px}
+.efield:hover{border-color:var(--lav)}
+.efield:focus{border-color:var(--pst);background:var(--bg);outline:0}
+.efield::placeholder{color:var(--dim);font-style:italic}
+.dmeta .t.efield{font-size:24px;font-weight:700;line-height:1.2}
+.dmeta .s.efield{font-size:13.5px}
+select.efield{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239A99A8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 4px center;background-size:16px;padding-right:22px}
+.fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin-top:12px}
+.fieldgrid label{display:flex;flex-direction:column;gap:3px}
+.fieldgrid label span{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.dtable td .efield{font-size:13.5px}
+.dtable td.dif select.efield{font-weight:700;padding-left:0}
+.savebar{display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--bg)}
+.savebar span{font-size:11px;color:var(--dim)}
+.filebar{margin-top:16px;padding-top:14px;border-top:1px dashed var(--bg);display:flex;flex-direction:column;gap:8px}
+.filebar .eb{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.filerow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.filerow .aff-name{font-size:11.5px}
+
+.affcell{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.ebtn{width:24px;height:24px;flex:none;border-radius:7px;border:1px solid var(--lav);background:var(--card-alt);
+  color:var(--text);font-size:13px;line-height:1;display:grid;place-items:center;padding:0}
+.ebtn:hover{border-color:var(--text)}
+.ebtn:disabled{opacity:.4;cursor:not-allowed}
+.affcell .aff-name{font-size:11px;max-width:80px;overflow:hidden;text-overflow:ellipsis}
+
+/* ---- Modal "Add song" / "Add pack" — prototipe, belum tersambung backend (sama seperti mode edit
+   di panel detail). Dipisah dari pola inline-edit karena ini membuat entri BARU, bukan mengubah yang sudah
+   ada — field-nya harus langsung terlihat sebagai form kosong, bukan "hover dulu baru kelihatan ada border"
+   seperti .efield di tempat lain, jadi dikasih modifier .modal .efield supaya border-nya selalu tampak. ---- */
+.modal-overlay{position:fixed;inset:0;background:rgba(12,12,34,.66);backdrop-filter:blur(2px);
+  display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal{background:var(--card);border-radius:24px;padding:22px 24px;width:100%;max-width:440px;
+  max-height:calc(100vh - 40px);overflow-y:auto;animation:fadeUp .22s ease}
+.modal-head{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.modal-head h2{font-size:17px;font-weight:700;flex:1}
+.modal-sub{font-size:12px;color:var(--muted);margin:0 0 14px}
+.modal .fieldgrid label.full{grid-column:1/-1}
+.modal .efield{border:1px solid var(--lav);background:var(--bg);margin:0}
+.modal .efield:hover{border-color:var(--muted)}
+.modal .efield:focus{border-color:var(--pst)}
+.modal .checkrow{display:flex;flex-direction:row;align-items:center;gap:9px}
+.modal .checkrow span{text-transform:none;font-size:12.5px;font-weight:600;color:var(--text);letter-spacing:0}
+.modal .hint{font-size:11px;color:var(--dim);margin:12px 0 0;line-height:1.6}
+.modal optgroup{color:var(--text);font-weight:700}
+
+/* ---- Lightbox: perbesar jacket art (detail panel & preview upload) ---- */
+.lightbox-overlay{position:fixed;inset:0;background:rgba(6,6,16,.82);backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;padding:32px;z-index:60;cursor:zoom-out}
+.lightbox-img{width:min(74vw,560px);aspect-ratio:1/1;border-radius:22px;background-size:cover,cover;
+  background-position:center,center;box-shadow:0 24px 64px -16px rgba(0,0,0,.6);animation:fadeUp .18s ease}
+.lightbox-close{position:fixed;top:22px;right:26px;width:38px;height:38px;border-radius:12px;
+  background:var(--card-alt);border:0;color:var(--text);font-size:16px;display:grid;place-items:center;z-index:61}
+.lightbox-close:hover{background:var(--lav)}
+
+/* ---- scrollbar custom, ikut palette (bukan bawaan browser) — termasuk scroll halaman penuh ---- */
+html, body, .songlist, .detailpanel, .lb, .side, .scroll, .modal{
+  scrollbar-width: thin; scrollbar-color: var(--lav) var(--bg);
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar, .songlist::-webkit-scrollbar, .detailpanel::-webkit-scrollbar,
+.lb::-webkit-scrollbar, .side::-webkit-scrollbar, .scroll::-webkit-scrollbar, .modal::-webkit-scrollbar{
+  width:10px; height:10px;
+}
+html::-webkit-scrollbar-track, body::-webkit-scrollbar-track, .songlist::-webkit-scrollbar-track,
+.detailpanel::-webkit-scrollbar-track, .lb::-webkit-scrollbar-track, .side::-webkit-scrollbar-track,
+.scroll::-webkit-scrollbar-track{
+  background:var(--bg);
+}
+html::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb, .songlist::-webkit-scrollbar-thumb,
+.detailpanel::-webkit-scrollbar-thumb, .lb::-webkit-scrollbar-thumb, .side::-webkit-scrollbar-thumb,
+.scroll::-webkit-scrollbar-thumb{
+  background:var(--lav); border-radius:8px; border:2px solid var(--bg);
+}
+html::-webkit-scrollbar-thumb:hover, body::-webkit-scrollbar-thumb:hover, .songlist::-webkit-scrollbar-thumb:hover,
+.detailpanel::-webkit-scrollbar-thumb:hover, .lb::-webkit-scrollbar-thumb:hover, .side::-webkit-scrollbar-thumb:hover,
+.scroll::-webkit-scrollbar-thumb:hover{
+  background:var(--badge);
+}
+html::-webkit-scrollbar-corner, body::-webkit-scrollbar-corner{ background:var(--bg); }
+/* .modal py latar --card (bukan --bg seperti elemen lain di atas), jadi track/thumb-nya dikasih warna sendiri
+   supaya tetap menyatu dengan latar modal, bukan nongol kotak --bg gelap di pinggir modal yang lebih terang. */
+.modal::-webkit-scrollbar-track{ background:var(--card); }
+.modal::-webkit-scrollbar-thumb{ background:var(--lav); border-radius:8px; border:2px solid var(--card); }
+.modal::-webkit-scrollbar-thumb:hover{ background:var(--badge); }
+
+/* ---- animasi: transisi antar-view, panel detail, hover feedback (hormati prefers-reduced-motion di bawah) ---- */
+.view{opacity:1;transform:translateY(0);transition:opacity .22s ease,transform .22s ease}
+.view.pre-enter{opacity:0;transform:translateY(8px)}
+.dpad{animation:fadeUp .22s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.songrow,.pack,.lbrow,.qbtn,.tile,nav button.navlink,.chip,.btn,.ebtn,.gadd,.game{
+  transition:background-color .15s ease,border-color .15s ease,transform .15s ease,box-shadow .15s ease,color .15s ease;
+}
+.pack:hover{transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(0,0,0,.45)}
+.btn:active,.ebtn:active,.songrow:active{transform:scale(.98)}
+.songrow[aria-current="true"]{animation:pulseIn .22s ease}
+@keyframes pulseIn{from{background:var(--lav)}to{background:var(--violet)}}
+
+@media (max-width:1040px){
+  .cols,.md-cols{grid-template-columns:1fr}
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .hero-cols{grid-template-columns:1fr}
+  .detailpanel{position:static;height:auto;max-height:none}
+  .songlist{height:auto;max-height:none}
+}
+@media (max-width:760px){
+  .shell{grid-template-columns:1fr}
+  .side{position:static;height:auto;flex-direction:row;align-items:center;gap:2px;
+    overflow-x:auto;padding:12px 16px}
+  .side nav{flex-direction:row;gap:4px}
+  .side nav .grp,.side footer{display:none}
+  nav button.navlink{padding:7px 11px;white-space:nowrap}
+  nav button.navlink span.lbl{display:none}
+  .mark b{display:none}
+  .wrap{padding-inline:16px}
+  .topbar{padding:12px 16px}
+  .search{margin-left:0;max-width:none;order:3;width:100%}
+  table,tbody{display:block;min-width:0}
+  thead{display:none}
+  tr{display:flex;flex-wrap:wrap;align-items:center;gap:7px 12px;background:var(--card-alt);
+    border-radius:14px;padding:12px 14px;margin-bottom:8px;border-top:0}
+  td{display:block;padding:0;white-space:normal;border-top:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="shell">
+  <aside class="side">
+    <div class="mark"><div class="glyph"></div><b>CELESTL</b></div>
+    <nav id="nav">
+      <button class="navlink" data-view="home" aria-current="page">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>
+        <span class="lbl">Home</span></button>
+      <div class="grp">Content</div>
+      <button class="navlink" data-view="packs">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/></svg>
+        <span class="lbl">Packs</span></button>
+      <button class="navlink" data-view="songs">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <span class="lbl">Songs &amp; charts</span></button>
+      <div class="grp">People</div>
+      <button class="navlink" data-view="users">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="18" cy="8" r="2.4"/><path d="M15.5 14.8c2.5.4 4.5 2.3 4.5 5.2"/></svg>
+        <span class="lbl">Users</span></button>
+      <button class="navlink" data-view="games">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="12" rx="3"/><circle cx="8.5" cy="13" r="1.6"/><path d="M14.5 12h3M14.5 14.5h2"/></svg>
+        <span class="lbl">Game management</span></button>
+      <div class="grp">Operations</div>
+      <button class="navlink" data-view="log">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+        <span class="lbl">Activity log</span></button>
+      <button class="navlink" data-view="import">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14"/></svg>
+        <span class="lbl">CSV import</span></button>
+      <button class="navlink" data-view="testing">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 14l2.5-3 2 2.2L16 10l3 4"/></svg>
+        <span class="lbl">Testing tools</span></button>
+    </nav>
+    <footer>ver 1.xx · admin</footer>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="crumb"><span>Admin</span><span class="sep">›</span><b id="crumbNow">Home</b></div>
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <label for="q" style="position:absolute;left:-9999px">Search songs</label>
+        <input id="q" type="search" placeholder="Search songs…" autocomplete="off">
+      </div>
+      <div class="whoami"><div class="av">A</div>
+        <div><div class="nm">AnisphiaaaUwU</div><div class="rl tab">160 500 737</div></div></div>
+    </header>
+
+    <div class="wrap">
+
+      <!-- ============ HOME ============ -->
+      <section class="view" id="view-home">
+        <div class="notice ok"><b>Packs &amp; Songs sekarang data asli.</b> 553 lagu / 62 pack diekstrak langsung
+          dari client game (lihat <code class="tab">data/songlist.json</code>). Users, Activity log, dan angka
+          "Needs review" di bawah masih contoh — menunggu Fase 4/5.</div>
+        <section class="hero-cols">
+          <div class="hero">
+            <div><span class="eb">Charts catalogued</span><div class="big tab" id="heroCharts">—</div>
+              <div class="sub" id="heroSub">—</div></div>
+            <div class="diffbreak" id="diffBreak"></div>
+            <div class="splitrow">
+              <div><span class="v tab">312</span><span class="k">USERS (contoh)</span></div>
+              <div><span class="v tab" style="color:var(--warn)">9</span><span class="k">NEEDS REVIEW (contoh)</span></div>
+            </div>
+          </div>
+          <section class="panel" style="padding:4px 0;display:flex;flex-direction:column">
+            <div class="phead"><h2>Recently added</h2><span class="sp"></span><span class="count tab">up to 20, by in-game date</span></div>
+            <div class="lb" id="leaderboard" style="padding:0 20px 16px;max-height:420px;overflow-y:auto"></div>
+          </section>
+        </section>
+        <section class="panel">
+          <div class="phead"><h2>Recent activity</h2><span class="sp"></span>
+            <button class="btn ghost" type="button" data-goto="log" style="padding:5px 11px;font-size:11px">View all</button></div>
+          <div class="feed" id="homeFeed"></div>
+        </section>
+      </section>
+
+      <!-- ============ PACKS ============ -->
+      <section class="view" id="view-packs" hidden>
+        <section class="panel">
+          <div class="phead"><h2>Packs</h2><span class="count tab" id="packsCount">—</span>
+            <span class="sp"></span>
+            <button class="btn" type="button" id="addPackBtn">+ Add pack</button>
+            <p>Dikelompokkan per kategori dengan pita label, meniru struktur
+              <code class="tab">arcaea.miraheze.org/wiki/Pack_list</code> (cuma tata letaknya — warna &amp; font
+              tetap Celestl). Pack dengan chapter tambahan (mis. Lasting Eden → Chapter 2) ditandai di bawah
+              kartunya. Klik pack atau chapter untuk membuka Songs &amp; charts yang sudah difilter.</p></div>
+          <div class="packsections" id="packsGrid"></div>
+        </section>
+      </section>
+
+      <!-- ============ SONGS & CHARTS (master-detail) ============ -->
+      <section class="view" id="view-songs" hidden>
+        <div class="notice ok"><b>Chart designer, jacket designer, dan constant sekarang ada.</b> Chart
+          designer/jacket designer resmi dari data game. Constant desimal (mis. 11.3) dari
+          <code class="tab">arcaea.miraheze.org</code> (Data:ChartConstant.json) — <b>komunitas, bukan resmi
+          lowiro</b>, tapi sudah silang-cocok dengan hitungan kita sendiri dari gambar Best 50-mu (11.3 persis
+          sama). 1.834/1.837 chart punya nilai; sisanya "—" karena wiki belum mengisinya. Jumlah note masih
+          belum ada di sumber mana pun.</div>
+        <div class="md-cols">
+          <section class="panel">
+            <div class="phead">
+              <h2>Songs &amp; charts</h2>
+              <select class="efield" style="width:auto;background:var(--card-alt);padding:4px 22px 4px 10px;font-size:12px;font-weight:700" title="Field di panel detail (Side, dll.) khusus Arcaea — game lain nanti punya skemanya sendiri, lihat CLAUDE.md">
+                <option>Arcaea</option>
+              </select>
+              <span class="count" id="count">—</span>
+              <span class="sp"></span>
+              <label style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);font-weight:700">
+                Sort
+                <select class="efield" id="sortBy" style="width:auto;background:var(--card-alt);padding:5px 22px 5px 10px;font-size:12px;color:var(--text)">
+                  <option value="title">Title (A–Z)</option>
+                  <option value="pack">Pack</option>
+                  <option value="date">Newest</option>
+                  <option value="bpm">BPM</option>
+                  <option value="cc">Highest constant</option>
+                </select>
+              </label>
+              <button class="btn" type="button" id="addSongBtn">+ Add song</button>
+            </div>
+            <div class="chips" id="chips"></div>
+            <div class="songlist" id="songlist"></div>
+            <div class="empty" id="empty" hidden><b>No songs match</b>Change the filter, pack, or search text.</div>
+          </section>
+          <section class="panel detailpanel" id="detailpanel"></section>
+        </div>
+      </section>
+
+      <!-- ============ USERS ============ -->
+      <section class="view" id="view-users" hidden>
+        <div class="notice"><b>Identitas per game.</b> Saat ini hanya Arcaea, jadi tiap user punya satu chip
+          identitas. Rencana multi-game: satu akun Celestl bisa punya banyak chip (satu per game) — lihat
+          § Rencana jauh: multi-game identity di CLAUDE.md.</div>
+        <section class="panel">
+          <div class="phead"><h2>Users</h2><span class="count tab">312 users</span>
+            <span class="sp"></span><input placeholder="Search nickname or Player ID…" style="background:var(--card-alt);border:0;border-radius:10px;padding:7px 12px;color:var(--text);font:inherit;font-size:12.5px;width:220px"></div>
+          <div class="scroll"><table style="min-width:560px">
+            <thead><tr><th>User</th><th>Game identity</th><th>Joined</th><th>Last active</th><th>Status</th></tr></thead>
+            <tbody id="usersTb"></tbody>
+          </table></div>
+        </section>
+      </section>
+
+      <!-- ============ GAME MANAGEMENT ============ -->
+      <section class="view" id="view-games" hidden>
+        <div class="notice"><b>Dirancang universal.</b> Tiap game menyimpan skema identitas sendiri (label +
+          format), bukan kolom kode terpisah per game — supaya menambah game baru hanya isi data ini, tidak
+          mengubah form register. Rotaeno masih di-hold sesuai CLAUDE.md.</div>
+        <section class="panel">
+          <div class="phead"><h2>Games</h2></div>
+          <div class="games" id="gamesGrid"></div>
+        </section>
+      </section>
+
+      <!-- ============ ACTIVITY LOG ============ -->
+      <section class="view" id="view-log" hidden>
+        <section class="panel">
+          <div class="phead"><h2>Activity log</h2><span class="count tab" id="logCount">—</span>
+            <p>Mencakup unggahan Best 50, import CSV, dan perubahan admin dalam satu linimasa. Pakai filter
+              "Needs review" untuk antrean yang butuh keputusanmu (nickname tidak cocok, baris CSV gagal, lagu
+              tak dikenali OCR).</p></div>
+          <div class="chips" id="logChips"></div>
+          <div class="list" id="logList"></div>
+        </section>
+      </section>
+
+      <!-- ============ CSV IMPORT ============ -->
+      <section class="view" id="view-import" hidden>
+        <section class="panel">
+          <div class="phead"><h2>Import chart constants</h2>
+            <p>Menjalankan <code class="tab">celestl:import-charts</code> (Task 1.3). Upsert ke songs + charts
+              untuk game Arcaea; baris rusak dilaporkan, tidak menghentikan proses.</p></div>
+          <div class="drop">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14"/></svg>
+            <b>Drop CSV file here</b><span>title, artist, pack, difficulty, level, constant, note_count</span>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="phead"><h2>Recent imports</h2></div>
+          <div class="scroll"><table style="min-width:520px">
+            <thead><tr><th>File</th><th>New</th><th>Updated</th><th>Failed</th><th>By</th><th>When</th></tr></thead>
+            <tbody>
+              <tr><td class="song">arcaea_v6_wiki.csv</td><td class="tab" style="color:var(--ok)">142</td><td class="tab">58</td><td class="tab" style="color:var(--bad)">3</td><td>AnisphiaaaUwU</td><td class="dim">2 hours ago</td></tr>
+              <tr><td class="song">packs_luminous.csv</td><td class="tab" style="color:var(--ok)">24</td><td class="tab">0</td><td class="tab">0</td><td>AnisphiaaaUwU</td><td class="dim">Sep 18</td></tr>
+            </tbody>
+          </table></div>
+        </section>
+      </section>
+
+      <!-- ============ TESTING TOOLS ============ -->
+      <section class="view" id="view-testing" hidden>
+        <div class="notice warn"><b>Belum fungsional.</b> Layanan <code class="tab">vision/</code> belum dibangun
+          (Fase 3 di TASKS.md). Ini pratinjau antarmuka saja — OCR dan hash jacket belum jalan sungguhan.</div>
+        <div class="cols">
+          <section class="panel">
+            <div class="phead"><h2>Best 50 OCR tester</h2>
+              <p>Unggah gambar Best 50 untuk melihat apa yang akan dibaca <code class="tab">vision/</code>,
+                sebelum dipakai di alur upload pengguna.</p></div>
+            <div class="drop"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 14l2.5-3 2 2.2L16 10l3 4"/></svg>
+              <b>Drop Best 50 image</b><span>PNG dari halaman resmi Arcaea, grid 5×10</span></div>
+          </section>
+          <section class="panel">
+            <div class="phead"><h2>Example output</h2><span class="count">mock</span></div>
+            <div class="conf">
+              <div><div class="row2"><span>Nickname match</span><b style="color:var(--ok)">AnisphiaaaUwU · 97%</b></div><div class="bar"><i style="width:97%;background:var(--ok)"></i></div></div>
+              <div><div class="row2"><span>Cards read</span><b>50 / 50</b></div><div class="bar"><i style="width:100%;background:var(--pst)"></i></div></div>
+              <div><div class="row2"><span>Score field confidence</span><b>94%</b></div><div class="bar"><i style="width:94%;background:var(--pst)"></i></div></div>
+              <div><div class="row2"><span>Jacket hash match</span><b>89%</b></div><div class="bar"><i style="width:89%;background:var(--ftr)"></i></div></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h2 id="modalTitle">Add</h2>
+      <button class="ebtn" type="button" id="modalCloseX" aria-label="Close">✕</button>
+    </div>
+    <p class="modal-sub" id="modalSub"></p>
+    <div id="modalBody"></div>
+    <div class="savebar">
+      <button class="btn" type="button" id="modalSave">Save</button>
+      <button class="btn ghost" type="button" id="modalCancel">Cancel</button>
+      <span>Prototipe — belum tersambung backend, tidak benar-benar tersimpan.</span>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox-overlay" id="lightboxOverlay" hidden>
+  <button class="lightbox-close" type="button" id="lightboxClose" aria-label="Close">✕</button>
+  <div class="lightbox-img" id="lightboxImg"></div>
+</div>
+
+<script>
+const DIFFS=[["PST","--pst"],["PRS","--prs"],["FTR","--ftr"],["BYD","--byd"],["ETR","--etr"],["INS","--ins"]];
+const PAL=["#03A8E6","#ACFF82","#F768DD","#4CAED1","#7B5D85"];
+// BUG YANG PERNAH TERJADI: `h>>4` (shift signed) bisa jadi negatif kalau h≥2^31 (hash besar, wajar untuk
+// judul panjang), dan `%` di JS tidak membungkus negatif ke positif seperti Python — jadi PAL[b] kadang
+// `undefined`. Satu nilai `undefined` di dalam shorthand `background` bikin SELURUH deklarasi ditolak browser,
+// termasuk layer url() gambar asli yang valid — jacket/pack yang sudah ada filenya pun ikut tidak tampil.
+// Diperbaiki dengan `h>>>4` (unsigned shift) supaya hasilnya selalu non-negatif.
+function jacket(t){let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))>>>0;
+  const a=h%PAL.length,b=(a+1+(h>>>4)%(PAL.length-1))%PAL.length;
+  return `linear-gradient(${h%360}deg,${PAL[a]},${PAL[b]})`;}
+// Kalau folder lokal jackets/<id>.jpg ada isinya (TIDAK dipublikasikan, lihat CLAUDE.md), gambar itu dipakai;
+// kalau tidak ada (404), browser otomatis jatuh ke layer gradien di bawahnya. Tidak ada gambar berhak cipta
+// yang diambil/disematkan oleh Claude di sini — folder ini sengaja kosong di versi yang dipublikasikan.
+function jacketLayers(id,t){ return `url('../data/jackets/${id}.jpg'), ${jacket(t)}`; }
+function packLayers(id,t){ return `url('../data/packs/${id}.png'), ${jacket(t)}`; }
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function fmtDate(unix){if(!unix)return null;const d=new Date(unix*1000);return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;}
+
+// REAL_SONGS / REAL_PACKS datang dari admin-data.js (hasil ekstraksi data/songlist.json + packlist.json).
+const GAMES=[
+ {name:"Arcaea",status:"active",ids:[["Player ID","9-digit numeric, permanent","160 500 737"],["Nickname","mutable, display only","AnisphiaaaUwU"]]},
+ {name:"Rotaeno",status:"hold",ids:[["Identity schema","TBD — ditunda sesuai CLAUDE.md","—"]]},
+];
+
+const USERS=[
+ ["AnisphiaaaUwU","A","Arcaea","Player ID 160 500 737","Sep 2026","2h ago","active"],
+ ["Minji","M","Arcaea","Player ID 204 118 906","Sep 2026","1d ago","active"],
+ ["kurotsuki","K","Arcaea","Player ID 311 907 442","Sep 2026","—","warn"],
+ ["Rei.","R","Arcaea","Player ID 158 330 271","Aug 2026","5h ago","active"],
+];
+
+const LOG=[
+ ["upload","AnisphiaaaUwU","uploaded a Best 50 image — 50/50 charts read","18 Sep 2026","ok"],
+ ["upload","Minji","uploaded a Best 50 image — nickname on image says “minji_”","17 Sep 2026","warn"],
+ ["upload","kurotsuki","uploaded a Best 50 image — only 17/50 cards read, image cropped","17 Sep 2026","bad"],
+ ["import","AnisphiaaaUwU","imported arcaea_v6_wiki.csv — 142 new, 58 updated, 3 failed","16 Sep 2026","warn"],
+ ["edit","AnisphiaaaUwU","edited chart constant for ALTER EGO [FTR] 10.4 → 10.5","15 Sep 2026","ok"],
+ ["account","—","Rei. created an account","12 Sep 2026","ok"],
+];
+
+const TYPE_COL={upload:"--pst",import:"--ftr",edit:"--prs",account:"--neutral"};
+const TYPE_LABEL={upload:"Best 50",import:"CSV import",edit:"Admin edit",account:"Account"};
+
+// ---------- Songs & charts: master-detail state ----------
+let packFilter=null;      // set lewat klik Pack
+let selected=null;        // song object aktif di panel kanan
+let editMode=false;       // false = lihat saja (default), true = field bisa diedit — lihat tombol pensil
+
+const chips=document.getElementById('chips');
+
+function maxConstant(s){return Math.max(0,...s.diffs.map(d=>d[4]??0));}
+function filteredSongs(){
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  const rows=REAL_SONGS.filter(s=>
+    (!packFilter||s.pack===packFilter) &&
+    (!q||s.t.toLowerCase().includes(q)||s.pack.toLowerCase().includes(q)||(s.artist||'').toLowerCase().includes(q)));
+  const by=document.getElementById('sortBy')?.value||'title';
+  const sorters={
+    title:(a,b)=>a.t.localeCompare(b.t),
+    pack:(a,b)=>a.pack.localeCompare(b.pack)||a.t.localeCompare(b.t),
+    date:(a,b)=>(b.date||0)-(a.date||0),
+    bpm:(a,b)=>(parseFloat(b.bpm)||0)-(parseFloat(a.bpm)||0),
+    cc:(a,b)=>maxConstant(b)-maxConstant(a),
+  };
+  return rows.sort(sorters[by]);
+}
+
+function renderSongs(){
+  const rows=filteredSongs();
+  const pf=document.getElementById('packFilterChip');
+  if(pf)pf.remove();
+  if(packFilter){
+    const c=document.createElement('span');
+    c.className='chip rm'; c.id='packFilterChip';
+    c.innerHTML=`Pack: ${packFilter} <button type="button" aria-label="Clear pack filter">✕</button>`;
+    c.querySelector('button').onclick=()=>{packFilter=null;renderSongs();};
+    chips.appendChild(c);
+  }
+  document.getElementById('songlist').innerHTML=rows.map((s,i)=>`
+    <button class="songrow" type="button" data-i="${i}" aria-current="${selected===s}">
+      <div class="jk" style="background:${jacketLayers(s.id,s.t)};background-size:cover,cover;background-position:center,center"></div>
+      <div class="tx"><b>${s.t}</b><span>${s.artist||'Unknown artist'}</span></div>
+      <div class="difftags">${s.diffs.map(([d,lv,cd,jd,ct])=>
+        `<b style="color:var(${DIFFS.find(x=>x[0]===d)[1]})" title="${ct!=null?ct.toFixed(1):'—'}">${lv}</b>`
+      ).join('<span class="dim">/</span>')}</div>
+    </button>`).join('');
+  document.getElementById('count').textContent=rows.length+' / '+REAL_SONGS.length+' songs';
+  document.getElementById('empty').hidden=rows.length>0;
+  document.querySelectorAll('.songrow').forEach(b=>b.addEventListener('click',()=>selectSong(rows[+b.dataset.i])));
+  if(!rows.includes(selected)) selectSong(rows[0]||null);
+  else renderDetail();
+}
+document.getElementById('q').addEventListener('input',renderSongs);
+document.getElementById('sortBy').addEventListener('change',renderSongs);
+
+function selectSong(song){
+  selected=song;
+  editMode=false; // pindah lagu selalu kembali ke mode lihat, bukan lanjut mode edit lagu sebelumnya
+  document.querySelectorAll('.songrow').forEach(b=>{});
+  renderSongs.lastRows=null;
+  // update selected state without full re-render of the list (cheap, avoids losing scroll position)
+  document.querySelectorAll('.songrow').forEach(b=>{
+    const i=+b.dataset.i, rows=filteredSongs();
+    b.setAttribute('aria-current', rows[i]===song ? 'true':'false');
+  });
+  renderDetail();
+}
+
+// Isi dari wiki belum dikonfirmasi otomatis bisa diedit — field kosong ("length"/"vocals") memang belum ada
+// sumbernya (lihat catatan di admin-data.js), bukan bug. Mengetik di sini tidak tersimpan (belum ada backend).
+function efield(tag, val, ph, extra){
+  const v = val==null ? '' : String(val).replace(/"/g,'&quot;');
+  if(tag==='textarea') return `<textarea class="efield" rows="1" placeholder="${ph||''}" ${extra||''}>${v}</textarea>`;
+  return `<input class="efield" value="${v}" placeholder="${ph||''}" ${extra||''}>`;
+}
+
+const PENCIL='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+
+function renderDetail(){
+  const el=document.getElementById('detailpanel');
+  if(!selected){ el.innerHTML='<div class="dempty">No song selected</div>'; return; }
+  const s=selected;
+  const rel=fmtDate(s.date);
+
+  // ---- mode lihat (default): teks saja, satu tombol pensil untuk masuk mode edit ----
+  if(!editMode){
+    const kv=(k,v)=>`<div><span>${k}</span><b>${v??'<span class="dim">—</span>'}</b></div>`;
+    el.innerHTML=`<div class="dpad">
+      <div class="djk zoomable" style="background:${jacketLayers(s.id,s.t)};background-size:cover,cover;background-position:center,center"></div>
+      <div class="dmeta">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <span class="t" style="flex:1">${s.t}</span>
+          <button class="btn ghost" type="button" id="editBtn" style="padding:6px 12px;font-size:11.5px;display:flex;align-items:center;gap:6px;flex:none">${PENCIL} Edit</button>
+        </div>
+        <span class="s">${s.artist||'Unknown artist'}</span>
+        <div class="kv">
+          ${kv('Pack', s.pack)}${kv('Side', s.side)}${kv('BPM', s.bpm)}
+          ${kv('Length', s.length||'not in this source')}${kv('Released', rel)}${kv('Version', s.version)}
+        </div>
+      </div>
+      <div class="scroll"><table class="dtable">
+        <thead><tr><th>Diff</th><th>Level</th><th>Constant</th><th>Chart designer</th><th>Jacket designer</th><th>Notes</th></tr></thead>
+        <tbody>${s.diffs.map(([d,lv,cd,jd,ct,nt])=>{
+          const col=`var(${DIFFS.find(x=>x[0]===d)[1]})`;
+          return `<tr>
+            <td class="dif" style="color:${col}">${d}</td>
+            <td class="tab">${lv}</td>
+            <td class="tab">${ct!=null?ct.toFixed(1):'<span class="dim">—</span>'}</td>
+            <td>${cd||'<span class="dim">uncredited</span>'}</td>
+            <td>${jd||'<span class="dim">uncredited</span>'}</td>
+            <td class="tab">${nt??'<span class="dim">—</span>'}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div>
+    </div>`;
+    document.getElementById('editBtn').onclick=()=>{editMode=true;renderDetail();};
+    return;
+  }
+
+  // ---- mode edit: field asli bisa diketik, dipicu dari tombol pensil di mode lihat ----
+  const packOpts=REAL_PACKS.map(p=>`<option ${p.name===s.pack?'selected':''}>${p.name}</option>`).join('');
+  el.innerHTML=`<div class="dpad">
+    <div class="djk zoomable" style="background:${jacketLayers(s.id,s.t)};background-size:cover,cover;background-position:center,center"></div>
+    <div class="dmeta">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+        <span class="chip" style="--c:var(--lav);display:flex;align-items:center;gap:5px" aria-pressed="true">${PENCIL} Editing</span>
+      </div>
+      ${efield('input', s.t, 'Song title').replace('class="efield"','class="efield t"')}
+      ${efield('input', s.artist, 'Artist — not credited in this source').replace('class="efield"','class="efield s"')}
+      <div class="fieldgrid">
+        <label><span>Pack</span><select class="efield">${packOpts}</select></label>
+        <label><span>Side</span><select class="efield">
+          ${['Light','Conflict','Colorless','Lephon','Catastrophe'].map(o=>
+            `<option ${s.side===o?'selected':''}>${o}</option>`).join('')}
+        </select></label>
+        <label><span>BPM</span>${efield('input', s.bpm, '—')}</label>
+        <label><span>Length (m:ss)</span>${efield('input', s.length, 'not in this source')}</label>
+        <label><span>Released</span>${efield('input', rel, '—')}</label>
+        <label><span>Game version</span>${efield('input', s.version, '—')}</label>
+      </div>
+    </div>
+    <div class="scroll"><table class="dtable">
+      <thead><tr><th>Diff</th><th>Level</th><th>Constant</th><th>Chart designer</th><th>Jacket designer</th><th>Notes</th></tr></thead>
+      <tbody>${s.diffs.map(([d,lv,cd,jd,ct,nt])=>{
+        const col=`var(${DIFFS.find(x=>x[0]===d)[1]})`;
+        return `<tr>
+          <td class="dif" style="color:${col}">${d}</td>
+          <td>${efield('input', lv, '—', 'style="width:48px"')}</td>
+          <td>${efield('input', ct!=null?ct.toFixed(1):null, '—', 'style="width:52px"')}</td>
+          <td>${efield('input', cd, 'uncredited')}</td>
+          <td>${efield('input', jd, 'uncredited')}</td>
+          <td>${efield('input', nt, 'not in this source', 'style="width:60px"')}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>
+    <div class="filebar">
+      <span class="eb">Chart files</span>
+      <div class="filerow">
+        <button class="btn ghost" type="button" id="bundleUp">↑ Upload .zip</button>
+        <button class="btn ghost" type="button" id="bundleDown" disabled title="Not available in this preview">↓ Download .zip</button>
+        <span class="aff-name dim">No file — one .zip holds every difficulty's chart for this song</span>
+      </div>
+    </div>
+    <div class="savebar" style="flex-wrap:wrap">
+      <button class="btn" type="button" id="saveBtn">Save changes</button>
+      <button class="btn ghost" type="button" id="cancelBtn">Cancel</button>
+      <span style="width:100%">Prototype only — nothing is persisted or downloadable yet (Task 5.1).</span>
+    </div>
+  </div>`;
+  document.getElementById('saveBtn').onclick=()=>{editMode=false;renderDetail();};
+  document.getElementById('cancelBtn').onclick=()=>{editMode=false;renderDetail();};
+  const bundleInput=document.getElementById('bundleUpInput');
+  document.getElementById('bundleUp').onclick=()=>bundleInput.click();
+  bundleInput.onchange=()=>{
+    const f=bundleInput.files[0];
+    const nameEl=el.querySelector('.filerow .aff-name');
+    if(nameEl) nameEl.textContent=f?f.name:"No file — one .zip holds every difficulty's chart for this song";
+    // Download tetap nonaktif walau sudah upload — sandbox preview ini tidak bisa benar-benar menyajikan file
+    // kembali, jadi tombolnya jangan terlihat aktif padahal tidak melakukan apa-apa saat diklik.
+  };
+}
+
+// ---------- Packs: dikelompokkan per kategori, meniru struktur Pack_list wiki ----------
+document.getElementById('packsCount').textContent=REAL_PACKS.length+' packs';
+const SECTION_ORDER=['Arcaea','Main Story · Act I','Main Story · Act II','Side Story','Collaboration','Variety','Other'];
+const topPacks=REAL_PACKS.filter(p=>p.n>0 && !p.parent);
+const childrenOf=pid=>REAL_PACKS.filter(p=>p.parent===pid);
+
+function packCard(p){
+  const kids=childrenOf(p.id);
+  // "April Fools" bukan pack asli di packlist.json (dibuat sendiri buat mengelompokkan 10 lagu special) —
+  // tidak ada File:Pack aprilfools.png di wiki mana pun, jadi jangan coba fetch (404 percuma). Gradien saja.
+  const bg = p.id==='aprilfools' ? jacket(p.name) : packLayers(p.id,p.name);
+  return `<div class="packcard">
+    <div class="n">${p.n} song${p.n===1?'':'s'}</div>
+    <button class="pack" type="button" data-pack="${p.name.replace(/"/g,'&quot;')}" data-pid="${p.id}">
+      <div class="fill" style="background:${bg};background-size:cover,cover;background-position:center,center"></div>
+      <div class="meta"><b>${p.name}</b></div>
+    </button>
+    ${kids.length?`<div class="chapters">${kids.map(k=>
+      `<button class="chaptertag" type="button" data-pack="${k.name.replace(/"/g,'&quot;')}"
+        style="background-image:url('../data/packs/${k.id}.png'), ${jacket(k.name)}"><b>${k.name}</b></button>`
+      ).join('')}</div>`:''}
+  </div>`;
+}
+
+document.getElementById('packsGrid').innerHTML=SECTION_ORDER.map(sec=>{
+  const rows=topPacks.filter(p=>p.section===sec);
+  if(!rows.length) return '';
+  return `<div class="packsection">
+    <div class="ribbon"><span>${sec}</span></div>
+    <div class="packrow">${rows.map(packCard).join('')}</div>
+  </div>`;
+}).join('');
+document.querySelectorAll('.pack,.chaptertag').forEach(b=>b.addEventListener('click',()=>{
+  packFilter=b.dataset.pack; document.getElementById('q').value=''; goto('songs'); renderSongs();
+}));
+// Lebar kartu (.packcard) TETAP 168px seperti semula — bukan ini yang menyesuaikan bentuk gambar.
+// Yang menyesuaikan adalah TINGGI kartu (.pack), dan rasionya diambil dari bounding box piksel non-transparan
+// PNG asli (dihitung offline dengan PIL, lihat PACK_TRIM di bawah) — BUKAN ukuran kanvas penuh file (naturalWidth/
+// naturalHeight dari <img>). Beberapa PNG (mis. extend_2, extend_3) py kanvas lebih besar dari isi gambarnya
+// sendiri (sisa area kosong/transparan dari proses render vector ke PNG) — kalau dipakai ukuran kanvas penuh,
+// kartunya jadi punya spasi kosong di pinggir. PACK_TRIM sudah memotong bagian itu duluan.
+const PACK_TRIM=REAL_PACK_TRIM; // {id: [trimmedWidth, trimmedHeight]}, lihat admin-data.js
+document.querySelectorAll('.pack[data-pid]').forEach(btn=>{
+  const pid=btn.dataset.pid;
+  const t=PACK_TRIM[pid];
+  if(!t) return; // tidak ada file asli (mis. aprilfools) atau belum terukur — pakai default 168/150
+  btn.style.aspectRatio=`${t[0]} / ${t[1]}`;
+});
+
+// ---------- Modal "Add song" / "Add pack" ----------
+// Prototipe murni: Save cuma menutup modal, tidak ada apa pun yang benar-benar tersimpan (sama seperti
+// mode edit di panel detail Songs & charts). Dibuat sebagai modal (bukan inline-edit seperti field lain)
+// karena ini membuat entri BARU, jadi butuh form kosong yang jelas kelihatan sebagai form, bukan baris
+// data yang sudah ada untuk diubah.
+const modalOverlay=document.getElementById('modalOverlay');
+const modalTitle=document.getElementById('modalTitle');
+const modalSub=document.getElementById('modalSub');
+const modalBody=document.getElementById('modalBody');
+
+function closeModal(){ modalOverlay.hidden=true; }
+document.getElementById('modalCloseX').onclick=closeModal;
+document.getElementById('modalCancel').onclick=closeModal;
+document.getElementById('modalSave').onclick=closeModal;
+modalOverlay.addEventListener('click',e=>{ if(e.target===modalOverlay) closeModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !modalOverlay.hidden) closeModal(); });
+
+// ---------- Lightbox: perbesar jacket art ----------
+// Dipasang lewat delegasi klik pada .zoomable (bukan handler per-elemen), supaya jacket di detail panel
+// (dirender ulang tiap pindah lagu) dan preview upload di modal "Add song" sama-sama kepasang otomatis tanpa
+// perlu re-wire listener tiap kali innerHTML-nya diganti. Background CSS-nya dibaca langsung dari style
+// inline elemen yang diklik (sudah berisi jacketLayers()/gradient fallback atau url() hasil upload lokal),
+// jadi lightbox selalu menampilkan persis apa yang terlihat di thumbnail-nya, cuma lebih besar.
+const lightboxOverlay=document.getElementById('lightboxOverlay');
+const lightboxImg=document.getElementById('lightboxImg');
+function openLightbox(bg){
+  if(!bg) return;
+  lightboxImg.style.background=bg;
+  lightboxImg.style.backgroundSize='cover,cover';
+  lightboxImg.style.backgroundPosition='center,center';
+  lightboxOverlay.hidden=false;
+}
+function closeLightbox(){ lightboxOverlay.hidden=true; }
+document.addEventListener('click',e=>{
+  const z=e.target.closest('.zoomable');
+  if(z && z.dataset.hasImage!=='0') openLightbox(z.style.background);
+});
+document.getElementById('lightboxClose').onclick=closeLightbox;
+lightboxOverlay.addEventListener('click',e=>{ if(e.target===lightboxOverlay) closeLightbox(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !lightboxOverlay.hidden) closeLightbox(); });
+
+// Hampir semua lagu pasti punya pack (bahkan lagu dasar masuk pack "Arcaea") — jadi dropdown Pack di
+// bawah ini dibuat wajib pilih (bukan opsional "no pack"), bukan input teks bebas, supaya pack-nya selalu
+// cocok dengan yang sudah ada. Termasuk pack chapter/append (mis. "Lasting Eden Chapter 2"), karena lagu
+// memang bisa masuk langsung ke situ, bukan cuma ke pack induknya — lihat admin-data.js.
+function packSection(p){
+  if(p.section) return p.section;
+  const parent=REAL_PACKS.find(x=>x.id===p.parent);
+  return parent ? parent.section : 'Other';
+}
+function packSelectOptions(){
+  return SECTION_ORDER.map(sec=>{
+    const members=REAL_PACKS.filter(p=>p.n>0 && packSection(p)===sec)
+      .sort((a,b)=>{
+        const pa=a.parent?REAL_PACKS.find(x=>x.id===a.parent)?.name||'':a.name;
+        const pb=b.parent?REAL_PACKS.find(x=>x.id===b.parent)?.name||'':b.name;
+        return pa.localeCompare(pb) || (a.parent?1:0)-(b.parent?1:0);
+      });
+    if(!members.length) return '';
+    const opts=members.map(p=>
+      `<option value="${p.name.replace(/"/g,'&quot;')}" ${p.name==='Arcaea'?'selected':''}>${p.parent?'— ':''}${p.name}</option>`
+    ).join('');
+    return `<optgroup label="${sec}">${opts}</optgroup>`;
+  }).join('');
+}
+
+function openAddSong(){
+  modalTitle.textContent='Add song';
+  modalSub.textContent='Field lain (BPM, side, length, difficulty, level, constant, dll.) diisi sesudahnya dari panel detail — di sini cukup yang minimal untuk membuat entrinya dulu.';
+  modalBody.innerHTML=`<div class="fieldgrid">
+    <label class="full"><span>Song name</span><input class="efield" id="asTitle" placeholder="Song title"></label>
+    <label class="full"><span>Artist</span><input class="efield" id="asArtist" placeholder="Artist (kosongkan kalau tidak dikreditkan)"></label>
+    <label class="full"><span>Pack</span>
+      <select class="efield" id="asPack">${packSelectOptions()}</select>
+    </label>
+  </div>
+  <div class="filebar" style="margin-top:14px;padding-top:0;border-top:0">
+    <span class="eb">Jacket art</span>
+    <div style="display:flex;gap:14px;align-items:center">
+      <div class="jk zoomable" id="asJacketPreview" data-has-image="0"
+        style="width:120px;height:120px;border-radius:16px;background:var(--bg);flex:none"></div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+        <button class="btn ghost" type="button" id="asJacketBtn">↑ Upload image</button>
+        <span class="aff-name dim" id="asJacketName">No file — click preview to zoom once uploaded</span>
+      </div>
+    </div>
+  </div>`;
+  modalOverlay.hidden=false;
+  document.getElementById('asTitle').focus();
+  let jacketFileInput=document.getElementById('asJacketInput');
+  if(!jacketFileInput){
+    document.body.insertAdjacentHTML('beforeend','<input type="file" accept="image/*" hidden id="asJacketInput">');
+    jacketFileInput=document.getElementById('asJacketInput');
+  }
+  document.getElementById('asJacketBtn').onclick=()=>jacketFileInput.click();
+  jacketFileInput.onchange=()=>{
+    const f=jacketFileInput.files[0];
+    const preview=document.getElementById('asJacketPreview');
+    document.getElementById('asJacketName').textContent=f?f.name:'No file — click preview to zoom once uploaded';
+    if(f){
+      preview.style.background=`url(${URL.createObjectURL(f)}) center/cover`;
+      preview.dataset.hasImage='1';
+    }
+  };
+}
+
+function openAddPack(){
+  modalTitle.textContent='Add pack';
+  modalSub.textContent='Pack baru untuk Arcaea. Kategori menentukan pita label tempat pack ini dikelompokkan di halaman ini.';
+  const parentOptions=topPacks.slice().sort((a,b)=>a.name.localeCompare(b.name))
+    .map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  modalBody.innerHTML=`<div class="fieldgrid">
+    <label class="full"><span>Pack name</span><input class="efield" id="apName" placeholder="Pack name"></label>
+    <label class="full"><span>Category</span>
+      <select class="efield" id="apSection">${SECTION_ORDER.map(s=>`<option>${s}</option>`).join('')}</select>
+    </label>
+    <label class="full"><span>Parent pack (optional)</span>
+      <select class="efield" id="apParent">
+        <option value="">None — top-level pack</option>
+        ${parentOptions}
+      </select>
+    </label>
+    <label class="full checkrow"><input type="checkbox" id="apSmall">
+      <span>Small pack image (nama file wiki pakai awalan "small_")</span></label>
+  </div>
+  <p class="hint">Isi "Parent pack" kalau ini chapter/append tambahan (mis. "Lasting Eden Chapter 2") —
+    gambarnya nanti ikut gambar pack induk, sesuai cara game menampilkannya. Kosongkan untuk pack mandiri.</p>`;
+  modalOverlay.hidden=false;
+  document.getElementById('apName').focus();
+}
+
+document.getElementById('addSongBtn').onclick=openAddSong;
+document.getElementById('addPackBtn').onclick=openAddPack;
+
+// ---------- Games ----------
+document.getElementById('gamesGrid').innerHTML=GAMES.map(g=>`
+  <div class="game ${g.status==='hold'?'hold':''}">
+    <div class="top"><div class="ic"></div><div class="nm">${g.name}</div>
+      <span class="pill ${g.status}">${g.status==='active'?'Active':'On hold'}</span></div>
+    ${g.ids.map(([l,fmt,ex])=>`<div class="idrow"><span class="l">${l}<br><span class="dim" style="font-size:10.5px">${fmt}</span></span><span class="v tab">${ex}</span></div>`).join('')}
+  </div>`).join('')+`
+  <button class="gadd" type="button">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+    Add game</button>`;
+
+// ---------- Users ----------
+document.getElementById('usersTb').innerHTML=USERS.map(([name,av,game,id,joined,active,state])=>`
+  <tr><td><div class="row" style="padding:0"><div class="av" style="width:26px;height:26px;font-size:10px">${av}</div>
+      <b>${name}</b></div></td>
+    <td><span class="idchip">${game}</span> <span class="tab dim" style="font-size:11.5px">${id}</span></td>
+    <td class="dim">${joined}</td><td class="dim">${active}</td>
+    <td><span class="state ${state==='warn'?'warn':'ok'}">${state==='warn'?'no upload yet':'active'}</span></td>
+  </tr>`).join('');
+
+// ---------- Activity log + Home feed ----------
+const logActive=new Set(["all"]);
+function renderLog(){
+  const items=LOG.filter(l=>logActive.has('all')||logActive.has(l[0])||(logActive.has('review')&&l[4]!=='ok'));
+  document.getElementById('logList').innerHTML=items.map(([type,who,desc,when,state])=>`
+    <div class="imp"><div class="t">
+        <span class="chip" style="--c:var(${TYPE_COL[type]});padding:2px 9px;font-size:10px" aria-pressed="true">${TYPE_LABEL[type]}</span>
+        <b>${who!=='—'?who+' ':''}${desc}</b>
+        <span class="state ${state}">${state==='ok'?'ok':state==='warn'?'review':'failed'}</span></div>
+      <div class="m">${when}</div></div>`).join('');
+  document.getElementById('logCount').textContent=items.length+' entries';
+}
+const logChipDefs=[["all","All"],["upload","Best 50"],["import","CSV import"],["edit","Admin edit"],["review","Needs review"]];
+document.getElementById('logChips').innerHTML=logChipDefs.map(([k,l])=>
+  `<button class="chip" type="button" data-k="${k}" aria-pressed="${k==='all'}">${l}</button>`).join('');
+document.querySelectorAll('#logChips .chip').forEach(b=>b.onclick=()=>{
+  const k=b.dataset.k;
+  if(k==='all'){logActive.clear();logActive.add('all');}
+  else{logActive.delete('all');logActive.has(k)?logActive.delete(k):logActive.add(k);if(!logActive.size)logActive.add('all');}
+  document.querySelectorAll('#logChips .chip').forEach(x=>x.setAttribute('aria-pressed',logActive.has(x.dataset.k)));
+  renderLog();
+});
+renderLog();
+document.getElementById('homeFeed').innerHTML=LOG.slice(0,4).map(([type,who,desc,when,state])=>`
+  <div class="fitem"><div class="dot" style="background:var(${type==='edit'?'--prs':type==='import'?'--ftr':state==='ok'?'--pst':'--warn'})"></div>
+    <div class="tx"><b>${who!=='—'?who+' ':''}</b>${desc}<span>${when}</span></div></div>`).join('');
+
+// ---------- nav / view switching ----------
+function goto(id){
+  const target=document.getElementById('view-'+id);
+  document.querySelectorAll('.view').forEach(v=>v.hidden=(v!==target));
+  document.querySelectorAll('#nav .navlink').forEach(b=>{
+    if(b.dataset.view===id)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+  });
+  document.getElementById('crumbNow').textContent=document.querySelector(`#nav [data-view="${id}"] .lbl`).textContent;
+  // Transisi masuk singkat. BUG YANG PERNAH TERJADI: double-rAF kadang tidak pernah terpanggil
+  // (headless/background tab), bikin halaman macet permanen di opacity:0 alias "kosong". Sekarang pakai
+  // rAF tunggal + fallback setTimeout supaya kelas pre-enter DIJAMIN kehapus walau rAF gagal terpanggil.
+  target.classList.add('pre-enter');
+  let done=false;
+  const clear=()=>{ if(done) return; done=true; target.classList.remove('pre-enter'); };
+  requestAnimationFrame(clear);
+  setTimeout(clear, 120);
+}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>goto(b.dataset.view));
+document.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>goto(b.dataset.goto));
+
+// ---------- Home: difficulty breakdown (data asli) + "recently added" leaderboard ----------
+const DIFF_COUNTS={PST:0,PRS:0,FTR:0,BYD:0,ETR:0,INS:0};
+let totalCharts=0;
+REAL_SONGS.forEach(s=>s.diffs.forEach(([d])=>{DIFF_COUNTS[d]=(DIFF_COUNTS[d]||0)+1;totalCharts++;}));
+const maxCount=Math.max(...Object.values(DIFF_COUNTS));
+document.getElementById('heroCharts').textContent=totalCharts.toLocaleString();
+document.getElementById('heroSub').textContent=`across ${REAL_SONGS.length} songs · ${REAL_PACKS.length} packs`;
+document.getElementById('diffBreak').innerHTML=DIFFS.map(([d,v])=>`
+  <div class="r"><b style="color:var(${v})">${d}</b>
+    <div class="bar"><i style="width:${maxCount?DIFF_COUNTS[d]/maxCount*100:0}%;background:var(${v})"></i></div>
+    <span class="n tab">${DIFF_COUNTS[d].toLocaleString()}</span></div>`).join('');
+
+const RANK_CLASS=["g1","g2","g3"];
+const recent=[...REAL_SONGS].filter(s=>s.date).sort((a,b)=>b.date-a.date).slice(0,20);
+document.getElementById('leaderboard').innerHTML=recent.map((s,i)=>{
+  const top=s.diffs[s.diffs.length-1], col=`var(${DIFFS.find(x=>x[0]===top[0])[1]})`;
+  const rc=RANK_CLASS[i];
+  return `<button class="lbrow" type="button" data-t="${s.t.replace(/"/g,'&quot;')}">
+    <div class="lbrank${rc?' '+rc:''}"><span>${i+1}</span></div>
+    <div class="lbjk" style="background:${jacketLayers(s.id,s.t)};background-size:cover,cover;background-position:center,center"></div>
+    <div class="lbtx"><b>${s.t}</b><span>${s.pack} · ${fmtDate(s.date)}</span></div>
+    <div class="lbval"><b style="color:${col}">${top[0]}</b><span>Lv ${top[1]}</span></div>
+  </button>`;}).join('');
+document.querySelectorAll('#leaderboard .lbrow').forEach(b=>b.addEventListener('click',()=>{
+  const song=REAL_SONGS.find(s=>s.t===b.dataset.t);
+  packFilter=null; document.getElementById('q').value=song.t; goto('songs'); renderSongs();
+}));
+
+document.body.insertAdjacentHTML('beforeend','<input type="file" accept=".zip" hidden id="bundleUpInput">');
+
+renderSongs();
+</script>

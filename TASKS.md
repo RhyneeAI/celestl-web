@@ -1,0 +1,106 @@
+# Celestl — Tahapan Kerja
+
+Kerjakan berurutan. Fokus **Arcaea saja**; Rotaeno dan deteksi game otomatis ditunda. Proyek personal skala
+kecil (lihat CLAUDE.md § Akun) — prioritas pemilik: content management (data Arcaea) dan rating engine/OCR
+dulu, sistem akun digeser belakangan. Aturan rating ada di CLAUDE.md. Centang task yang sudah selesai.
+
+Sebelum Fase 2 ada dua hal yang harus terjawab: urutan clamp minimum 0 vs bonus, dan rumus PTT total (lihat CLAUDE.md).
+
+---
+
+## Fase 1 — Fondasi data
+
+### [ ] 1.1 Setup proyek Laravel
+Buat proyek di `web/` dengan Inertia + React + Tailwind dan test runner. Database **MySQL** (sudah diputuskan). Test runner **Pest** (sudah diputuskan). Catat di CLAUDE.md beserta bagian "Perintah" (dev server, semua test, satu test). Siapkan struktur i18n Laravel (bahasa utama Inggris) sejak awal. Jangan buat fitur dulu. Autentikasi bawaan starter kit **tidak dipakai** (login tanpa password, dibuat di Fase 4).
+**Selesai jika:** aplikasi jalan lokal dan test bawaan lolos.
+
+### [ ] 1.2 Skema lagu & chart
+Migration + model: `games` (slug, name), `songs` (game_id, slug, title, title_localized json nullable, artist, composer nullable, jacket_designer nullable, released_at date nullable, pack, jacket_hash nullable), `charts` (song_id, difficulty enum PST/PRS/FTR/BYD/ETR/INS, level string, constant decimal(4,1), note_count nullable, game_version, source). Relasi, factory, unique (song_id + difficulty). Skema tetap multi-game. Sebelum menulis migration, putuskan dengan pemilik apakah pola `game_identities` (§ Rencana jauh: multi-game identity di CLAUDE.md) mulai diterapkan sekarang atau ditunda. Jelaskan rancangan dulu.
+**Selesai jika:** relasi teruji, tidak ada chart ganda per lagu + difficulty.
+
+### [ ] 1.3 Import chart constant
+**Sumber sudah ditemukan**, bukan "cari di wiki" lagi: `data/songlist.json` + `data/packlist.json` (resmi,
+hasil ekstraksi client game) digabung `data/chartconstant.json` (komunitas, arcaea.miraheze.org
+Data:ChartConstant.json, sudah tervalidasi silang — lihat CLAUDE.md § Sumber chart constant ditemukan).
+Minta pemilik konfirmasi final sebelum dipakai sungguhan (bukan cuma mockup), lalu susun jadi CSV atau import
+langsung dari JSON — pilih salah satu dengan pemilik. Artisan command `celestl:import-charts {file}` (kolom:
+title, artist, pack, difficulty, level, constant, chart_designer, jacket_designer, released_at), upsert untuk
+Arcaea, laporkan baru/diperbarui/gagal beserta alasan. Lewati baris `deleted:true` dan constant `null`. Contoh
+kecil di `web/database/seeders/data/`.
+**Selesai jika:** bisa diulang tanpa duplikasi, baris rusak/null dilaporkan tanpa menghentikan proses.
+
+### [ ] 1.4 Daftar lagu (publik)
+Halaman daftar lagu Arcaea sesuai desain Figma: pencarian, grid, pengelompokan pack, halaman detail lagu (BPM, panjang, level/constant/notes per difficulty). Responsif.
+**Selesai jika:** data hasil import tampil dan bisa dicari di HP dan desktop.
+
+---
+
+## Fase 2 — Rating engine & kalkulator
+
+### [ ] 2.1 Rating engine Arcaea
+Service murni `ArcaeaRating` (tanpa database): `modifier(int $score)`, `grade(int $score)`, `playRating(float $constant, int $score, Lamp $lamp)` termasuk bonus +0.2 untuk semua lamp clear. Tulis test untuk SEMUA nilai uji di CLAUDE.md dulu, pastikan gagal, lalu implementasi. Tambah test batas 9.800.000, 9.900.000, 10.000.000 dan di atasnya, serta tiap lamp.
+**Selesai jika:** semua nilai uji lolos.
+
+### [ ] 2.2 Kalkulator + log perhitungan
+Form kalkulator (cari lagu, difficulty, skor, lamp) dengan play rating real-time. Sediakan juga **section "Drop Image"** sesuai desain Figma, tapi non-aktif/placeholder dulu — logika CV baru ada di Fase 3. Tiap perhitungan disimpan sebagai log di tabel `plays` (chart_id, score, lamp enum, played_at, source enum manual/scan) dan bisa dilihat di halaman riwayat. Sebelum ada akun (Fase 4), log boleh tanpa `user_id` atau diasosiasikan ke satu identitas default — putuskan dengan pemilik saat task ini mulai.
+**Selesai jika:** rating tampil real-time, log tersimpan.
+
+### [ ] 2.3 Top 50 (dari log)
+Halaman Top 50: skor terbaik per chart, urut play rating, 50 teratas. **Tanpa PTT total** sampai rumusnya terverifikasi.
+**Selesai jika:** daftar benar dan konsisten dengan rating engine.
+
+### [ ] 2.4 Simulasi skor target
+Kebalikan rumus: skor minimal untuk play rating X pada sebuah chart (memperhitungkan bonus clear), dengan test round-trip skor → rating → skor. Fitur "agar PTT naik 0,01" menunggu rumus PTT total.
+**Selesai jika:** round-trip konsisten dengan engine.
+
+---
+
+## Fase 3 — Upload Best 50 (Arcaea)
+
+### [ ] 3.1 Layanan vision
+`vision/` (FastAPI), satu endpoint: terima gambar Best 50 resmi (layout tetap 5×10), kembalikan JSON data mentah (nickname, generated date, per kartu: rank, judul/jacket, skor, lamp, potential tercetak, level) + confidence. Tanpa logika rating. Komentar menjelaskan *kenapa*.
+**Selesai jika:** gambar contoh menghasilkan 50 entri yang benar (diverifikasi manual).
+
+### [ ] 3.2 Upload, cek nickname, konfirmasi
+Laravel memanggil vision, mencocokkan lagu ke database (hash jacket dulu, judul OCR sebagai cadangan — judul di kartu sering terpotong), memeriksa nickname gambar = nickname akun (bukan bukti kepemilikan), membandingkan potential tercetak dengan hasil engine sebagai cross-check, lalu menampilkan hasil untuk dikonfirmasi user.
+**Selesai jika:** upload yang cocok tersimpan, nickname berbeda ditolak, selisih rating dilaporkan.
+
+### [ ] 3.3 Riwayat Best 50
+Simpan snapshot (tanggal generate, nickname, 50 entri) dan menu untuk melihat snapshot sebelumnya.
+**Selesai jika:** beberapa snapshot bisa dilihat dan dibandingkan.
+
+---
+
+## Fase 4 — Akun
+
+### [ ] 4.1 Register, login, profile, mode guest
+Tanpa password. Register sendiri dengan nickname in-game + player ID 9 digit; login dengan salah satunya. Player ID (ternormalisasi tanpa spasi) adalah kunci akun; nickname display-only dan bisa berubah. Halaman profile. Mode tanpa login: kalkulator jalan tanpa menyimpan riwayat di server. Hubungkan log `plays` dan snapshot Best 50 dari Fase 2–3 ke akun yang baru dibuat. Proyek personal skala kecil (lihat CLAUDE.md) — alur boleh sederhana, tidak perlu proteksi tingkat produk publik.
+**Selesai jika:** register/login/logout dan guest berjalan, ada test untuk keduanya.
+
+---
+
+## Fase 5 — Admin
+
+### [ ] 5.1 Admin: fondasi (layout, Songs & charts, Packs)
+Layout admin (flag is_admin) mengikuti `design/admin-dashboard.html`: sidebar 8 menu (Home, Packs, Songs &
+charts, Users, Game management, Activity log, CSV import, Testing tools — yang terakhir boleh jadi halaman
+kosong "coming soon" dulu kalau vision/ belum ada). Songs & charts: tabel level-lagu (No/Song/Composer/Jacket
+designer/Release date/Source) + panel detail per-difficulty saat baris diklik. Packs: grid pack dengan jumlah
+lagu. Kolom `composer`, `jacket_designer`, `released_at` sudah ada dari Task 1.2.
+**Selesai jika:** Songs & charts dan Packs bisa dicari/difilter, detail per-difficulty tampil benar, responsif.
+
+### [ ] 5.2 Admin: Users, Activity log, Game management
+Users: tabel user + identitas game (siapkan kolom untuk banyak identitas per user kalau § Rencana jauh:
+multi-game identity sudah disetujui; kalau belum, cukup satu identitas Arcaea per user). Activity log: linimasa
+gabungan (upload Best 50, import CSV, edit admin, akun baru) dengan filter tipe + "Needs review". Game
+management: boleh dibuat read-only dulu (menampilkan Arcaea saja) kalau multi-game belum diputuskan jalan.
+**Selesai jika:** Activity log menampilkan kejadian nyata dari task-task sebelumnya (bukan data contoh).
+
+---
+
+## Ditunda
+
+- Rotaeno (rumus, data, UI) dan deteksi game otomatis
+- Export ke gambar
+- Logika CV untuk "Drop Image" di kalkulator (section UI-nya sudah dibuat di Task 2.2)
+- YOLO, foto kamera dengan koreksi perspektif, konfirmasi otomatis berbasis confidence
