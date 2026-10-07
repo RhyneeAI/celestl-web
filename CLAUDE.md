@@ -534,6 +534,25 @@ membulatkan.
   itu dipakai buat `POST /api/v1/songs` (Task 6.3).
 - `GET /` → `Hello World!` (cek hidup).
 
+### Push ke private server (6.3, sudah diverifikasi ke server asli)
+
+`PrivateServerPusher` (`web/app/Services/`), dipicu tombol "Push to server". Config di `config/celestl.php`
+`private_server.*` ← env `ARCAEA_PRIVATE_SERVER_URL`, `_API_TOKEN`, `_SONGS_PATH` (default
+`../ArcaeaServerFork/database/songs`). Fakta dari kode + uji ke server asli yang perlu diingat:
+
+- **Auth:** header `Token`. Server punya `API_TOKEN` statis di `config.py` (kosong = nonaktif) yang berlaku
+  sebagai role *system* — dipakai ini supaya Celestl tidak menyimpan password admin. Token itu setara akses
+  penuh ke API admin server, jadi `.env`/`config.py`-nya jangan pernah di-commit (dua-duanya gitignored).
+- **Respons API** selalu `{"code":0,"data":...,"msg":""}`; `code != 0` = error (mis. `-2` no data, `-4` data
+  exist), HTTP status tetap 200 untuk error aplikasi, jadi **cek `code`, bukan status HTTP**.
+- **`POST /system/operations/<nama>` wajib body JSON object `{}`** (server memanggil `request.get_json()` lalu
+  `set_params(**...)`): tanpa body → 415, `[]` → gagal. Ini baru ketahuan setelah uji ke server asli — tes
+  dengan server palsu (`Http::fake`) tidak bisa menangkapnya, makanya uji integrasi ke server asli penting.
+- `PUT /songs/<id>` hanya mengubah difficulty yang dikirim; `POST` mengisi difficulty yang tidak dikirim
+  dengan `-10` (unrank). Jadi chart tanpa constant tidak dikirim ke API (file `.aff`-nya tetap disalin).
+- File `.aff` ditulis langsung ke disk server (tidak ada endpoint upload) → **hanya jalan kalau Celestl dan
+  server satu mesin**. Kalau nanti beda mesin, perlu mekanisme lain (belum dirancang).
+
 ### Skema private server yang sudah dipetakan (dari riset `Lost-MSth/Arcaea-server`)
 
 - `best_score(user_id, song_id, difficulty, score, shiny_perfect_count, perfect_count, near_count, miss_count,

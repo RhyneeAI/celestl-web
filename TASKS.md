@@ -183,11 +183,18 @@ dari client Arcaea asli — butuh tahu versi client + platform yang dipakai dulu
 cocok & langkah proxy-nya).
 **Selesai jika:** server jalan lokal, minimal satu device bisa login & main lewat server ini.
 
-### [ ] 6.3 Push custom chart ke private server
-Dari data yang sudah terkumpul di 6.1: panggil `POST/PUT /songs` (API admin bawaan private server) buat
-constant, taruh file `.aff` ke `database/songs/<song_id>/<difficulty>.aff` di filesystem server. Catat kolom
-`pushed_at` (sudah disiapkan di skema 6.1) setelah berhasil.
-**Selesai jika:** custom chart yang di-upload lewat 6.1 bisa benar-benar dimainkan di server (6.2).
+### [x] 6.3 Push custom chart ke private server
+Tombol "Push to server" di tiap lagu di `/admin/unofficial` (`App\Services\PrivateServerPusher`): constant lewat
+API admin server (`GET` cek ada → `POST /songs` atau `PUT /songs/<id>`), file `.aff` disalin ke
+`database/songs/<song_id>/<index>.aff` (PST=0..ETR=4), lalu `refresh_song_file_cache`. `pushed_at` terisi
+setelah berhasil. Auth pakai `API_TOKEN` statis server (tanpa password admin di Celestl); isinya sudah diisi
+acak di `ArcaeaServerFork/config.py` dan `web/.env` (keduanya gitignored). Validasi constant: batas atas 12
+dihapus, tetap max 1 desimal.
+**Selesai jika:** custom chart dari 6.1 sampai ke server. ✅ Terbukti ke **server asli** (salinan sementara,
+bukan databasemu): constant masuk (13.5 diterima) dan ter-update lewat PUT, file `.aff` tersalin, refresh 200.
+`tests/Feature/PrivateServerPushTest.php` (6 test). **Belum terbukti:** apakah game client *menampilkan* dan
+bisa *memainkan* lagu custom ini — itu butuh 6.2 (client tersambung); lagu baru kemungkinan juga perlu entri
+songlist/content bundle supaya muncul di game (belum diselidiki, jangan diasumsikan).
 
 ### [ ] 6.4 Baca skor dari private server (read-only)
 Koneksi DB kedua Laravel (read-only) ke SQLite private server, baca `best_score`/`user`. **Jangan percaya

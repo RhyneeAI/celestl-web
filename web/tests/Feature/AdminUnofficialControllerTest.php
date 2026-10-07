@@ -102,6 +102,17 @@ test('only the 5 difficulties the base private server supports are accepted', fu
     $response->assertSessionHasErrors('difficulty');
 });
 
+test('a constant above 12 is accepted (custom charts are not capped)', function () {
+    $song = UnofficialSong::factory()->create();
+
+    $this->post("/admin/unofficial/songs/{$song->id}/charts", [
+        'difficulty' => 'ETR',
+        'constant' => '13.5',
+    ])->assertSessionHasNoErrors();
+
+    expect((float) UnofficialChart::where('unofficial_song_id', $song->id)->sole()->constant)->toBe(13.5);
+});
+
 test('a constant with more than 1 decimal digit is rejected', function () {
     $song = UnofficialSong::factory()->create();
 

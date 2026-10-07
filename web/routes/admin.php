@@ -21,6 +21,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/unofficial', [AdminUnofficialController::class, 'index'])->name('unofficial');
     Route::post('/unofficial/songs', [AdminUnofficialController::class, 'storeSong'])->name('unofficial.songs.store');
     Route::delete('/unofficial/songs/{unofficialSong}', [AdminUnofficialController::class, 'destroySong'])->name('unofficial.songs.destroy');
+    Route::post('/unofficial/songs/{unofficialSong}/push', [AdminUnofficialController::class, 'pushSong'])->name('unofficial.songs.push');
     Route::post('/unofficial/songs/{unofficialSong}/charts', [AdminUnofficialController::class, 'storeChart'])->name('unofficial.charts.store');
 
     Route::inertia('/users', 'admin/users')->name('users');

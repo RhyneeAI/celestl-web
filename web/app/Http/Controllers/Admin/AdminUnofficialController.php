@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\UnofficialChart;
 use App\Models\UnofficialSong;
+use App\Services\PrivateServerPusher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+use RuntimeException;
 
 class AdminUnofficialController extends Controller
 {
@@ -85,9 +87,10 @@ class AdminUnofficialController extends Controller
     {
         $data = $request->validate([
             'difficulty' => ['required', Rule::in(['PST', 'PRS', 'FTR', 'BYD', 'ETR'])],
-            // Max 1 desimal: private server menyimpan constant sebagai integer `constant * 10`
-            // (core/song.py), jadi digit ke-2 akan hilang saat di-push — lebih baik ditolak di sini.
-            'constant' => ['nullable', 'numeric', 'min:0', 'max:12', 'decimal:0,1'],
+            // Tanpa batas atas (chart custom boleh lebih tinggi dari 12). Max 1 desimal: private server
+            // menyimpan constant sebagai integer `constant * 10` (core/song.py), jadi digit ke-2 akan
+            // hilang saat di-push — lebih baik ditolak di sini. Min 0: constant <= 0 dianggap unrank.
+            'constant' => ['nullable', 'numeric', 'min:0', 'decimal:0,1'],
             'aff' => ['nullable', 'file', 'max:2048', 'extensions:aff'],
         ]);
 
@@ -111,6 +114,20 @@ class AdminUnofficialController extends Controller
             ['unofficial_song_id' => $unofficialSong->id, 'difficulty' => $data['difficulty']],
             $attributes,
         );
+
+        return redirect()->route('admin.unofficial');
+    }
+
+    /**
+     * Push this song's constants + .aff files to the private server (see PrivateServerPusher).
+     */
+    public function pushSong(UnofficialSong $unofficialSong, PrivateServerPusher $pusher): RedirectResponse
+    {
+        try {
+            $pusher->push($unofficialSong);
+        } catch (RuntimeException $e) {
+            return back()->withErrors(['push' => $e->getMessage()]);
+        }
 
         return redirect()->route('admin.unofficial');
     }

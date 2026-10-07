@@ -45,11 +45,12 @@ export default function AdminUnofficial({ songs }: Props) {
             </Notice>
 
             <Notice tone="warn">
-                <b>Belum terhubung ke server.</b> File .aff dan constant di
-                bawah baru tersimpan di Celestl. Push ke private server (lewat
-                API <code className="font-mono text-[11px]">POST /songs</code>{' '}
-                dan penempatan file di disk-nya) masih langkah berikutnya, belum
-                jalan dari sini.
+                <b>Push manual.</b> Data di bawah tersimpan di Celestl dulu;
+                tombol <b>Push to server</b> di tiap lagu mengirim constant (API{' '}
+                <code className="font-mono text-[11px]">POST /songs</code>) dan
+                menyalin file .aff ke folder server — hanya jalan kalau server
+                menyala di mesin yang sama dan token API-nya sudah diisi di{' '}
+                <code className="font-mono text-[11px]">web/.env</code>.
             </Notice>
 
             <Panel>
@@ -89,6 +90,13 @@ function SongCard({ song }: { song: SongRow }) {
     const chartsByDifficulty = new Map(
         song.charts.map((c) => [c.difficulty, c]),
     );
+    const [pushing, setPushing] = useState(false);
+    const [pushError, setPushError] = useState<string | null>(null);
+    const lastPushed = song.charts
+        .map((c) => c.pushed_at)
+        .filter((v): v is string => v !== null)
+        .sort()
+        .at(-1);
 
     return (
         <div className="rounded-2xl bg-card-alt p-4">
@@ -102,6 +110,27 @@ function SongCard({ song }: { song: SongRow }) {
                         <span className="font-mono">{song.slug}</span>
                     </span>
                 </div>
+                <button
+                    type="button"
+                    disabled={pushing}
+                    onClick={() => {
+                        setPushError(null);
+                        router.post(
+                            `/admin/unofficial/songs/${song.id}/push`,
+                            {},
+                            {
+                                preserveScroll: true,
+                                onStart: () => setPushing(true),
+                                onFinish: () => setPushing(false),
+                                onError: (errors) =>
+                                    setPushError(errors.push ?? 'Push gagal.'),
+                            },
+                        );
+                    }}
+                    className="rounded-lg bg-lav px-2.5 py-1 text-[11px] font-semibold text-text hover:bg-[#4a4780] disabled:opacity-50"
+                >
+                    {pushing ? 'Pushing…' : 'Push to server'}
+                </button>
                 <button
                     type="button"
                     onClick={() => {
@@ -123,6 +152,17 @@ function SongCard({ song }: { song: SongRow }) {
                     Delete
                 </button>
             </div>
+            {(pushError || lastPushed) && (
+                <div
+                    className={cn(
+                        'mb-2 text-[11px]',
+                        pushError ? 'text-bad' : 'text-dim',
+                    )}
+                >
+                    {pushError ??
+                        `Terakhir di-push: ${new Date(lastPushed!).toLocaleString('id-ID')}`}
+                </div>
+            )}
             <div className="flex flex-col gap-1.5">
                 {SLOT_DIFFICULTIES.map((difficulty) => (
                     <ChartSlot
@@ -183,7 +223,6 @@ function ChartSlot({
                 type="number"
                 step="0.1"
                 min="0"
-                max="12"
                 placeholder="Constant"
                 value={data.constant}
                 onChange={(e) => setData('constant', e.target.value)}
