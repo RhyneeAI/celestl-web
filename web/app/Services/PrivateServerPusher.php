@@ -108,7 +108,9 @@ class PrivateServerPusher
             $response = $request();
         } catch (ConnectionException $e) {
             throw new RuntimeException(
-                'Tidak bisa menghubungi private server di '.config('celestl.private_server.url').' — pastikan servernya jalan.',
+                'Tidak bisa menghubungi private server di '.config('celestl.private_server.url')
+                    .' — pastikan servernya jalan, dan URL ini cocok dengan HOST:PORT di config.py server '
+                    .'(server yang di-bind ke IP LAN tidak menerima koneksi lewat 127.0.0.1).',
                 previous: $e,
             );
         }
