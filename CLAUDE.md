@@ -507,6 +507,33 @@ bukan nambah kolom "is_custom" atau semacamnya ke tabel resmi.
   `.aff` langsung ke `database/songs/<song_id>/<difficulty>.aff` di filesystem server (tidak ada endpoint API
   buat ini di kode dasarnya, jadi untuk sekarang selama masih satu mesin, ditulis langsung ke path itu).
 
+### Keputusan presisi constant: tetap 1 digit
+
+Pemilik sempat menanyakan constant 2 digit desimal buat custom chart. Hasil cek: batas 1 digit di private
+server itu **pilihan desain kodenya** (constant disimpan `×10` sebagai integer di `core/song.py`; rumus
+`calculate_rating` sendiri tidak mengasumsikan presisi apa pun, dan PTT keseluruhan malah sudah disimpan `×100`),
+jadi bisa dipatch — tapi **diputuskan tetap 1 digit**, sama dengan data resmi game dan skema `charts` Celestl,
+karena constant dipakai buat perhitungan rating/potential. Konsekuensi: `unofficial_charts.constant` tetap
+`decimal(4,1)` dan validasi upload **menolak** lebih dari 1 desimal (`decimal:0,1`) alih-alih diam-diam
+membulatkan.
+
+### Menjalankan private server (6.2, sudah diverifikasi boot)
+
+- Pakai **`ArcaeaServerFork`** (branch `main`, struktur datar: `main.py` di root) — yang `Arcaea-server` (`master`
+  v2.12.1) bilang cocok sampai Arcaea 6.7.1, fork-nya mengklaim dukungan 7.0. **Versi client yang dipakai
+  menentukan pilihan ini** — belum dikonfirmasi pemilik.
+- Dependensi cuma 3 (`flask`, `cryptography`, `limits`). Venv sengaja **di luar repo**:
+  `~/.venvs/arcaea-server` (`pip install -r ArcaeaServerFork/requirements.txt`).
+- Config: buat `ArcaeaServerFork/config.py` berisi `class Config:` (override saja yang perlu). Default asli
+  `PORT=80` dan `HOST=0.0.0.0` — di-override jadi `127.0.0.1:8765` (jangan 8080, di mesin pemilik sudah dipakai
+  Adminer). Jalankan: `cd ArcaeaServerFork && ~/.venvs/arcaea-server/bin/python -B main.py`.
+- Booting pertama otomatis bikin 4 file SQLite di `database/` (`arcaea_database.db`, `arcaea_log.db`,
+  `arcaea_database_deleted.db`, `song_cache.db`) dan akun admin bawaan (`user_id` 2000000, nama `admin`) —
+  **password default-nya wajib diganti** sebelum server bisa diakses teman (ada di wiki upstream).
+- API admin: `POST /api/v1/token` body `{"auth": base64("<user_id>:<password>")}` → `{token, user_id}`; token
+  itu dipakai buat `POST /api/v1/songs` (Task 6.3).
+- `GET /` → `Hello World!` (cek hidup).
+
 ### Skema private server yang sudah dipetakan (dari riset `Lost-MSth/Arcaea-server`)
 
 - `best_score(user_id, song_id, difficulty, score, shiny_perfect_count, perfect_count, near_count, miss_count,

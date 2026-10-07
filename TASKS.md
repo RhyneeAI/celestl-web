@@ -174,6 +174,13 @@ Clone & jalankan `Arcaea-server`/`ArcaeaServerFork` (config.py, cek kebutuhan da
 kode Python-nya). Lanjut: cara menyambungkan client Arcaea asli ke server ini (lihat `data/server-arcaea.md`
 + riset proxy/sertifikat yang sudah dibahas sesi sebelumnya). "Aku + beberapa teman" — disarankan lewat
 VPN/jaringan privat, bukan port publik (permintaan README resmi proyeknya).
+
+**Progres (bagian "jalankan" selesai):** `ArcaeaServerFork` (main) sudah dijalankan lokal dan terverifikasi
+boot — lihat CLAUDE.md § Menjalankan private server. Venv di `~/.venvs/arcaea-server` (di luar repo),
+`ArcaeaServerFork/config.py` buatan lokal (HOST 127.0.0.1, PORT 8765; port 8080 ternyata sudah dipakai
+Adminer di mesin ini). Token API admin juga sudah dipetakan alurnya (dibutuhkan 6.3). **Belum:** nyambung
+dari client Arcaea asli — butuh tahu versi client + platform yang dipakai dulu (menentukan server mana yang
+cocok & langkah proxy-nya).
 **Selesai jika:** server jalan lokal, minimal satu device bisa login & main lewat server ini.
 
 ### [ ] 6.3 Push custom chart ke private server

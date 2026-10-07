@@ -85,7 +85,9 @@ class AdminUnofficialController extends Controller
     {
         $data = $request->validate([
             'difficulty' => ['required', Rule::in(['PST', 'PRS', 'FTR', 'BYD', 'ETR'])],
-            'constant' => ['nullable', 'numeric', 'min:0', 'max:12'],
+            // Max 1 desimal: private server menyimpan constant sebagai integer `constant * 10`
+            // (core/song.py), jadi digit ke-2 akan hilang saat di-push — lebih baik ditolak di sini.
+            'constant' => ['nullable', 'numeric', 'min:0', 'max:12', 'decimal:0,1'],
             'aff' => ['nullable', 'file', 'max:2048', 'extensions:aff'],
         ]);
 

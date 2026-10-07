@@ -102,6 +102,17 @@ test('only the 5 difficulties the base private server supports are accepted', fu
     $response->assertSessionHasErrors('difficulty');
 });
 
+test('a constant with more than 1 decimal digit is rejected', function () {
+    $song = UnofficialSong::factory()->create();
+
+    $response = $this->post("/admin/unofficial/songs/{$song->id}/charts", [
+        'difficulty' => 'FTR',
+        'constant' => '9.55',
+    ]);
+
+    $response->assertSessionHasErrors('constant');
+});
+
 test('deleting a custom song also deletes its stored .aff files', function () {
     Storage::fake('local');
     $song = UnofficialSong::factory()->create(['slug' => 'to-delete']);
