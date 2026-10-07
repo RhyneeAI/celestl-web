@@ -122,6 +122,11 @@ sengaja TIDAK diporting** dari mockup — mockup punya mode lihat/edit toggle, t
 update sungguhan, UI edit yang tidak benar-benar menyimpan dianggap kurang jujur dibanding tidak
 menampilkannya sama sekali; menyusul begitu endpoint update dibuat.
 
+CSV import dan Testing tools (dua sisa dari 8 menu sidebar) juga sudah diisi — bukan lagi placeholder "coming
+soon": CSV import menjelaskan dengan jujur bahwa jalur CSV tidak pernah dibangun (Task 1.3 pakai JSON
+langsung) dan menampilkan hasil nyata `celestl:import-arcaea-content` terakhir; Testing tools tetap murni
+pratinjau non-fungsional (sesuai rencana — `vision/` baru Fase 3) dengan label "Belum fungsional" yang jelas.
+
 Belum ada flag `is_admin`/middleware proteksi (belum ada sistem akun — Fase 4 — jadi `/admin` masih bisa
 diakses siapa saja untuk sekarang, **sengaja**, bukan lupa). **Belum diuji responsif** (mobile/tablet) — semua
 halaman admin baru dicek di lebar desktop (1400px); layout grid (`grid-cols-[224px_1fr]` sidebar,
