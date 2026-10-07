@@ -622,3 +622,29 @@ CSS — dan jangan percaya screenshot ukuran penuh untuk soal warna teks kecil, 
 mengandung apostrof `'`) bikin parser CSS pipeline proyek ini (Tailwind v4 lewat lightningcss) gagal/salah
 parse di dalam blok `@theme` — satu kali error fatal ("Unterminated string"), satu kali lolos build tapi
 dengan warning aneh. Sekarang dibiasakan: komentar CSS di `app.css` single-line saja, tanpa apostrof.
+
+**Home, Packs, Songs & charts sudah DB-backed sungguhan** (`AdminHomeController`/`AdminPackController`/
+`AdminSongController`), diverifikasi lewat database MySQL lokal hasil `celestl:import-arcaea-content` —
+termasuk verifikasi end-to-end bahwa 4 chart legacy-INS Divine Oblivion (lihat § Data resmi ditemukan) tampil
+biru (INS) yang benar, bukan merah (BYD), di tabel per-difficulty Songs & charts asli. Pack-filter dari Packs
+→ Songs & charts (`?pack=<nama>`) juga sudah diverifikasi (klik "Divine Oblivion" → 8 lagu terfilter benar).
+
+**Keputusan sengaja: mode edit TIDAK diporting dari mockup.** Mockup punya toggle mode lihat/edit (field jadi
+`<input>`/`<select>` setelah klik pensil) sebagai cara menunjukkan niat desain, karena saat itu belum ada versi
+"real" untuk dibandingkan. Sekarang yang "real" sudah ada tapi belum punya endpoint update — menampilkan UI
+edit yang Save-nya tidak benar-benar menyimpan dianggap lebih menyesatkan (useless) daripada tidak
+menampilkannya sama sekali, beda dari modal "Add song"/"Add pack" yang statusnya "prototipe" memang sudah
+jelas dari labelnya sendiri. Edit mode menyusul begitu endpoint update sungguhan dibuat.
+
+**Belum diuji responsif.** Semua halaman admin baru diverifikasi di lebar desktop (headless screenshot
+1400px) — sesuai arahan CLAUDE.md bahwa admin mengikuti frame desktop Figma, bukan mobile, tapi grid layout
+(`AdminLayout`'s `grid-cols-[224px_1fr]`, Songs & charts' `grid-cols-[minmax(0,1.5fr)_minmax(400px,1fr)]`)
+belum punya breakpoint sama sekali — di layar sempit akan rusak, bukan sekadar "kurang rapi". Ini sisa
+pekerjaan sebelum Task 5.1 bisa dicentang selesai (lihat TASKS.md).
+
+**Jacket/pack art di halaman asli:** path gambar (`/storage/jackets/<slug>.jpg`,
+`/storage/packs/<slug>.png`) menunjuk ke Laravel public disk (`storage:link`), BUKAN folder `data/` secara
+langsung seperti mockup — berbeda dari mockup yang baca relatif `../data/jackets/`. Ini murni jalur opsional;
+kalau file itu tidak ada di `storage/app/public/`, otomatis jatuh ke gradien placeholder (`jacketGradient()`
+di `resources/js/lib/jacket.ts`, port persis dari bug unsigned-shift yang sudah diperbaiki di mockup). Belum
+ada mekanisme untuk mengisi folder itu — murni kapabilitas kode, sama seperti mockup.

@@ -1,18 +1,10 @@
 import { Notice, Panel, PanelHead } from '@/components/admin/ui';
 import { homeFeedDotColor, LOG } from '@/data/admin-examples';
 import AdminLayout from '@/layouts/admin-layout';
+import { DIFFICULTY_COLOR, type DifficultyCode } from '@/lib/difficulty';
 import { jacketGradient } from '@/lib/jacket';
 import { cn } from '@/lib/utils';
 import { Head, Link } from '@inertiajs/react';
-
-const DIFFICULTY_COLOR: Record<string, string> = {
-    PST: 'text-pst bg-pst',
-    PRS: 'text-prs bg-prs',
-    FTR: 'text-ftr bg-ftr',
-    BYD: 'text-byd bg-byd',
-    ETR: 'text-etr bg-etr',
-    INS: 'text-ins bg-ins',
-};
 
 const RANK_GRADIENT: Record<number, string> = {
     0: 'bg-[linear-gradient(145deg,#FFE9A8,#C9962B)] text-[#2B1D03]',
@@ -90,9 +82,9 @@ export default function AdminHome({ stats, recent }: Props) {
                                 <b
                                     className={cn(
                                         'w-9 flex-none tracking-[0.04em]',
-                                        DIFFICULTY_COLOR[difficulty]?.split(
-                                            ' ',
-                                        )[0],
+                                        DIFFICULTY_COLOR[
+                                            difficulty as DifficultyCode
+                                        ]?.[0],
                                     )}
                                 >
                                     {difficulty}
@@ -101,9 +93,9 @@ export default function AdminHome({ stats, recent }: Props) {
                                     <div
                                         className={cn(
                                             'h-full rounded',
-                                            DIFFICULTY_COLOR[difficulty]?.split(
-                                                ' ',
-                                            )[1],
+                                            DIFFICULTY_COLOR[
+                                                difficulty as DifficultyCode
+                                            ]?.[1],
                                         )}
                                         style={{
                                             width: `${(count / maxCount) * 100}%`,
@@ -162,8 +154,8 @@ export default function AdminHome({ stats, recent }: Props) {
                                             className={cn(
                                                 'block text-[17px] font-bold',
                                                 DIFFICULTY_COLOR[
-                                                    song.top_difficulty
-                                                ]?.split(' ')[0],
+                                                    song.top_difficulty as DifficultyCode
+                                                ]?.[0],
                                             )}
                                         >
                                             {song.top_difficulty}

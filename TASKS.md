@@ -111,11 +111,24 @@ by `released_at`, rank diamond top-3), "Recent activity" masih dari fixture stat
 nanti oleh Users/Game management/Activity log). Packs juga sudah **DB-backed sungguhan**
 (`AdminPackController`): dikelompokkan per kategori (pita label vertikal), chapter/append tampil di bawah
 kartu induknya, tombol "+ Add pack" buka modal (prototipe, belum submit sungguhan). Klik pack/chapter
-mengarah ke `/admin/songs?pack=<nama>` — filter-nya baru benar-benar jalan setelah halaman Songs & charts
-dibuat. Songs & charts masih placeholder "Coming soon". Belum ada flag `is_admin`/middleware proteksi (belum
-ada sistem akun — Fase 4 — jadi `/admin` masih bisa diakses siapa saja untuk sekarang, **sengaja**, bukan
-lupa).
-**Selesai jika:** Songs & charts dan Packs bisa dicari/difilter, detail per-difficulty tampil benar, responsif.
+mengarah ke `/admin/songs?pack=<nama>` — **sudah diverifikasi jalan** (8 lagu Divine Oblivion terfilter benar,
+termasuk 4 chart INS legacy-nya tampil biru seperti seharusnya).
+
+Songs & charts juga sudah **DB-backed sungguhan** (`AdminSongController`): master-detail, pencarian
+(judul/artist/pack), sort (title/pack/newest/BPM/constant tertinggi), filter pack dari query string, panel
+detail (jacket zoomable lewat lightbox, kv Pack/Side/BPM/Length/Released/Version, tabel per-difficulty),
+modal "+ Add song" (pack dropdown dikelompokkan per kategori, upload jacket + preview zoomable). **Mode edit
+sengaja TIDAK diporting** dari mockup — mockup punya mode lihat/edit toggle, tapi karena belum ada endpoint
+update sungguhan, UI edit yang tidak benar-benar menyimpan dianggap kurang jujur dibanding tidak
+menampilkannya sama sekali; menyusul begitu endpoint update dibuat.
+
+Belum ada flag `is_admin`/middleware proteksi (belum ada sistem akun — Fase 4 — jadi `/admin` masih bisa
+diakses siapa saja untuk sekarang, **sengaja**, bukan lupa). **Belum diuji responsif** (mobile/tablet) — semua
+halaman admin baru dicek di lebar desktop (1400px); layout grid (`grid-cols-[224px_1fr]` sidebar,
+`grid-cols-[minmax(0,1.5fr)_minmax(400px,1fr)]` master-detail Songs & charts) belum punya breakpoint sama
+sekali. Ini satu-satunya sisa sebelum kriteria "selesai" task ini terpenuhi.
+**Selesai jika:** Songs & charts dan Packs bisa dicari/difilter (✅), detail per-difficulty tampil benar (✅),
+responsif (❌ belum).
 
 ### [ ] 5.2 Admin: Users, Activity log, Game management
 Users: tabel user + identitas game (siapkan kolom untuk banyak identitas per user kalau § Rencana jauh:
