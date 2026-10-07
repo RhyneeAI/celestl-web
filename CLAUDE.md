@@ -10,7 +10,8 @@ Pemilik proyek: backend engineer (Laravel 5+ tahun, Node.js), baru belajar Pytho
 
 ## Status repo
 
-Baru berisi dokumen (`CLAUDE.md`, `TASKS.md`) dan satu gambar contoh Best 50. Belum ada kode, jadi belum ada perintah build/test. Bagian "Perintah" diisi saat Task 1.1 selesai.
+Jadi git repo sejak Task 1.1 (`main`, root-commit berisi dokumen + mockup `design/`, commit berikutnya
+scaffold Laravel). `web/` sudah ada dan jalan lokal (lihat § Perintah). `vision/` belum ada — menunggu Fase 3.
 
 ## Struktur repo
 
@@ -18,8 +19,9 @@ Baru berisi dokumen (`CLAUDE.md`, `TASKS.md`) dan satu gambar contoh Best 50. Be
 celestl/
 ├── CLAUDE.md
 ├── TASKS.md           # tahapan kerja, dikerjakan berurutan
-├── web/               # Laravel + Inertia (React) — backend, admin, UI (belum ada)
-└── vision/            # Python FastAPI — pembaca gambar Best 50 (belum ada)
+├── design/            # mockup HTML/JS statis (admin dashboard, account/Top 50) — dibuat sebelum web/ ada
+├── web/               # Laravel + Inertia (React) — backend, admin, UI (Task 1.1 selesai)
+└── vision/            # Python FastAPI — pembaca gambar Best 50 (belum ada, Fase 3)
 ```
 
 ## Pembagian tanggung jawab (penting)
@@ -38,7 +40,36 @@ celestl/
 
 ## Perintah
 
-> Diisi saat Task 1.1 selesai. Wajib mencakup: menjalankan dev server, menjalankan seluruh test, dan menjalankan SATU file/nama test saja.
+Semua perintah dijalankan dari `web/` (aplikasi Laravel). Database lokal: MySQL, nama `celestl`, user `root`
+tanpa password (lihat `web/.env`). Dibuat lewat Laravel installer resmi: `laravel new web --react
+--database=mysql --no-authentication --pest --npm --no-boost` (React starter kit = Inertia + React + Tailwind
+sudah termasuk; `--no-authentication` karena login custom/tanpa password dibuat di Fase 4, bukan scaffolding
+bawaan starter kit).
+
+```bash
+cd web
+
+# Dev server (Laravel + Vite + queue listener, sekaligus, lewat `artisan dev` bawaan Laravel 12)
+composer run dev
+
+# Build aset frontend (perlu sekali sebelum test fitur yang merender halaman Inertia, karena test
+# membaca public/build/manifest.json, bukan dev server Vite)
+npm run build
+
+# Seluruh test (Pest)
+php artisan test
+
+# Satu test (filter nama method/deskripsi)
+php artisan test --filter=nama_test
+```
+
+Migration: `php artisan migrate` (database `celestl` harus sudah dibuat lebih dulu — `CREATE DATABASE celestl
+CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`). Test pakai SQLite in-memory sendiri (diatur di
+`phpunit.xml`), jadi tidak tersentuh oleh data MySQL lokal.
+
+i18n: `lang/en/` sudah dipublikasikan lewat `php artisan lang:publish` sebagai wadah (cuma isi bawaan
+framework — auth/validation/pagination/passwords — belum ada teks Celestl sendiri). JA/KO/ZH menyusul nanti,
+belum ditulis.
 
 ## Aturan rating Arcaea
 

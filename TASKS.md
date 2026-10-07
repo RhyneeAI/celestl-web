@@ -10,7 +10,7 @@ Sebelum Fase 2 ada dua hal yang harus terjawab: urutan clamp minimum 0 vs bonus,
 
 ## Fase 1 — Fondasi data
 
-### [ ] 1.1 Setup proyek Laravel
+### [x] 1.1 Setup proyek Laravel
 Buat proyek di `web/` dengan Inertia + React + Tailwind dan test runner. Database **MySQL** (sudah diputuskan). Test runner **Pest** (sudah diputuskan). Catat di CLAUDE.md beserta bagian "Perintah" (dev server, semua test, satu test). Siapkan struktur i18n Laravel (bahasa utama Inggris) sejak awal. Jangan buat fitur dulu. Autentikasi bawaan starter kit **tidak dipakai** (login tanpa password, dibuat di Fase 4).
 **Selesai jika:** aplikasi jalan lokal dan test bawaan lolos.
 
