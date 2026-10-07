@@ -398,18 +398,30 @@ untuk sesuatu yang mempengaruhi visibilitas konten.
 - Jangan pakai logo resmi game atau branding lowiro di UI.
 - Untuk sekarang **simpan data hasil parsing saja, bukan gambarnya**. Menyimpan jacket art boleh dipertimbangkan nanti, tapi jangan sekarang dan jangan pernah di-commit ke repo.
 
-### Kolom baru yang disepakati untuk `songs` (Task 1.2 belum dibuat, catat dulu di sini)
+### Skema `songs`/`charts`/`packs` (Task 1.2 — selesai, lihat `web/database/migrations/`)
 
 Tabel admin Songs & Charts sengaja disederhanakan jadi level-lagu saja (detail per-difficulty pindah ke halaman
-detail). Ini butuh kolom yang belum ada di rancangan `songs` semula:
+detail). Kolom final yang sebenarnya dipakai (beberapa berbeda dari rencana awal Task 1.2 di TASKS.md — lihat
+alasannya di masing-masing):
 
-- `composer` (string nullable) — berbeda dari `artist` yang sudah ada; satu lagu bisa punya artist (kolaborasi
-  vokal/alias) dan composer berbeda.
-- `jacket_designer` (string nullable).
-- `released_at` (date nullable).
-
-**Belum ada sumber data untuk `jacket_designer` dan `released_at`.** Jangan mengarang nama orang atau tanggal;
-mockup menampilkan placeholder "—" untuk kedua kolom ini sampai sumbernya jelas (wiki komunitas / data resmi).
+- `packs` adalah **tabel sendiri**, bukan kolom string `pack` di `songs` seperti rencana awal — dibutuhkan
+  untuk pengelompokan per kategori (`section`) dan relasi chapter/append (`parent_id`, dari field
+  `pack_parent` di `packlist.json`) yang admin mockup sudah pakai. `songs.pack_id` adalah FK nullable ke sini.
+- `songs.composer` (string nullable) — berbeda dari `artist`; satu lagu bisa punya artist (kolaborasi
+  vokal/alias) dan composer berbeda. **Masih belum ada sumber data massal**, selalu null untuk sekarang.
+- `songs.jacket_designer` — **dipindah ke `charts.jacket_designer`** (per-chart, bukan per-lagu), karena
+  `songlist.json` memang menyimpannya per `difficulties[]`, bukan per lagu — lihat § Data resmi ditemukan.
+  `songs.jacket_designer` tetap ada sebagai kolom (untuk kasus lain di masa depan) tapi tidak diisi importer.
+- `songs.released_at` — **ada sumbernya** sekarang (field `date`, unix epoch, di `songlist.json`), jadi tidak
+  lagi placeholder "—" seperti catatan lama di sini. Diisi oleh importer Task 1.3.
+- `songs.side`, `bpm`, `length`, `version` — ditambah di luar rencana awal Task 1.2 (tidak disebut di
+  TASKS.md), tapi dibutuhkan panel detail Songs & charts yang sudah dibangun di mockup. Semua string (bukan
+  numerik) karena sumbernya memang string (`bpm` bisa rentang `"180-300"`, `length` format `"m:ss"`).
+- `charts.difficulty` — string + PHP backed enum `App\Difficulty` (method `fromRatingClass()` menerapkan
+  aturan `ratingClassAlias===1` → paksa INS yang sudah dikonfirmasi di § Data resmi ditemukan), bukan kolom
+  `enum` native MySQL, supaya gampang diubah nanti tanpa migration ALTER TABLE.
+- `charts.level` — string, bukan integer, karena bisa `"?"` untuk lagu April Fools (`rating` di
+  `songlistothers.json`), jangan pernah coba di-parse sebagai angka.
 
 ## Rencana jauh: tooling untuk charter unofficial
 

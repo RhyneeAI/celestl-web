@@ -14,9 +14,18 @@ Sebelum Fase 2 ada dua hal yang harus terjawab: urutan clamp minimum 0 vs bonus,
 Buat proyek di `web/` dengan Inertia + React + Tailwind dan test runner. Database **MySQL** (sudah diputuskan). Test runner **Pest** (sudah diputuskan). Catat di CLAUDE.md beserta bagian "Perintah" (dev server, semua test, satu test). Siapkan struktur i18n Laravel (bahasa utama Inggris) sejak awal. Jangan buat fitur dulu. Autentikasi bawaan starter kit **tidak dipakai** (login tanpa password, dibuat di Fase 4).
 **Selesai jika:** aplikasi jalan lokal dan test bawaan lolos.
 
-### [ ] 1.2 Skema lagu & chart
-Migration + model: `games` (slug, name), `songs` (game_id, slug, title, title_localized json nullable, artist, composer nullable, jacket_designer nullable, released_at date nullable, pack, jacket_hash nullable), `charts` (song_id, difficulty enum PST/PRS/FTR/BYD/ETR/INS, level string, constant decimal(4,1), note_count nullable, game_version, source). Relasi, factory, unique (song_id + difficulty). Skema tetap multi-game. Sebelum menulis migration, putuskan dengan pemilik apakah pola `game_identities` (§ Rencana jauh: multi-game identity di CLAUDE.md) mulai diterapkan sekarang atau ditunda. Jelaskan rancangan dulu.
-**Selesai jika:** relasi teruji, tidak ada chart ganda per lagu + difficulty.
+### [x] 1.2 Skema lagu & chart
+Migration + model: `games` (slug, name), `packs` (game_id, slug, name, section nullable, parent_id nullable
+self-FK, small_pack_image bool — **ditambah di luar rancangan awal task ini**, karena `pack` sebagai string
+lepas di `songs` tidak cukup untuk pengelompokan per kategori + chapter/append yang dipakai admin mockup;
+lihat CLAUDE.md § Skema), `songs` (game_id, pack_id nullable FK, slug, title, title_localized json nullable,
+artist, composer nullable, jacket_designer nullable, side nullable, bpm nullable, length nullable, version
+nullable, released_at date nullable, jacket_hash nullable), `charts` (song_id, difficulty — string + PHP enum
+`App\Difficulty`, bukan enum native DB, lihat CLAUDE.md — level string (bisa "?" untuk April Fools), constant
+decimal(4,1) nullable, chart_designer, jacket_designer, note_count nullable, game_version, source). Relasi,
+factory, unique (game_id+slug di songs, song_id+difficulty di charts). `game_identities` (§ Rencana jauh di
+CLAUDE.md) **tetap ditunda** — tidak disentuh, tidak menghalangi skema ini karena itu soal tabel `users`.
+**Selesai jika:** relasi teruji, tidak ada chart ganda per lagu + difficulty. ✅ `tests/Feature/ArcaeaSchemaTest.php` (7 test).
 
 ### [ ] 1.3 Import chart constant
 **Sumber sudah ditemukan**, bukan "cari di wiki" lagi: `data/songlist.json` + `data/packlist.json` (resmi,
