@@ -27,16 +27,21 @@ factory, unique (game_id+slug di songs, song_id+difficulty di charts). `game_ide
 CLAUDE.md) **tetap ditunda** — tidak disentuh, tidak menghalangi skema ini karena itu soal tabel `users`.
 **Selesai jika:** relasi teruji, tidak ada chart ganda per lagu + difficulty. ✅ `tests/Feature/ArcaeaSchemaTest.php` (7 test).
 
-### [ ] 1.3 Import chart constant
-**Sumber sudah ditemukan**, bukan "cari di wiki" lagi: `data/songlist.json` + `data/packlist.json` (resmi,
-hasil ekstraksi client game) digabung `data/chartconstant.json` (komunitas, arcaea.miraheze.org
-Data:ChartConstant.json, sudah tervalidasi silang — lihat CLAUDE.md § Sumber chart constant ditemukan).
-Minta pemilik konfirmasi final sebelum dipakai sungguhan (bukan cuma mockup), lalu susun jadi CSV atau import
-langsung dari JSON — pilih salah satu dengan pemilik. Artisan command `celestl:import-charts {file}` (kolom:
-title, artist, pack, difficulty, level, constant, chart_designer, jacket_designer, released_at), upsert untuk
-Arcaea, laporkan baru/diperbarui/gagal beserta alasan. Lewati baris `deleted:true` dan constant `null`. Contoh
-kecil di `web/database/seeders/data/`.
-**Selesai jika:** bisa diulang tanpa duplikasi, baris rusak/null dilaporkan tanpa menghentikan proses.
+### [x] 1.3 Import chart constant
+**Dipilih: import langsung dari JSON**, bukan CSV — sumbernya (`data/songlist.json` + `data/packlist.json` +
+`data/chartconstant.json` + `data/notecount.json` + `data/songlength.json` + `data/songlistothers.json`) sudah
+tervalidasi silang sebelumnya (lihat CLAUDE.md § Sumber chart constant ditemukan), jadi CSV perantara cuma
+nambah langkah tanpa manfaat. Artisan command `celestl:import-arcaea-content` (tanpa argumen file — baca
+langsung dari `config('celestl.arcaea_data_path')`), upsert packs → songs → charts, laporkan baru/diperbarui/
+dilewati lewat tabel di terminal. Melewati stub `deleted:true` (ada di DUA tempat: stub kosong di
+`songlist.json` sendiri, dan entri penuh di `songlistothers.json`'s `deleted` — keduanya dilewati). Lagu
+`special` (April Fools + 1 lagu `tutorial` yang bukan April Fools tapi juga tanpa pack asli) dikelompokkan ke
+pack sintetis "April Fools" — lihat CLAUDE.md untuk status "dugaan, bukan keputusan" soal `tutorial`.
+Idempoten (diuji lewat re-run, 0 baris baru kedua kalinya). Dijalankan terhadap data asli: 63 pack (62 asli +
+1 sintetis), 563 lagu, 1.848 chart — cocok persis dengan statistik mockup `design/admin-dashboard.html`.
+**Selesai jika:** bisa diulang tanpa duplikasi, baris rusak/null dilaporkan tanpa menghentikan proses. ✅
+`tests/Feature/ImportArcaeaContentTest.php` (6 test, data fixture sintetis di `tests/fixtures/arcaea-data/` —
+bukan data asli, aman di-commit).
 
 ### [ ] 1.4 Daftar lagu (publik)
 Halaman daftar lagu Arcaea sesuai desain Figma: pencarian, grid, pengelompokan pack, halaman detail lagu (BPM, panjang, level/constant/notes per difficulty). Responsif.

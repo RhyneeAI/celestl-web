@@ -1,0 +1,10 @@
+{
+  "testsong": [
+    {"constant": 3.5, "old": false},
+    {"constant": 6.2, "old": false},
+    {"constant": 9.3, "old": false},
+    {"constant": 11.3, "old": false},
+    null,
+    null
+  ]
+}

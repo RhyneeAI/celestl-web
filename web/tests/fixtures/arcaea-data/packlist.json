@@ -1,0 +1,21 @@
+{
+  "packs": [
+    {
+      "id": "testpack",
+      "section": "arcaea",
+      "name_localized": {"en": "Test Pack"}
+    },
+    {
+      "id": "testpack_append_1",
+      "section": "arcaea",
+      "pack_parent": "testpack",
+      "name_localized": {"en": "Test Pack Chapter 2"}
+    },
+    {
+      "id": "smallpack",
+      "section": "variety",
+      "small_pack_image": true,
+      "name_localized": {"en": "Small Pack"}
+    }
+  ]
+}

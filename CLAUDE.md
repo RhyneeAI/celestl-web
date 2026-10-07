@@ -204,13 +204,17 @@ Dua kategori lagu yang **sengaja tidak masuk** `data/songlist.json` utama:
   menyimpan data historisnya termasuk constant lama. Tidak masuk katalog utama karena tidak bisa dimainkan lagi
   — tidak masuk akal untuk fitur pelacak skor. Simpan datanya kalau nanti ingin fitur arsip, tapi jangan
   ditampilkan sebagai lagu yang bisa di-log.
-- **`special`** (10 lagu, `"set": "aprilfools"`): **lagu lelucon April Fools resmi dari lowiro**
-  (contoh: "overdead.", "UNUSED LEVELS", "Live Faster Die Younger" remix). Ini jawaban atas pertanyaan pemilik
-  soal "diff-nya '?'" — **`"rating": "?"` itu memang disengaja oleh lowiro**, bukan data rusak/kosong. Chart
-  designer-nya juga sengaja lucu-lucuan (mis. `"《WARNING》 LIMITER:underflow_error%"`) — **jangan dibersihkan
-  atau dianggap perlu diperbaiki**, sama seperti kasus mojibake chartDesigner sebelumnya: tampilkan apa adanya.
-  Field `rating` untuk lagu-lagu ini **harus ditangani sebagai string "?"**, jangan pernah di-parse sebagai
-  angka atau diberi constant karangan.
+- **`special`** (10 entri total, tapi **cuma 9 beneran `"set": "aprilfools"`** — koreksi dari catatan lama di
+  sini yang bilang "10 lagu aprilfools"): **lagu lelucon April Fools resmi dari lowiro** (contoh: "overdead.",
+  "UNUSED LEVELS", "Live Faster Die Younger" remix). Ini jawaban atas pertanyaan pemilik soal "diff-nya '?'" —
+  **`"rating": "?"` itu memang disengaja oleh lowiro**, bukan data rusak/kosong. Chart designer-nya juga
+  sengaja lucu-lucuan (mis. `"《WARNING》 LIMITER:underflow_error%"`) — **jangan dibersihkan atau dianggap perlu
+  diperbaiki**, sama seperti kasus mojibake chartDesigner sebelumnya: tampilkan apa adanya. Field `rating`
+  untuk lagu-lagu ini **harus ditangani sebagai string "?"**, jangan pernah di-parse sebagai angka atau diberi
+  constant karangan.
+  Entri ke-10 adalah **`tutorial`** (`"set": "tutorial"`, judul "Word Problems") — rating-nya normal ("1","4"),
+  BUKAN lelucon April Fools, cuma kebetulan disimpan di array `special` yang sama karena sama-sama tidak punya
+  pack asli.
 
 **Yang masih perlu dicek bareng pemilik:** semua entri `special` di file ini punya `"ratingClass": 2` (artinya
 Future, menurut pemetaan yang sudah dikonfirmasi), tapi pemilik bilang "masuk kategori Beyond" secara tampilan
@@ -218,8 +222,11 @@ di game. Kemungkinan cuma soal di mana tombolnya muncul di layar pemilihan diffi
 punya Future asli untuk digantikan posisinya), bukan berarti pemetaan `ratingClass` kita salah — **tapi ini
 baru dugaan, jangan diasumsikan benar sebelum dicek langsung di game.**
 
-**Belum diputuskan:** apakah 10 lagu `special` ini masuk katalog Songs & charts (dengan rating "?" tidak bisa
-disortir/difilter normal) atau dipisah ke bagian sendiri nanti. Belum diterapkan ke `admin-data.js`.
+**Diterapkan di Task 1.3** (`app/Console/Commands/ImportArcaeaContent.php`): kesepuluh lagu `special` MASUK
+katalog Songs & charts (bukan dipisah), dikelompokkan ke pack sintetis "April Fools" (section "Other") yang
+dibuat importer sendiri — bukan pack asli `packlist.json`. Mengelompokkan `tutorial` ke situ juga (sama-sama
+tanpa pack asli) adalah **dugaan/keputusan sepihak importer, bukan hal yang sudah dikonfirmasi pemilik** —
+tandai kalau perlu dipindah nanti.
 
 ## Sumber chart constant ditemukan: `data/chartconstant.json`
 
