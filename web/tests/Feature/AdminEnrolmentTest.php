@@ -2,6 +2,8 @@
 
 use App\Models\AdminAccount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use PragmaRX\Google2FA\Google2FA;
 
 uses(RefreshDatabase::class);
@@ -67,4 +69,16 @@ test('it rejects a value that is not an email address', function () {
     $this->artisan('celestl:admin-totp', ['--email' => 'not-an-email'])->assertFailed();
 
     expect(AdminAccount::current())->toBeNull();
+});
+
+test('the secret is not readable in the database without the app key', function () {
+    $this->artisan('celestl:admin-totp', ['--email' => 'owner@example.test'])->assertSuccessful();
+
+    $plain = AdminAccount::current()->totp_secret;
+    $stored = DB::table('admin_accounts')->value('totp_secret');
+
+    // What a database dump would show: ciphertext, not the secret itself.
+    expect($stored)->not->toBe($plain)
+        ->and($stored)->not->toContain($plain)
+        ->and(Crypt::decryptString($stored))->toBe($plain);
 });

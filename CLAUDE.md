@@ -981,6 +981,17 @@ Tabel `admin_accounts` (`email` nullable unique, `totp_secret`, `confirmed_at` n
   membuktikan apa-apa; kode yang kembali membuktikan pemilik benar-benar punya secret-nya di app.
 - Kolom `singleton` (boolean, **unique**) bikin "cuma satu admin" jadi **constraint database**, bukan sekadar
   konvensi kode — baris kedua ditolak MySQL apa pun yang dipercaya kode aplikasi.
+- `totp_secret` **dienkripsi at rest** (cast `encrypted`, kunci dari `APP_KEY`), kolomnya `text` karena
+  ciphertext-nya ~256 char. Ini tidak melindungi dari orang yang sudah menguasai app yang jalan — TOTP itu
+  simetris, server wajib tahu secret-nya untuk memverifikasi kode. Yang ditutup adalah kasus yang realistis:
+  salinan database sendirian (dump, backup, `SELECT` dari tool lain) tanpa `APP_KEY` jadi tidak berguna.
+- **Email di sini cuma label pencatat, bukan pengaman.** Tidak pernah dikirim ke mana pun, tidak dipakai saat
+  login, dan tidak diverifikasi — fungsinya menandai "install ini diklaim siapa" dan memberi nama entri di app
+  authenticator. Keamanan seluruhnya ada di secret TOTP-nya.
+- **Tidak ada koneksi ke Google sama sekali.** TOTP itu murni lokal: secret + waktu sekarang → HMAC-SHA1 → 6
+  digit. "Google Authenticator" cuma nama app yang mengimplementasikan RFC 6238; app itu sendiri tidak
+  menghubungi server Google untuk ini, dan Celestl tidak pernah bicara dengan Google. Aegis, Bitwarden,
+  1Password, FreeOTP, Microsoft Authenticator sama-sama bisa dipakai.
 - Jalan keluarnya sengaja manual: `UPDATE admin_accounts SET email = NULL;` di database. Tidak ada halaman,
   tombol, atau session yang bisa melakukannya.
 - **Sengaja terpisah dari tabel `users`.** `users` untuk pemain (Fase 4, bareng `game_identities`) dan

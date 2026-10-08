@@ -21,6 +21,9 @@ class AdminAccount extends Model
     protected function casts(): array
     {
         return [
+            // Encrypted at rest: a database dump on its own is then useless for minting codes.
+            // See the migration that widened this column for what that does and does not cover.
+            'totp_secret' => 'encrypted',
             'confirmed_at' => 'datetime',
             'singleton' => 'boolean',
         ];
