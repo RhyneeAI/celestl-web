@@ -66,6 +66,28 @@ test('a song detail page lists its charts in difficulty order, not insertion ord
         );
 });
 
+test('each chart carries its own designers, which can differ between difficulties', function () {
+    // 17 real songs credit a different artist for their Beyond jacket, which is why jacketDesigner
+    // is stored per chart and not per song -- see CLAUDE.md § Skema songs/charts/packs.
+    $song = Song::factory()->create(['game_id' => $this->game->id, 'slug' => 'goodtek']);
+    Chart::factory()->create([
+        'song_id' => $song->id, 'difficulty' => 'FTR',
+        'chart_designer' => 'Nitro', 'jacket_designer' => 'Koyama Mai',
+    ]);
+    Chart::factory()->create([
+        'song_id' => $song->id, 'difficulty' => 'BYD',
+        'chart_designer' => 'GOODTOAST', 'jacket_designer' => '出前',
+    ]);
+
+    $this->get('/songs/goodtek')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('song.charts.0.jacket_designer', 'Koyama Mai')
+            ->where('song.charts.1.jacket_designer', '出前')
+            ->where('song.charts.1.chart_designer', 'GOODTOAST')
+        );
+});
+
 test('an unknown song slug 404s instead of rendering an empty page', function () {
     $this->get('/songs/does-not-exist')->assertNotFound();
 });

@@ -39,6 +39,7 @@ return [
         'constant' => 'Constant',
         'notes' => 'Notes',
         'chart_design' => 'Chart design',
+        'jacket_design' => 'Jacket design',
         'uncredited' => 'Uncredited',
         'unknown' => 'Unknown',
         'no_charts' => 'No chart data for this song yet.',

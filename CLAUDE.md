@@ -419,6 +419,10 @@ alasannya di masing-masing):
 - `songs.jacket_designer` — **dipindah ke `charts.jacket_designer`** (per-chart, bukan per-lagu), karena
   `songlist.json` memang menyimpannya per `difficulties[]`, bukan per lagu — lihat § Data resmi ditemukan.
   `songs.jacket_designer` tetap ada sebagai kolom (untuk kasus lain di masa depan) tapi tidak diisi importer.
+  **Terverifikasi dengan angka (Oktober 2026, atas pertanyaan pemilik):** 17 lagu benar-benar punya
+  `jacketDesigner` berbeda antar-difficulty, hampir semuanya di slot Beyond (mis. GOODTEK → PST/PRS/FTR
+  "Koyama Mai", BYD "出前"; qualia → BYD "khronetic -synesthesia-"). Jadi per-chart itu memang perlu, bukan
+  over-engineering. Sudah ditampilkan di tabel detail lagu publik sebagai kolom "Jacket design".
 - `songs.released_at` — **ada sumbernya** sekarang (field `date`, unix epoch, di `songlist.json`), jadi tidak
   lagi placeholder "—" seperti catatan lama di sini. Diisi oleh importer Task 1.3.
 - `songs.side`, `bpm`, `length`, `version` — ditambah di luar rencana awal Task 1.2 (tidak disebut di
@@ -858,3 +862,32 @@ mengunduh prettier baru dan memformat ulang dengan default-nya (kutip ganda), pa
 sini pakai kutip tunggal — satu perintah mengubah file yang tidak ada hubungannya dengan pekerjaan yang sedang
 dikerjakan. Sudah kejadian sekali dan harus di-`git checkout` ulang. Formatter yang dipakai proyek ini cuma
 Pint (PHP). Untuk TS/TSX, ikuti gaya file di sekitarnya dan andalkan `npx tsc --noEmit` untuk pengecekan.
+
+
+### `jacketOverride` — 57 chart punya jacket SENDIRI, gambarnya BELUM kita punya
+
+Ditemukan saat memeriksa `jacketDesigner` per difficulty (pertanyaan pemilik, Oktober 2026). Selain
+`jacketDesigner`, tiap entri `difficulties[]` di `songlist.json` bisa punya `jacketOverride: true` — artinya
+difficulty itu memakai **gambar jacket yang berbeda** dari jacket lagunya, bukan cuma kreditnya yang beda.
+
+- **57 chart di 50 lagu** punya flag ini. Mayoritas di slot Beyond.
+- **Kita belum punya file-nya.** `data/jackets/` isinya satu file per lagu (`<id>.jpg`, 565 file, tanpa
+  varian) — konvensi `File:Songs <id>.jpg` dari `Module:SongData` yang dipakai waktu mengambilnya memang cuma
+  mengambil jacket utama. Jadi untuk 57 chart itu, UI sekarang menampilkan jacket lagu yang **salah** (jacket
+  FTR dipakai juga untuk BYD).
+- Skema sekarang juga belum menampung ini: jacket disimpan di `songs.jacket_path`, bukan per chart.
+- **Belum dikerjakan, menunggu keputusan pemilik** — mengambil 57 gambar tambahan berarti mengunduh aset
+  berhak cipta lagi, itu keputusan pemilik bukan Claude. Kalau nanti dikerjakan: perlu kolom jacket di
+  `charts` (nullable, fallback ke jacket lagu) + mencari pola nama file varian di wiki, karena konvensi
+  `File:Songs <id>.jpg` tidak mencakupnya.
+
+### Tabel difficulty di detail lagu: scroll horizontal, bukan sembunyikan kolom
+
+Keputusan pemilik: kalau kolom designer tidak muat di layar HP, **tabelnya di-scroll horizontal**, jangan
+kolomnya disembunyikan. Jadi semua chart menampilkan field yang sama di semua lebar layar; layar sempit cuma
+perlu menggeser. Implementasi: wrapper `-mx-4 px-4 overflow-x-auto` (sengaja menembus padding kartu supaya
+tepi terpotongnya kelihatan = sinyal bisa di-scroll) + `min-w-[520px]` di `<table>`.
+
+**Gotcha yang menyertainya:** `<section>` pembungkusnya **wajib** `min-w-0`. Tanpa itu, grid item-nya tumbuh
+mengikuti `min-width` tabel dan yang ter-scroll jadi SELURUH halaman, bukan tabelnya — gejalanya persis sama
+dengan bug overflow yang lain (jacket dan header ikut terpotong), jadi gampang salah didiagnosis.

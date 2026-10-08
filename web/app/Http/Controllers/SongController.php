@@ -65,6 +65,7 @@ class SongController extends Controller
                         'constant' => $chart->constant,
                         'note_count' => $chart->note_count,
                         'chart_designer' => $chart->chart_designer,
+                        'jacket_designer' => $chart->jacket_designer,
                     ]),
             ],
         ]);

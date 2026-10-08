@@ -11,6 +11,7 @@ type Chart = {
     constant: string | null;
     note_count: number | null;
     chart_designer: string | null;
+    jacket_designer: string | null;
 };
 
 type Song = {
@@ -85,7 +86,7 @@ export default function SongShow({ song }: { song: Song }) {
                     </dl>
                 </div>
 
-                <section className="rounded-3xl bg-card p-4">
+                <section className="min-w-0 rounded-3xl bg-card p-4">
                     <h2 className="px-1 text-[11px] font-bold tracking-[0.14em] text-dim uppercase">
                         {t('song.charts')}
                     </h2>
@@ -98,9 +99,15 @@ export default function SongShow({ song }: { song: Song }) {
                          * drew three of them -- six (PST..INS) will not fit a phone that way, so
                          * the axes are flipped: difficulties become rows. Label cells keep the
                          * --lav fill and data cells --violet, as in the design.
+                         *
+                         * The designer columns do not fit a phone either. Rather than hide them,
+                         * the table scrolls sideways (owner's call): every chart shows the same
+                         * fields at every width, a narrow screen just reaches them by scrolling.
+                         * The wrapper bleeds past the card padding so the cut-off edge is visible
+                         * and the table reads as scrollable instead of clipped.
                          */
-                        <div className="mt-3 overflow-hidden rounded-2xl">
-                            <table className="w-full border-separate border-spacing-y-1 text-[12.5px]">
+                        <div className="-mx-4 mt-3 overflow-x-auto px-4">
+                            <table className="w-full min-w-[520px] border-separate border-spacing-y-1 text-[12.5px]">
                                 <thead>
                                     <tr className="text-[10.5px] font-bold tracking-wider text-text/70 uppercase">
                                         <th className="rounded-l-xl bg-lav px-3 py-2 text-left">
@@ -108,11 +115,12 @@ export default function SongShow({ song }: { song: Song }) {
                                         </th>
                                         <th className="bg-lav px-2 py-2 text-right">{t('song.level')}</th>
                                         <th className="bg-lav px-2 py-2 text-right">{t('song.constant')}</th>
-                                        <th className="rounded-r-xl bg-lav px-3 py-2 text-right sm:rounded-none">
-                                            {t('song.notes')}
-                                        </th>
-                                        <th className="hidden rounded-r-xl bg-lav px-3 py-2 text-left sm:table-cell">
+                                        <th className="bg-lav px-2 py-2 text-right">{t('song.notes')}</th>
+                                        <th className="bg-lav px-3 py-2 text-left">
                                             {t('song.chart_design')}
+                                        </th>
+                                        <th className="rounded-r-xl bg-lav px-3 py-2 text-left">
+                                            {t('song.jacket_design')}
                                         </th>
                                     </tr>
                                 </thead>
@@ -136,10 +144,6 @@ export default function SongShow({ song }: { song: Song }) {
                                                         {chart.difficulty}
                                                     </span>
                                                 </span>
-                                                {/* Designer has no column on a phone, so it rides along here. */}
-                                                <span className="mt-0.5 block text-[11px] text-muted sm:hidden">
-                                                    {chart.chart_designer ?? t('song.uncredited')}
-                                                </span>
                                             </td>
                                             <td className="bg-violet px-2 py-2.5 text-right font-semibold tabular-nums">
                                                 {chart.level}
@@ -147,11 +151,21 @@ export default function SongShow({ song }: { song: Song }) {
                                             <td className="bg-violet px-2 py-2.5 text-right tabular-nums">
                                                 {chart.constant ?? '—'}
                                             </td>
-                                            <td className="rounded-r-xl bg-violet px-3 py-2.5 text-right tabular-nums sm:rounded-none">
+                                            <td className="bg-violet px-2 py-2.5 text-right tabular-nums">
                                                 {chart.note_count ?? '—'}
                                             </td>
-                                            <td className="hidden rounded-r-xl bg-violet px-3 py-2.5 text-muted sm:table-cell">
-                                                {chart.chart_designer ?? t('song.uncredited')}
+                                            <td className="bg-violet px-3 py-2.5 whitespace-nowrap text-muted">
+                                                {chart.chart_designer || t('song.uncredited')}
+                                            </td>
+                                            {/*
+                                              * Not always the same as the chart designer, and not
+                                              * always the same across a song's difficulties: 17
+                                              * songs credit a different artist for their Beyond
+                                              * jacket (songlist.json keeps jacketDesigner per
+                                              * difficulty, which is why it lives on charts).
+                                              */}
+                                            <td className="rounded-r-xl bg-violet px-3 py-2.5 whitespace-nowrap text-muted">
+                                                {chart.jacket_designer || t('song.uncredited')}
                                             </td>
                                         </tr>
                                     ))}

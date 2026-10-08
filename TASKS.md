@@ -70,6 +70,11 @@ teks yang di-hardcode di React. Jacket/pack art tetap gradien placeholder (file 
 chapter ikut section induknya, pack kosong tidak muncul, slug tak dikenal 404, teks UI datang dari translations.
 Diverifikasi visual di 390 / 820 / 1440 px — termasuk lagu 6-difficulty (DREAD AREA) yang INS-nya tampil benar.
 
+**Ditambahkan setelah review pemilik:** tabel difficulty memakai scroll horizontal di layar sempit (bukan
+menyembunyikan kolom designer), dan kolom **Jacket design** ikut ditampilkan — terbukti 17 lagu punya jacket
+designer berbeda di slot Beyond. Lihat juga CLAUDE.md § `jacketOverride` untuk 57 chart yang jacket
+*gambarnya* juga beda tapi filenya belum kita punya.
+
 **Catatan terbuka:** warna INS (`#0000CD`) di tabel detail lagu praktis tidak terbaca di atas sel `--violet`,
 persis seperti yang sudah dihitung di CLAUDE.md § Kontras warna difficulty (kontras 1.72). Sekarang
 kelihatannya di halaman asli, bukan cuma di atas kertas — tetap menunggu keputusan pemilik, jangan diubah
