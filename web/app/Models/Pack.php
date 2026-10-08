@@ -27,6 +27,18 @@ class Pack extends Model
     /** @use HasFactory<PackFactory> */
     use HasFactory;
 
+    /**
+     * Display order of the section ribbons, mirroring arcaea.miraheze.org/wiki/Pack_list's layout
+     * (its structure only, not its color theme -- see CLAUDE.md § Mockup buatan sendiri).
+     *
+     * Sections are stored as these display labels already (the importer maps packlist.json's raw
+     * codes), so this is purely an ordering, and 'Other' is the bucket for synthetic packs.
+     */
+    public const SECTION_ORDER = [
+        'Arcaea', 'Main Story · Act I', 'Main Story · Act II', 'Side Story',
+        'Collaboration', 'Variety', 'Other',
+    ];
+
     protected function casts(): array
     {
         return [

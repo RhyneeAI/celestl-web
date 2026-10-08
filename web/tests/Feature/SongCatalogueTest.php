@@ -1,0 +1,153 @@
+<?php
+
+use App\Models\Chart;
+use App\Models\Game;
+use App\Models\Pack;
+use App\Models\Song;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia;
+
+uses(RefreshDatabase::class);
+
+/**
+ * Public song catalogue (Task 1.4). These pages are player-facing, so the assertions are about
+ * what reaches the browser, not about internals.
+ */
+beforeEach(function () {
+    $this->game = Game::factory()->create(['slug' => 'arcaea', 'name' => 'Arcaea']);
+});
+
+test('the landing page lists every song with its pack', function () {
+    $pack = Pack::factory()->create(['game_id' => $this->game->id, 'name' => 'Divine Oblivion']);
+    Song::factory()->create([
+        'game_id' => $this->game->id,
+        'pack_id' => $pack->id,
+        'slug' => 'dreadarea',
+        'title' => 'DREAD AREA',
+        'artist' => 'Laur',
+    ]);
+    Song::factory()->create(['game_id' => $this->game->id, 'pack_id' => null, 'title' => 'Zzz']);
+
+    $this->get('/')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('songs/index')
+            ->has('songs', 2)
+            // Alphabetical, so the packless "Zzz" lands last.
+            ->where('songs.0.title', 'DREAD AREA')
+            ->where('songs.0.pack', 'Divine Oblivion')
+            ->where('songs.1.pack', null)
+        );
+});
+
+test('a song detail page lists its charts in difficulty order, not insertion order', function () {
+    $song = Song::factory()->create([
+        'game_id' => $this->game->id,
+        'slug' => 'extradimensional',
+        'title' => 'Extradimensional Cosmic Phenomenon',
+        'bpm' => '200',
+    ]);
+
+    // Deliberately inserted out of order.
+    foreach (['ETR', 'PST', 'FTR'] as $difficulty) {
+        Chart::factory()->create(['song_id' => $song->id, 'difficulty' => $difficulty]);
+    }
+
+    $this->get('/songs/extradimensional')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('songs/show')
+            ->where('song.title', 'Extradimensional Cosmic Phenomenon')
+            ->where('song.bpm', '200')
+            ->has('song.charts', 3)
+            ->where('song.charts.0.difficulty', 'PST')
+            ->where('song.charts.1.difficulty', 'FTR')
+            ->where('song.charts.2.difficulty', 'ETR')
+        );
+});
+
+test('an unknown song slug 404s instead of rendering an empty page', function () {
+    $this->get('/songs/does-not-exist')->assertNotFound();
+});
+
+test('the pack list groups packs by section and skips empty ones', function () {
+    $withSongs = Pack::factory()->create([
+        'game_id' => $this->game->id,
+        'slug' => 'base',
+        'name' => 'Arcaea',
+        'section' => 'Arcaea',
+    ]);
+    Song::factory()->create(['game_id' => $this->game->id, 'pack_id' => $withSongs->id]);
+
+    Pack::factory()->create([
+        'game_id' => $this->game->id,
+        'slug' => 'empty',
+        'name' => 'Empty Pack',
+        'section' => 'Variety',
+    ]);
+
+    $this->get('/packs')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('packs/index')
+            ->has('sections', 1)
+            ->where('sections.0.label', 'Arcaea')
+            ->where('sections.0.packs.0.song_count', 1)
+        );
+});
+
+test('a chapter pack is grouped under its parent section', function () {
+    $parent = Pack::factory()->create([
+        'game_id' => $this->game->id,
+        'slug' => 'eden',
+        'name' => 'Lasting Eden',
+        'section' => 'Side Story',
+    ]);
+    $chapter = Pack::factory()->create([
+        'game_id' => $this->game->id,
+        'slug' => 'eden_append_1',
+        'name' => 'Lasting Eden Chapter 2',
+        'section' => null,
+        'parent_id' => $parent->id,
+    ]);
+    Song::factory()->create(['game_id' => $this->game->id, 'pack_id' => $chapter->id]);
+
+    $this->get('/packs')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->has('sections', 1)
+            ->where('sections.0.label', 'Side Story')
+            ->where('sections.0.packs.0.name', 'Lasting Eden Chapter 2')
+        );
+
+    $this->get('/packs/eden_append_1')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('packs/show')
+            ->where('pack.section', 'Side Story')
+            ->has('songs', 1)
+        );
+});
+
+test('a pack page only lists its own songs', function () {
+    $pack = Pack::factory()->create(['game_id' => $this->game->id, 'slug' => 'base', 'name' => 'Arcaea']);
+    Song::factory()->create(['game_id' => $this->game->id, 'pack_id' => $pack->id, 'title' => 'Mine']);
+    Song::factory()->create(['game_id' => $this->game->id, 'pack_id' => null, 'title' => 'Not mine']);
+
+    $this->get('/packs/base')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->has('songs', 1)
+            ->where('songs.0.title', 'Mine')
+        );
+});
+
+test('UI strings reach the page as translations instead of being hardcoded in React', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('locale', 'en')
+            ->where('translations.songs.title', 'Songs')
+            ->where('translations.nav.packs', 'Packs')
+        );
+});

@@ -32,3 +32,9 @@
     --color-warn: #ffd76a;
     --color-bad: #f768dd;
 }
+
+/* Dark at every width, so overscroll and any gap below a short page stay dark too. */
+html {
+    background: var(--color-bg);
+    color-scheme: dark;
+}

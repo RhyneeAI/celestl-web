@@ -12,13 +12,6 @@ use Inertia\Response;
 
 class AdminSongController extends Controller
 {
-    // Mirrors the Packs page's section order/grouping so the Pack dropdown in "Add song" can be
-    // grouped by <optgroup> the same way.
-    private const SECTION_ORDER = [
-        'Arcaea', 'Main Story · Act I', 'Main Story · Act II', 'Side Story',
-        'Collaboration', 'Variety', 'Other',
-    ];
-
     public function __invoke(Request $request): Response
     {
         $songs = Song::query()
@@ -58,7 +51,7 @@ class AdminSongController extends Controller
                 'is_child' => $p->parent_id !== null,
             ]));
 
-        $packOptions = collect(self::SECTION_ORDER)
+        $packOptions = collect(Pack::SECTION_ORDER)
             ->map(fn (string $label) => [
                 'label' => $label,
                 'packs' => $packsBySection[$label] ?? collect(),

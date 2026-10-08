@@ -38,6 +38,10 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            // UI strings live in lang/<locale>/app.php, never hardcoded in the React pages
+            // (CLAUDE.md § Stack). The file is small enough to ship whole on every response.
+            'locale' => app()->getLocale(),
+            'translations' => trans('app'),
             'auth' => [
                 'user' => $request->user(),
             ],

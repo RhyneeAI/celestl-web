@@ -10,13 +10,6 @@ use Inertia\Response;
 
 class AdminPackController extends Controller
 {
-    // Display order for the section ribbons, mirrors the mockup's SECTION_ORDER (which itself
-    // mirrors arcaea.miraheze.org/wiki/Pack_list's layout, not its color theme -- see CLAUDE.md).
-    private const SECTION_ORDER = [
-        'Arcaea', 'Main Story · Act I', 'Main Story · Act II', 'Side Story',
-        'Collaboration', 'Variety', 'Other',
-    ];
-
     public function __invoke(Request $request): Response
     {
         $packs = Pack::query()
@@ -26,7 +19,7 @@ class AdminPackController extends Controller
 
         $topLevel = $packs->whereNull('parent_id')->where('songs_count', '>', 0);
 
-        $sections = collect(self::SECTION_ORDER)
+        $sections = collect(Pack::SECTION_ORDER)
             ->map(fn (string $label) => [
                 'label' => $label,
                 'packs' => $topLevel->where('section', $label)->values()->map(fn (Pack $p) => [
@@ -47,7 +40,7 @@ class AdminPackController extends Controller
         return Inertia::render('admin/packs', [
             'sections' => $sections,
             'totalPacks' => $packs->count(),
-            'sectionOrder' => self::SECTION_ORDER,
+            'sectionOrder' => Pack::SECTION_ORDER,
             'topLevelPacks' => $topLevel->sortBy('name')->values()->map(fn (Pack $p) => [
                 'id' => $p->id,
                 'name' => $p->name,

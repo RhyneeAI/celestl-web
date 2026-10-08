@@ -649,7 +649,13 @@ Future `#F768DD`. Titik warna di Song Detail: `#4CAED1`, `#ACFF82`, `#F768DD`.
 - Tombol sekunder memakai gaya **garis putus-putus** seperti "Drop Image". Tidak ada tombol gradien.
 - **Font (dikonfirmasi dari Figma lewat `get_design_context`, bukan tebakan):** Poppins Medium untuk nama aplikasi/wordmark, Exo 2 (Regular/SemiBold) untuk semua teks lain — label, body, data. Keduanya ada di Google Fonts, tidak perlu unduh file .ttf.
 - Format skor pakai tanda petik **lengkung** (`’` / U+2019), bukan lurus: `09’998’593`.
-- **Desktop berbeda dari mobile:** frame desktop memakai panel utama **terang** (`#F8F8F6`) di atas latar navy `#0D112A`, sidebar abu hangat `#686766`, menu aktif `#3C3837` dengan teks `#FFFFD1`, kolom pencarian teal `#4CAED1`, dan kartu `#615F71`. Halaman admin mengikuti frame desktop ini, bukan gaya mobile.
+- **Frame desktop di Figma BUKAN acuan — dikonfirmasi pemilik, belum final.** Frame `Home Page` (277:31,
+  1980×1080) memakai panel utama terang (`#F8F8F6`) di atas latar navy, sidebar abu hangat `#686766`, search
+  teal `#4CAED1`, kartu `#615F71`. **Jangan dipakai.** Catatan lama di sini pernah menulis "halaman admin
+  mengikuti frame desktop ini" — itu salah dan memang tidak pernah terjadi: admin yang dibangun gelap semua.
+  **Keputusan pemilik: tema gelap di SEMUA ukuran layar**, satu palet (§ Palette di atas), konsisten dengan
+  admin. Acuan desain cuma frame **mobile**; tata letak layar lebar diturunkan sendiri dari frame mobile +
+  pola yang sudah ada di admin, bukan dari frame desktop itu.
 - Angka skor ditulis gaya Arcaea: `09'998'593`. Baris data memakai pola `key : value`.
 
 ### Referensi UI: ArcaeaNap (bukan sumber data/aset)
@@ -768,3 +774,39 @@ langsung seperti mockup — berbeda dari mockup yang baca relatif `../data/jacke
 kalau file itu tidak ada di `storage/app/public/`, otomatis jatuh ke gradien placeholder (`jacketGradient()`
 di `resources/js/lib/jacket.ts`, port persis dari bug unsigned-shift yang sudah diperbaiki di mockup). Belum
 ada mekanisme untuk mengisi folder itu — murni kapabilitas kode, sama seperti mockup.
+
+### Halaman publik (Task 1.4) — `AppLayout`, bukan `AdminLayout`
+
+Halaman pemain punya shell sendiri (`web/resources/js/layouts/app-layout.tsx`): header tipis + nav
+Songs/Packs, konten `max-w-5xl`, footer "ver 1.xx". **Tema gelap di semua ukuran layar** (keputusan pemilik),
+jadi `html` sendiri diberi `background: var(--color-bg)` + `color-scheme: dark` di `app.css` — supaya
+overscroll dan sisa ruang di bawah halaman pendek ikut gelap, bukan putih bawaan browser.
+
+Rute: `/` (daftar lagu, sekaligus landing page — `welcome.tsx` bawaan starter kit dihapus),
+`/songs/{slug}`, `/packs`, `/packs/{slug}`. Controller publik (`SongController`, `PackController`) terpisah
+dari `Admin\*` dan hanya mengirim field yang dibutuhkan pemain.
+
+- **Seluruh katalog (563 lagu) dikirim sekali** ke browser lalu disaring di client, supaya pencarian instan
+  tanpa round-trip per ketikan. Yang mahal bukan datanya tapi jumlah DOM node, jadi `SongGrid` cuma merender
+  48 kartu dan menambah lagi lewat `IntersectionObserver` saat di-scroll.
+- `Pack::SECTION_ORDER` sekarang satu-satunya sumber urutan section (dulu di-copy-paste di
+  `AdminPackController` dan `AdminSongController`). Pack chapter/append tidak punya `section` sendiri — selalu
+  ikut `parent->section`, di halaman publik maupun admin.
+- **Tabel difficulty di detail lagu sengaja beda sumbu dari Figma.** Figma menggambar difficulty sebagai
+  *kolom*, tapi cuma menggambar tiga; enam (PST..INS) tidak muat di layar HP seperti itu, jadi difficulty jadi
+  *baris*. Warna sel tetap ikut desain: label `--lav`, data `--violet`. Kolom "Chart design" disembunyikan di
+  bawah `sm` dan ikut menumpang di sel difficulty.
+
+**Jangan dipakai sebagai acuan: frame desktop Figma (277:31) belum final** — kata pemilik sendiri. Satu-satunya
+acuan desain adalah frame mobile; tata letak layar lebar diturunkan dari situ. Catatan lama di file ini yang
+bilang "halaman admin mengikuti frame desktop ini" sudah tidak berlaku.
+
+### Gotcha verifikasi: screenshot headless Chrome tidak bisa lebih sempit dari ~500px
+
+`--window-size=390,...` **tidak** membuat viewport 390px — Chrome headless di Linux menjepit lebar viewport di
+sekitar 500 CSS px dan screenshot-nya cuma dipotong ke 390. Akibatnya halaman terlihat seolah meluap
+horizontal (kolom kanan grid terpotong, nav kepotong) padahal tidak ada masalah sama sekali. Ini sempat bikin
+"memperbaiki" bug yang tidak ada. Cara cek sebenarnya: `document.documentElement.clientWidth` dari dalam
+halaman. Cara screenshot yang benar untuk lebar HP: render halamannya **di dalam `<iframe>` selebar 390px**
+dari sebuah file kecil yang di-serve dari origin yang sama (`public/_frame.html` sementara) — iframe punya
+viewport sendiri, jadi media query dan layout-nya betul-betul jalan di 390px.

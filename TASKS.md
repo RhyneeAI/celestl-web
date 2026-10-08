@@ -45,9 +45,21 @@ Idempoten (diuji lewat re-run, 0 baris baru kedua kalinya). Dijalankan terhadap 
 `tests/Feature/ImportArcaeaContentTest.php` (6 test, data fixture sintetis di `tests/fixtures/arcaea-data/` —
 bukan data asli, aman di-commit).
 
-### [ ] 1.4 Daftar lagu (publik)
-Halaman daftar lagu Arcaea sesuai desain Figma: pencarian, grid, pengelompokan pack, halaman detail lagu (BPM, panjang, level/constant/notes per difficulty). Responsif.
-**Selesai jika:** data hasil import tampil dan bisa dicari di HP dan desktop.
+### [x] 1.4 Daftar lagu (publik)
+Halaman publik (bukan admin): `/` daftar lagu + pencarian, `/songs/{slug}` detail, `/packs` + `/packs/{slug}`.
+Layout `AppLayout` sendiri, **tema gelap di semua ukuran layar** (keputusan pemilik) — acuannya cuma frame
+mobile Figma; tata letak layar lebar diturunkan dari situ, frame desktop Figma 277:31 **tidak dipakai** karena
+belum final (lihat CLAUDE.md § Desain). Semua teks lewat `lang/en/app.php` + `useTranslations()`, tidak ada
+teks yang di-hardcode di React. Jacket/pack art tetap gradien placeholder (file asli opsional di public disk).
+**Selesai jika:** data hasil import tampil dan bisa dicari di HP dan desktop. ✅
+`tests/Feature/SongCatalogueTest.php` (7 test): urutan chart ikut urutan enum bukan urutan insert, pack
+chapter ikut section induknya, pack kosong tidak muncul, slug tak dikenal 404, teks UI datang dari translations.
+Diverifikasi visual di 390 / 820 / 1440 px — termasuk lagu 6-difficulty (DREAD AREA) yang INS-nya tampil benar.
+
+**Catatan terbuka:** warna INS (`#0000CD`) di tabel detail lagu praktis tidak terbaca di atas sel `--violet`,
+persis seperti yang sudah dihitung di CLAUDE.md § Kontras warna difficulty (kontras 1.72). Sekarang
+kelihatannya di halaman asli, bukan cuma di atas kertas — tetap menunggu keputusan pemilik, jangan diubah
+sepihak.
 
 ---
 
