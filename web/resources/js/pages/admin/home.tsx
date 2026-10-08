@@ -2,7 +2,7 @@ import { Notice, Panel, PanelHead } from '@/components/admin/ui';
 import { homeFeedDotColor, LOG } from '@/data/admin-examples';
 import AdminLayout from '@/layouts/admin-layout';
 import { DIFFICULTY_COLOR, type DifficultyCode } from '@/lib/difficulty';
-import { jacketGradient } from '@/lib/jacket';
+import { artworkBackground } from '@/lib/jacket';
 import { cn } from '@/lib/utils';
 import { Head, Link } from '@inertiajs/react';
 
@@ -26,6 +26,7 @@ function formatDate(iso: string | null): string {
 type RecentSong = {
     slug: string;
     title: string;
+    jacket: string | null;
     pack: string | null;
     released_at: string | null;
     top_difficulty: string | null;
@@ -136,7 +137,10 @@ export default function AdminHome({ stats, recent }: Props) {
                                 <div
                                     className="size-[42px] flex-none rounded-[10px]"
                                     style={{
-                                        background: jacketGradient(song.title),
+                                        background: artworkBackground(
+                                            song.jacket,
+                                            song.title,
+                                        ),
                                     }}
                                 />
                                 <div className="min-w-0 flex-1">

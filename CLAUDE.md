@@ -768,12 +768,10 @@ jelas dari labelnya sendiri. Edit mode menyusul begitu endpoint update sungguhan
 belum punya breakpoint sama sekali — di layar sempit akan rusak, bukan sekadar "kurang rapi". Ini sisa
 pekerjaan sebelum Task 5.1 bisa dicentang selesai (lihat TASKS.md).
 
-**Jacket/pack art di halaman asli:** path gambar (`/storage/jackets/<slug>.jpg`,
-`/storage/packs/<slug>.png`) menunjuk ke Laravel public disk (`storage:link`), BUKAN folder `data/` secara
-langsung seperti mockup — berbeda dari mockup yang baca relatif `../data/jackets/`. Ini murni jalur opsional;
-kalau file itu tidak ada di `storage/app/public/`, otomatis jatuh ke gradien placeholder (`jacketGradient()`
-di `resources/js/lib/jacket.ts`, port persis dari bug unsigned-shift yang sudah diperbaiki di mockup). Belum
-ada mekanisme untuk mengisi folder itu — murni kapabilitas kode, sama seperti mockup.
+**Jacket/pack art di halaman asli: SUDAH jalan** (lihat § Gambar di aplikasi sungguhan di bawah). Catatan
+lama di sini yang bilang "belum ada mekanisme untuk mengisi folder itu" sudah tidak berlaku sejak Task 1.3b —
+sekarang ada `celestl:import-arcaea-images`, dan halaman tidak lagi menebak path melainkan menerima URL-nya
+dari server.
 
 ### Halaman publik (Task 1.4) — `AppLayout`, bukan `AdminLayout`
 
@@ -810,3 +808,53 @@ horizontal (kolom kanan grid terpotong, nav kepotong) padahal tidak ada masalah 
 halaman. Cara screenshot yang benar untuk lebar HP: render halamannya **di dalam `<iframe>` selebar 390px**
 dari sebuah file kecil yang di-serve dari origin yang sama (`public/_frame.html` sementara) — iframe punya
 viewport sendiri, jadi media query dan layout-nya betul-betul jalan di 390px.
+
+
+## Gambar di aplikasi sungguhan (Task 1.3b)
+
+Pemilik bertanya kenapa gambar belum terpakai padahal file-nya sudah ada. Jawabannya: memang belum ada yang
+memindahkannya. Sekarang ada.
+
+**Keputusan pemilik: yang masuk database cuma PATH, bukan isi gambarnya.** Ditawari dua opsi (file di disk +
+path di DB, vs BLOB 190MB di MySQL) dan memilih yang pertama. Alasannya dicatat di migration-nya: backup DB
+tidak ikut berat, gambar dilayani web server (bisa di-cache browser) alih-alih lewat PHP tiap request.
+
+- `celestl:import-arcaea-images` — **command terpisah** dari `celestl:import-arcaea-content`, sengaja: yang
+  satu memindahkan ~190MB file, yang satu mengisi baris database. Tidak perlu ikut jalan tiap refresh data.
+  Idempoten (lewati file yang sudah ada), `--force` untuk membangun ulang.
+- Tujuan: `storage/app/public/{jackets,packs}/` + `thumbs/` di masing-masing. Butuh `php artisan storage:link`
+  sekali (command-nya memperingatkan kalau belum).
+- **Thumbnail 384px wajib, bukan optimasi belakangan.** Jacket asli 768×768 @300-600KB; satu layar grid lagu
+  memuat puluhan sekaligus = ~20MB kalau pakai aslinya. Thumb jadi ~49KB. Aturan: **grid pakai thumb, halaman
+  detail/lightbox pakai ukuran penuh.** Ini sempat salah di admin Songs & charts — daftar 563 barisnya
+  memuat jacket ukuran penuh semua (~225MB) sebelum diperbaiki jadi thumb + `jacket_full` terpisah.
+- Pack art tetap **PNG dengan alpha** (bukan dikonversi ke JPEG): transparansinya dipakai untuk mengukur
+  bounding box konten. Di GD, alpha `127` = transparan penuh (7-bit), bukan 255 — dan `imagecreatetruecolor`
+  harus diberi `imagealphablending(false)` + `imagesavealpha(true)` atau alpha-nya hilang diam-diam.
+- Pack chapter/append (`parent_id`) tidak punya file sendiri di beberapa kasus → otomatis memakai file pack
+  induknya, sama seperti cara game menampilkannya.
+- `packs.image_trim_width/height` menyimpan ukuran konten non-transparan tiap pack art, dipakai sebagai
+  `aspect-ratio` kartu pack — menerapkan keputusan lama pemilik (§ tinggi kartu Pack) ke aplikasi sungguhan,
+  karena 57 dari 62 pack art itu potret 1:2 dan ter-crop parah kalau dipaksa ke kotak 168/150. Wadahnya perlu
+  `items-start` (grid maupun flex), kalau tidak kartu yang pendek ikut meregang setinggi barisnya.
+
+**Jangan tebak path gambar di React.** Dulu `url(/storage/jackets/<slug>.jpg)` ditulis langsung di komponen,
+jadi tiap lagu tanpa file memicu 404. Sekarang controller mengirim URL-nya (atau `null`) lewat
+`Song::jacketUrl()` / `Pack::imageUrl()`, dan `artworkBackground(url, seed)` di `lib/jacket.ts` yang memutuskan
+mau pakai gambar atau cuma gradien.
+
+**URL-nya relatif (`/storage/...`), bukan absolut.** `Storage::url()` menghasilkan URL absolut dari `APP_URL`;
+kalau itu dikirim apa adanya, membuka app dari HP lewat IP LAN akan menunjuk ke `localhost` dan semua gambar
+mati. Accessor-nya mengambil komponen path saja lewat `parse_url(..., PHP_URL_PATH)`.
+
+**Hak cipta tetap sama:** `storage/app/public/` dan `public/storage` dua-duanya sudah gitignored, jadi gambar
+tidak pernah masuk repo. Test importer membuat gambarnya sendiri lewat GD, tidak memakai aset asli. Clone
+baru tanpa folder `data/` tetap jalan — semua kolom path-nya `null` dan UI jatuh ke gradien.
+
+### Gotcha: jangan jalankan `npx prettier` di repo ini
+
+Proyek ini **tidak punya konfigurasi prettier** dan prettier bukan dependensi-nya. `npx prettier --write`
+mengunduh prettier baru dan memformat ulang dengan default-nya (kutip ganda), padahal seluruh kode TS/TSX di
+sini pakai kutip tunggal — satu perintah mengubah file yang tidak ada hubungannya dengan pekerjaan yang sedang
+dikerjakan. Sudah kejadian sekali dan harus di-`git checkout` ulang. Formatter yang dipakai proyek ini cuma
+Pint (PHP). Untuk TS/TSX, ikuti gaya file di sekitarnya dan andalkan `npx tsc --noEmit` untuk pengecekan.

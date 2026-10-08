@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { DIFFICULTY_COLOR, type DifficultyCode } from '@/lib/difficulty';
 import { useTranslations } from '@/lib/i18n';
-import { jacketGradient } from '@/lib/jacket';
+import { artworkBackground } from '@/lib/jacket';
 import { cn } from '@/lib/utils';
 import { Head, Link } from '@inertiajs/react';
 
@@ -17,6 +17,7 @@ type Song = {
     slug: string;
     title: string;
     artist: string | null;
+    jacket: string | null;
     bpm: string | null;
     length: string | null;
     side: string | null;
@@ -54,11 +55,7 @@ export default function SongShow({ song }: { song: Song }) {
                 <div className="rounded-3xl bg-card p-4">
                     <div
                         className="aspect-square w-full rounded-2xl"
-                        style={{
-                            background: `url(/storage/jackets/${song.slug}.jpg), ${jacketGradient(song.title)}`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                        }}
+                        style={{ background: artworkBackground(song.jacket, song.title) }}
                     />
                     <h1 className="mt-4 text-[20px] font-semibold leading-tight">{song.title}</h1>
                     <p className="mt-1 text-[13px] text-muted">

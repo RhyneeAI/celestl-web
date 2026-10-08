@@ -1,0 +1,287 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\Pack;
+use App\Models\Song;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+
+#[Signature('celestl:import-arcaea-images {--force : Rebuild files that already exist}')]
+#[Description('Copy local Arcaea jacket/pack art onto the public disk and record the paths in the database')]
+class ImportArcaeaImages extends Command
+{
+    /**
+     * Longest edge of the generated thumbnails, in pixels.
+     *
+     * Jackets ship at 768x768 and 300-600KB each. A song grid shows dozens at once, so loading the
+     * originals there costs ~20MB per screen. 384 is half the source, still sharp on a 2x phone
+     * screen at the ~190px the cards actually use.
+     */
+    private const THUMB_SIZE = 384;
+
+    /** JPEG quality for jacket thumbnails. 82 is visually lossless at this size. */
+    private const JPEG_QUALITY = 82;
+
+    public function handle(): int
+    {
+        $source = rtrim((string) config('celestl.arcaea_data_path'), '/');
+
+        if (! File::isDirectory($source)) {
+            $this->error("Data folder not found: {$source}");
+            $this->line('Set ARCAEA_DATA_PATH, or see CLAUDE.md § Data dan hak cipta.');
+
+            return self::FAILURE;
+        }
+
+        if (! extension_loaded('gd')) {
+            $this->error('The GD extension is required to build thumbnails.');
+
+            return self::FAILURE;
+        }
+
+        $disk = Storage::disk('public');
+
+        foreach (['jackets', 'jackets/thumbs', 'packs', 'packs/thumbs'] as $folder) {
+            $disk->makeDirectory($folder);
+        }
+
+        $songs = $this->importJackets($source, $disk->path(''));
+        $packs = $this->importPackArt($source, $disk->path(''));
+
+        $this->newLine();
+        $this->info("Jackets: {$songs['copied']} copied, {$songs['skipped']} already present, {$songs['missing']} without a source file.");
+        $this->info("Pack art: {$packs['copied']} copied, {$packs['skipped']} already present, {$packs['missing']} without a source file.");
+
+        if (! File::exists(public_path('storage'))) {
+            $this->newLine();
+            $this->warn('public/storage is missing, so nothing will be served yet. Run: php artisan storage:link');
+        }
+
+        return self::SUCCESS;
+    }
+
+    /**
+     * @return array{copied: int, skipped: int, missing: int}
+     */
+    private function importJackets(string $source, string $publicRoot): array
+    {
+        $stats = ['copied' => 0, 'skipped' => 0, 'missing' => 0];
+        $songs = Song::query()->get(['id', 'slug', 'jacket_path', 'jacket_thumb_path']);
+        $bar = $this->output->createProgressBar($songs->count());
+        $bar->setFormat(' Jackets  %current%/%max% [%bar%] %message%');
+        $bar->setMessage('');
+
+        foreach ($songs as $song) {
+            $bar->setMessage($song->slug);
+
+            // Jacket files are named by the song's internal id, which is exactly our slug -- the
+            // wiki's Module:SongData convention, not a fuzzy title match (CLAUDE.md § Jacket art).
+            $file = "{$source}/jackets/{$song->slug}.jpg";
+
+            if (! File::isFile($file)) {
+                $stats['missing']++;
+                $bar->advance();
+
+                continue;
+            }
+
+            $path = "jackets/{$song->slug}.jpg";
+            $thumb = "jackets/thumbs/{$song->slug}.jpg";
+
+            $written = $this->publish($file, $publicRoot.$path, $publicRoot.$thumb, 'jpeg');
+            $stats[$written ? 'copied' : 'skipped']++;
+
+            // Always refresh the columns: the file can already be there from an earlier run while
+            // the database was rebuilt from scratch.
+            $song->update(['jacket_path' => $path, 'jacket_thumb_path' => $thumb]);
+            $bar->advance();
+        }
+
+        $bar->finish();
+        $this->newLine();
+
+        return $stats;
+    }
+
+    /**
+     * @return array{copied: int, skipped: int, missing: int}
+     */
+    private function importPackArt(string $source, string $publicRoot): array
+    {
+        $stats = ['copied' => 0, 'skipped' => 0, 'missing' => 0];
+        $packs = Pack::query()->with('parent:id,slug')->get();
+
+        foreach ($packs as $pack) {
+            $file = "{$source}/packs/{$pack->slug}.png";
+
+            // A chapter/append pack shows its parent's banner in game, so it inherits the file when
+            // it has none of its own (CLAUDE.md § Pack art).
+            if (! File::isFile($file) && $pack->parent) {
+                $file = "{$source}/packs/{$pack->parent->slug}.png";
+            }
+
+            if (! File::isFile($file)) {
+                $stats['missing']++;
+                $this->line("  no art for pack: {$pack->slug}");
+
+                continue;
+            }
+
+            $path = "packs/{$pack->slug}.png";
+            $thumb = "packs/thumbs/{$pack->slug}.png";
+
+            // PNG, not JPEG: pack art is transparent, and the card's aspect ratio comes from the
+            // non-transparent bounding box (CLAUDE.md § tinggi kartu Pack).
+            $written = $this->publish($file, $publicRoot.$path, $publicRoot.$thumb, 'png');
+            $stats[$written ? 'copied' : 'skipped']++;
+
+            [$trimWidth, $trimHeight] = $this->contentSize($file);
+
+            $pack->update([
+                'image_path' => $path,
+                'image_thumb_path' => $thumb,
+                'image_trim_width' => $trimWidth,
+                'image_trim_height' => $trimHeight,
+            ]);
+        }
+
+        return $stats;
+    }
+
+    /**
+     * Size of the image's non-transparent content, which the pack card uses as its aspect ratio.
+     *
+     * Scans inward from each edge and stops at the first row/column that has any opaque pixel, so
+     * the common case (artwork filling its canvas) costs a few rows rather than the whole bitmap.
+     *
+     * @return array{0: int|null, 1: int|null}
+     */
+    private function contentSize(string $file): array
+    {
+        $image = imagecreatefrompng($file);
+
+        if ($image === false) {
+            return [null, null];
+        }
+
+        $width = imagesx($image);
+        $height = imagesy($image);
+
+        $opaqueRow = function (int $y) use ($image, $width): bool {
+            for ($x = 0; $x < $width; $x++) {
+                // The alpha byte lives in bits 24-30; 127 is fully transparent in GD, not 255.
+                if (((imagecolorat($image, $x, $y) >> 24) & 0x7F) < 127) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
+        $opaqueColumn = function (int $x) use ($image, $height): bool {
+            for ($y = 0; $y < $height; $y++) {
+                if (((imagecolorat($image, $x, $y) >> 24) & 0x7F) < 127) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
+        $top = 0;
+        while ($top < $height && ! $opaqueRow($top)) {
+            $top++;
+        }
+
+        if ($top === $height) {
+            imagedestroy($image);
+
+            // Fully transparent: nothing to measure, so the card keeps its default ratio.
+            return [null, null];
+        }
+
+        $bottom = $height - 1;
+        while ($bottom > $top && ! $opaqueRow($bottom)) {
+            $bottom--;
+        }
+
+        $left = 0;
+        while ($left < $width && ! $opaqueColumn($left)) {
+            $left++;
+        }
+
+        $right = $width - 1;
+        while ($right > $left && ! $opaqueColumn($right)) {
+            $right--;
+        }
+
+        imagedestroy($image);
+
+        return [$right - $left + 1, $bottom - $top + 1];
+    }
+
+    /**
+     * Copy one source image and build its thumbnail. Returns false when both already existed.
+     */
+    private function publish(string $source, string $target, string $thumb, string $format): bool
+    {
+        $force = (bool) $this->option('force');
+        $written = false;
+
+        if ($force || ! File::isFile($target)) {
+            File::copy($source, $target);
+            $written = true;
+        }
+
+        if ($force || ! File::isFile($thumb)) {
+            $this->thumbnail($source, $thumb, $format);
+            $written = true;
+        }
+
+        return $written;
+    }
+
+    private function thumbnail(string $source, string $target, string $format): void
+    {
+        $image = $format === 'png' ? imagecreatefrompng($source) : imagecreatefromjpeg($source);
+
+        if ($image === false) {
+            $this->warn("  unreadable image, copied as-is: {$source}");
+            File::copy($source, $target);
+
+            return;
+        }
+
+        $width = imagesx($image);
+        $height = imagesy($image);
+        $scale = min(1, self::THUMB_SIZE / max($width, $height));
+
+        $resized = imagecreatetruecolor((int) round($width * $scale), (int) round($height * $scale));
+
+        if ($format === 'png') {
+            // Without these two, GD composites onto opaque black and the transparent margin that
+            // the pack-card aspect ratio depends on is lost.
+            imagealphablending($resized, false);
+            imagesavealpha($resized, true);
+        }
+
+        imagecopyresampled(
+            $resized, $image,
+            0, 0, 0, 0,
+            imagesx($resized), imagesy($resized), $width, $height,
+        );
+
+        if ($format === 'png') {
+            imagepng($resized, $target, 6);
+        } else {
+            imagejpeg($resized, $target, self::JPEG_QUALITY);
+        }
+
+        imagedestroy($resized);
+        imagedestroy($image);
+    }
+}

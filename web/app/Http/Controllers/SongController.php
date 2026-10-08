@@ -21,12 +21,13 @@ class SongController extends Controller
         $songs = Song::query()
             ->with('pack:id,name')
             ->orderBy('title')
-            ->get(['id', 'slug', 'title', 'artist', 'pack_id'])
+            ->get(['id', 'slug', 'title', 'artist', 'pack_id', 'jacket_thumb_path'])
             ->map(fn (Song $song) => [
                 'slug' => $song->slug,
                 'title' => $song->title,
                 'artist' => $song->artist,
                 'pack' => $song->pack?->name,
+                'jacket' => $song->jacketUrl(thumb: true),
             ]);
 
         return Inertia::render('songs/index', [
@@ -46,6 +47,7 @@ class SongController extends Controller
                 'slug' => $song->slug,
                 'title' => $song->title,
                 'artist' => $song->artist,
+                'jacket' => $song->jacketUrl(),
                 'bpm' => $song->bpm,
                 'length' => $song->length,
                 'side' => $song->side,

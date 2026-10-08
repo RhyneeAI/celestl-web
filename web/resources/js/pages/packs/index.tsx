@@ -1,9 +1,16 @@
 import AppLayout from '@/layouts/app-layout';
 import { useTranslations } from '@/lib/i18n';
-import { jacketGradient } from '@/lib/jacket';
+import { artworkBackground } from '@/lib/jacket';
 import { Head, Link } from '@inertiajs/react';
 
-type PackCard = { slug: string; name: string; song_count: number };
+type PackCard = {
+    slug: string;
+    name: string;
+    song_count: number;
+    image: string | null;
+    // "width/height" of the artwork's own content; null when this install has no art.
+    aspect: string | null;
+};
 type Section = { label: string; packs: PackCard[] };
 
 export default function Packs({ sections }: { sections: Section[] }) {
@@ -22,7 +29,7 @@ export default function Packs({ sections }: { sections: Section[] }) {
                             {section.label}
                         </h2>
 
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                        <div className="grid grid-cols-2 items-start gap-3 sm:grid-cols-3 lg:grid-cols-4">
                             {section.packs.map((pack) => (
                                 <Link
                                     key={pack.slug}
@@ -30,11 +37,12 @@ export default function Packs({ sections }: { sections: Section[] }) {
                                     className="min-w-0 overflow-hidden rounded-2xl bg-card-alt hover:bg-violet"
                                 >
                                     <div
-                                        className="aspect-[168/150] w-full"
+                                        className="w-full"
                                         style={{
-                                            background: `url(/storage/packs/${pack.slug}.png), ${jacketGradient(pack.name)}`,
-                                            backgroundSize: 'cover',
-                                            backgroundPosition: 'center',
+                                            // Fixed width, height follows the artwork -- cropping
+                                            // every pack into one box loses half of a tall banner.
+                                            aspectRatio: pack.aspect ?? '168/150',
+                                            background: artworkBackground(pack.image, pack.name),
                                         }}
                                     />
                                     <div className="p-3">

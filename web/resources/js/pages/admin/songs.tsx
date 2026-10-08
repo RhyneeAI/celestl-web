@@ -3,7 +3,7 @@ import { Modal, ModalField, modalInputClass } from '@/components/admin/modal';
 import { Panel, PanelHead } from '@/components/admin/ui';
 import AdminLayout from '@/layouts/admin-layout';
 import { DIFFICULTY_COLOR, type DifficultyCode } from '@/lib/difficulty';
-import { jacketGradient } from '@/lib/jacket';
+import { artworkBackground } from '@/lib/jacket';
 import { cn } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
@@ -22,6 +22,8 @@ type SongRow = {
     slug: string;
     title: string;
     artist: string | null;
+    jacket: string | null;
+    jacket_full: string | null;
     pack: string | null;
     side: string | null;
     bpm: string | null;
@@ -58,10 +60,6 @@ function formatDate(iso: string | null): string {
         year: 'numeric',
         timeZone: 'UTC',
     });
-}
-
-function songJacketBackground(slug: string, title: string): string {
-    return `url(/storage/jackets/${slug}.jpg), ${jacketGradient(title)}`;
 }
 
 export default function AdminSongs({
@@ -192,8 +190,8 @@ export default function AdminSongs({
                                 <div
                                     className="size-[38px] flex-none rounded-[10px] bg-cover bg-center"
                                     style={{
-                                        background: songJacketBackground(
-                                            song.slug,
+                                        background: artworkBackground(
+                                            song.jacket,
                                             song.title,
                                         ),
                                     }}
@@ -240,16 +238,16 @@ export default function AdminSongs({
                                 type="button"
                                 onClick={() =>
                                     setLightboxBg(
-                                        songJacketBackground(
-                                            selected.slug,
+                                        artworkBackground(
+                                            selected.jacket_full,
                                             selected.title,
                                         ),
                                     )
                                 }
                                 className="mb-3.5 aspect-video w-full cursor-zoom-in rounded-2xl bg-cover bg-center"
                                 style={{
-                                    background: songJacketBackground(
-                                        selected.slug,
+                                    background: artworkBackground(
+                                        selected.jacket_full,
                                         selected.title,
                                     ),
                                 }}

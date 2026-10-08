@@ -45,6 +45,20 @@ Idempoten (diuji lewat re-run, 0 baris baru kedua kalinya). Dijalankan terhadap 
 `tests/Feature/ImportArcaeaContentTest.php` (6 test, data fixture sintetis di `tests/fixtures/arcaea-data/` —
 bukan data asli, aman di-commit).
 
+### [x] 1.3b Import gambar jacket & pack art
+Command kedua `celestl:import-arcaea-images` (dipisah dari import konten karena ini memindahkan ~190MB file,
+bukan baris database — tidak perlu ikut jalan tiap kali data lagu di-refresh). Menyalin `data/jackets/<slug>.jpg`
+dan `data/packs/<slug>.png` ke public disk Laravel + membuat thumbnail 384px (GD), lalu mencatat path-nya di
+kolom baru `songs.jacket_path`/`jacket_thumb_path` dan `packs.image_path`/`image_thumb_path`.
+**Yang disimpan di database cuma path, bukan isi gambarnya** — keputusan pemilik setelah ditawari dua opsi.
+Pack chapter/append otomatis memakai gambar pack induknya. Juga mengukur **bounding box piksel non-transparan**
+tiap pack art (`packs.image_trim_width/height`) supaya kartu pack bisa memakai rasio konten aslinya, menerapkan
+keputusan lama pemilik di mockup (CLAUDE.md § tinggi kartu Pack) ke aplikasi sungguhan.
+**Selesai jika:** gambar tampil di halaman publik & admin, idempoten, dan tidak pernah masuk git. ✅
+`tests/Feature/ImportArcaeaImagesTest.php` (7 test, gambar dibuat on-the-fly lewat GD — tidak ada aset asli
+yang di-commit). Dijalankan ke data asli: 563 jacket + 62 pack art, ~16 detik, 1 pack tanpa art (pack sintetis
+"April Fools", memang tidak punya).
+
 ### [x] 1.4 Daftar lagu (publik)
 Halaman publik (bukan admin): `/` daftar lagu + pencarian, `/songs/{slug}` detail, `/packs` + `/packs/{slug}`.
 Layout `AppLayout` sendiri, **tema gelap di semua ukuran layar** (keputusan pemilik) — acuannya cuma frame

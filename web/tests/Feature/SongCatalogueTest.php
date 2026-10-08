@@ -142,6 +142,31 @@ test('a pack page only lists its own songs', function () {
         );
 });
 
+test('a jacket URL is sent only when this install actually has the file', function () {
+    Song::factory()->create([
+        'game_id' => $this->game->id,
+        'slug' => 'withart',
+        'title' => 'With art',
+        'jacket_path' => 'jackets/withart.jpg',
+        'jacket_thumb_path' => 'jackets/thumbs/withart.jpg',
+    ]);
+    Song::factory()->create(['game_id' => $this->game->id, 'slug' => 'noart', 'title' => 'Zzz no art']);
+
+    $this->get('/')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            // The grid gets the thumbnail, never the 768px original.
+            ->where('songs.0.jacket', '/storage/jackets/thumbs/withart.jpg')
+            ->where('songs.1.jacket', null)
+        );
+
+    $this->get('/songs/withart')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->where('song.jacket', '/storage/jackets/withart.jpg')
+        );
+});
+
 test('UI strings reach the page as translations instead of being hardcoded in React', function () {
     $this->get('/')
         ->assertOk()

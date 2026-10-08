@@ -1,5 +1,5 @@
 import { useTranslations } from '@/lib/i18n';
-import { jacketGradient } from '@/lib/jacket';
+import { artworkBackground } from '@/lib/jacket';
 import { Link } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -7,14 +7,15 @@ export type SongCard = {
     slug: string;
     title: string;
     artist: string | null;
+    jacket: string | null;
 };
 
 /**
  * The 2-column jacket grid from the Figma mobile frames (Search Result 67:41, Pack List 39:93),
  * widened on bigger screens since no desktop design exists to follow (CLAUDE.md § Desain).
  *
- * Jacket art is never shipped in this repo: the real file is an optional local extra on the public
- * disk, and the deterministic gradient underneath is what everyone else sees.
+ * Jacket art is never shipped in this repo. An install that imported it locally gets the real
+ * thumbnail; everyone else gets the deterministic gradient, which is also the layer underneath.
  */
 export function SongGrid({ songs, pageSize = 48 }: { songs: SongCard[]; pageSize?: number }) {
     const t = useTranslations();
@@ -52,12 +53,8 @@ export function SongGrid({ songs, pageSize = 48 }: { songs: SongCard[]; pageSize
                         className="group min-w-0 rounded-2xl p-2 hover:bg-card-alt"
                     >
                         <div
-                            className="aspect-square w-full rounded-xl bg-cover bg-center"
-                            style={{
-                                background: `url(/storage/jackets/${song.slug}.jpg), ${jacketGradient(song.title)}`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                            }}
+                            className="aspect-square w-full rounded-xl"
+                            style={{ background: artworkBackground(song.jacket, song.title) }}
                         />
                         <p className="mt-2 line-clamp-2 break-words text-[13px] font-semibold leading-snug">
                             {song.title}

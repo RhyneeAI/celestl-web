@@ -43,6 +43,7 @@ class AdminHomeController extends Controller
                 return [
                     'slug' => $song->slug,
                     'title' => $song->title,
+                    'jacket' => $song->jacketUrl(thumb: true),
                     'pack' => $song->pack?->name,
                     'released_at' => $song->released_at?->toDateString(),
                     'top_difficulty' => $topChart?->difficulty->value,

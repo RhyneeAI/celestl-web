@@ -33,6 +33,8 @@ class PackController extends Controller
                         'slug' => $pack->slug,
                         'name' => $pack->name,
                         'song_count' => $pack->songs_count,
+                        'image' => $pack->imageUrl(thumb: true),
+                        'aspect' => $pack->imageAspectRatio(),
                     ]),
             ])
             ->filter(fn (array $section) => $section['packs']->isNotEmpty())
@@ -53,11 +55,12 @@ class PackController extends Controller
         $songs = Song::query()
             ->where('pack_id', $pack->id)
             ->orderBy('title')
-            ->get(['slug', 'title', 'artist'])
+            ->get(['slug', 'title', 'artist', 'jacket_thumb_path'])
             ->map(fn (Song $song) => [
                 'slug' => $song->slug,
                 'title' => $song->title,
                 'artist' => $song->artist,
+                'jacket' => $song->jacketUrl(thumb: true),
             ]);
 
         return Inertia::render('packs/show', [
@@ -65,6 +68,8 @@ class PackController extends Controller
                 'slug' => $pack->slug,
                 'name' => $pack->name,
                 'section' => $pack->section ?? $pack->parent?->section,
+                'image' => $pack->imageUrl(thumb: true),
+                'aspect' => $pack->imageAspectRatio(),
             ],
             'songs' => $songs,
         ]);

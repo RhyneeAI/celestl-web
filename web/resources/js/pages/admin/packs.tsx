@@ -1,17 +1,24 @@
 import { Panel, PanelHead } from '@/components/admin/ui';
 import { Modal, ModalField, modalInputClass } from '@/components/admin/modal';
 import AdminLayout from '@/layouts/admin-layout';
-import { jacketGradient } from '@/lib/jacket';
+import { artworkBackground } from '@/lib/jacket';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 
-type ChildPack = { id: number; slug: string; name: string };
+type ChildPack = {
+    id: number;
+    slug: string;
+    name: string;
+    image: string | null;
+};
 
 type PackCard = {
     id: number;
     slug: string;
     name: string;
     song_count: number;
+    image: string | null;
+    aspect: string | null;
     children: ChildPack[];
 };
 
@@ -23,13 +30,6 @@ type Props = {
     sectionOrder: string[];
     topLevelPacks: { id: number; name: string }[];
 };
-
-// Real pack/jacket art is never shipped with this app (copyright, see CLAUDE.md § Data dan hak
-// cipta) -- if it happens to exist locally on the public disk (storage:link + manually dropped
-// files, same opt-in idea as the old mockup), it layers on top; otherwise this gradient shows.
-function packBackground(slug: string, name: string): string {
-    return `url(/storage/packs/${slug}.png), ${jacketGradient(name)}`;
-}
 
 function goToSongs(packName: string) {
     router.visit(`/admin/songs?pack=${encodeURIComponent(packName)}`);
@@ -86,7 +86,7 @@ export default function AdminPacks({
                                     {section.label}
                                 </span>
                             </div>
-                            <div className="flex min-w-0 flex-1 flex-wrap gap-x-3.5 gap-y-4">
+                            <div className="flex min-w-0 flex-1 flex-wrap items-start gap-x-3.5 gap-y-4">
                                 {section.packs.map((pack) => (
                                     <div
                                         key={pack.id}
@@ -99,15 +99,20 @@ export default function AdminPacks({
                                         <button
                                             type="button"
                                             onClick={() => goToSongs(pack.name)}
-                                            className="group relative aspect-[168/150] w-full overflow-hidden rounded-[14px]"
+                                            className="group relative w-full overflow-hidden rounded-[14px]"
+                                            style={{
+                                                aspectRatio:
+                                                    pack.aspect ?? '168/150',
+                                            }}
                                         >
                                             <div
                                                 className="absolute inset-0 bg-cover bg-center"
                                                 style={{
-                                                    background: packBackground(
-                                                        pack.slug,
-                                                        pack.name,
-                                                    ),
+                                                    background:
+                                                        artworkBackground(
+                                                            pack.image,
+                                                            pack.name,
+                                                        ),
                                                 }}
                                             />
                                             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,12,34,0)_35%,rgba(12,12,34,.92)_100%)]" />
@@ -130,9 +135,9 @@ export default function AdminPacks({
                                                         }
                                                         className="group relative block h-[26px] w-full overflow-hidden rounded-md bg-cover bg-center"
                                                         style={{
-                                                            backgroundImage:
-                                                                packBackground(
-                                                                    child.slug,
+                                                            background:
+                                                                artworkBackground(
+                                                                    child.image,
                                                                     child.name,
                                                                 ),
                                                         }}

@@ -27,10 +27,13 @@ class AdminPackController extends Controller
                     'slug' => $p->slug,
                     'name' => $p->name,
                     'song_count' => $p->songs_count,
+                    'image' => $p->imageUrl(thumb: true),
+                    'aspect' => $p->imageAspectRatio(),
                     'children' => $p->children->map(fn (Pack $c) => [
                         'id' => $c->id,
                         'slug' => $c->slug,
                         'name' => $c->name,
+                        'image' => $c->imageUrl(thumb: true),
                     ]),
                 ]),
             ])

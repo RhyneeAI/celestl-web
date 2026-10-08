@@ -20,3 +20,17 @@ export function jacketGradient(seed: string): string {
 
     return `linear-gradient(${hash % 360}deg, ${PALETTE[a]}, ${PALETTE[b]})`;
 }
+
+/**
+ * CSS `background` value for a jacket/pack tile: the real image when this install has one, with the
+ * deterministic gradient underneath it.
+ *
+ * Takes the URL from the server rather than guessing a path, so a missing file is a clean null
+ * instead of a 404 behind every tile. Both layers go in one shorthand, so keep every token valid --
+ * one bad token voids the whole declaration (see the >>> bug above).
+ */
+export function artworkBackground(url: string | null, seed: string): string {
+    const gradient = jacketGradient(seed);
+
+    return url ? `url("${url}") center / cover no-repeat, ${gradient}` : gradient;
+}

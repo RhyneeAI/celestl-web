@@ -24,6 +24,10 @@ class AdminSongController extends Controller
                 'slug' => $song->slug,
                 'title' => $song->title,
                 'artist' => $song->artist,
+                // Thumbnail for the 563-row list, full size only for the detail panel banner --
+                // sending the originals to every row costs hundreds of MB.
+                'jacket' => $song->jacketUrl(thumb: true),
+                'jacket_full' => $song->jacketUrl(),
                 'pack' => $song->pack?->name,
                 'side' => $song->side,
                 'bpm' => $song->bpm,
