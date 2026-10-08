@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Difficulty;
+use App\Models\Chart;
 use App\Models\Pack;
 use App\Models\Song;
 use Illuminate\Console\Attributes\Description;
@@ -50,10 +52,12 @@ class ImportArcaeaImages extends Command
         }
 
         $songs = $this->importJackets($source, $disk->path(''));
+        $overrides = $this->importChartJackets($source, $disk->path(''));
         $packs = $this->importPackArt($source, $disk->path(''));
 
         $this->newLine();
         $this->info("Jackets: {$songs['copied']} copied, {$songs['skipped']} already present, {$songs['missing']} without a source file.");
+        $this->info("Per-difficulty jackets: {$overrides['copied']} copied, {$overrides['skipped']} already present, {$overrides['missing']} without a source file.");
         $this->info("Pack art: {$packs['copied']} copied, {$packs['skipped']} already present, {$packs['missing']} without a source file.");
 
         if (! File::exists(public_path('storage'))) {
@@ -103,6 +107,81 @@ class ImportArcaeaImages extends Command
 
         $bar->finish();
         $this->newLine();
+
+        return $stats;
+    }
+
+    /**
+     * Jackets that belong to one difficulty rather than the whole song.
+     *
+     * The wiki names these `File:Songs <id> <pst|prs|ftr|byd|etr|ins>.jpg` (Module:SongData), so
+     * they land here as `<slug>_<diff>.jpg`. Charts without such a file keep null and fall back to
+     * the song's jacket at render time -- that is the overwhelming majority of them, so a missing
+     * file is normal here and is not reported per chart the way a missing pack image is.
+     *
+     * Identical pictures are matched by content, not by filename. Several songs (Prism, To the
+     * Furthest Dream and the rest of the Past+Present group) carry one override per difficulty as
+     * separate wiki files that may hold the same picture; comparing bytes keeps those as a single
+     * artwork, so the detail page offers a switch only when there is really something to switch to.
+     *
+     * @return array{copied: int, skipped: int, missing: int}
+     */
+    private function importChartJackets(string $source, string $publicRoot): array
+    {
+        $stats = ['copied' => 0, 'skipped' => 0, 'missing' => 0];
+
+        $songs = Song::query()
+            ->with('charts:id,song_id,difficulty,jacket_path,jacket_thumb_path')
+            ->get(['id', 'slug']);
+
+        foreach ($songs as $song) {
+            // Keyed by file hash: the song's own jacket maps to null, meaning "no override needed".
+            $byHash = [];
+            $base = "{$source}/jackets/{$song->slug}.jpg";
+
+            if (File::isFile($base)) {
+                $byHash[md5_file($base)] = null;
+            }
+
+            // Lowest difficulty first, so when several share one picture the published file is
+            // named after the lowest of them every run, rather than whatever order the rows load in.
+            $charts = $song->charts->sortBy(
+                fn (Chart $chart) => array_search($chart->difficulty, Difficulty::cases(), true)
+            );
+
+            foreach ($charts as $chart) {
+                $difficulty = strtolower($chart->difficulty->value);
+                $file = "{$source}/jackets/{$song->slug}_{$difficulty}.jpg";
+
+                if (! File::isFile($file)) {
+                    $stats['missing']++;
+
+                    continue;
+                }
+
+                $hash = md5_file($file);
+
+                if (array_key_exists($hash, $byHash)) {
+                    $seen = $byHash[$hash];
+                    $chart->update([
+                        'jacket_path' => $seen['path'] ?? null,
+                        'jacket_thumb_path' => $seen['thumb'] ?? null,
+                    ]);
+                    $stats['skipped']++;
+
+                    continue;
+                }
+
+                $path = "jackets/{$song->slug}_{$difficulty}.jpg";
+                $thumb = "jackets/thumbs/{$song->slug}_{$difficulty}.jpg";
+
+                $written = $this->publish($file, $publicRoot.$path, $publicRoot.$thumb, 'jpeg');
+                $stats[$written ? 'copied' : 'skipped']++;
+
+                $byHash[$hash] = ['path' => $path, 'thumb' => $thumb];
+                $chart->update(['jacket_path' => $path, 'jacket_thumb_path' => $thumb]);
+            }
+        }
 
         return $stats;
     }

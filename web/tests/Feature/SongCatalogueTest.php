@@ -185,8 +185,89 @@ test('a jacket URL is sent only when this install actually has the file', functi
     $this->get('/songs/withart')
         ->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page
-            ->where('song.jacket', '/storage/jackets/withart.jpg')
+            // The detail view gets the original, not the thumbnail.
+            ->where('song.jackets.0.url', '/storage/jackets/withart.jpg')
         );
+});
+
+test('a song with one artwork offers nothing to switch between', function () {
+    $song = Song::factory()->create([
+        'game_id' => $this->game->id, 'slug' => 'plain',
+        'jacket_path' => 'jackets/plain.jpg',
+    ]);
+    foreach (['PST', 'PRS', 'FTR'] as $difficulty) {
+        Chart::factory()->create(['song_id' => $song->id, 'difficulty' => $difficulty]);
+    }
+
+    $this->get('/songs/plain')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->has('song.jackets', 1)
+            ->where('song.jackets.0.label', 'PST / PRS / FTR')
+        );
+});
+
+test('a Beyond chart with its own artwork becomes a second entry, after the shared one', function () {
+    $song = Song::factory()->create([
+        'game_id' => $this->game->id, 'slug' => 'goodtek',
+        'jacket_path' => 'jackets/goodtek.jpg',
+    ]);
+    foreach (['PST', 'PRS', 'FTR'] as $difficulty) {
+        Chart::factory()->create(['song_id' => $song->id, 'difficulty' => $difficulty]);
+    }
+    Chart::factory()->create([
+        'song_id' => $song->id, 'difficulty' => 'BYD',
+        'jacket_path' => 'jackets/goodtek_byd.jpg',
+    ]);
+
+    $this->get('/songs/goodtek')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->has('song.jackets', 2)
+            ->where('song.jackets.0.label', 'PST / PRS / FTR')
+            ->where('song.jackets.0.url', '/storage/jackets/goodtek.jpg')
+            ->where('song.jackets.1.label', 'BYD')
+            ->where('song.jackets.1.url', '/storage/jackets/goodtek_byd.jpg')
+        );
+});
+
+test('Past and Present sharing an override come first, as one entry', function () {
+    // The Prism / To the Furthest Dream shape: the lower two difficulties carry the alternate
+    // artwork and Future keeps the song's own, so the override is the FIRST entry here.
+    $song = Song::factory()->create([
+        'game_id' => $this->game->id, 'slug' => 'prism',
+        'jacket_path' => 'jackets/prism.jpg',
+    ]);
+    foreach (['PST', 'PRS'] as $difficulty) {
+        Chart::factory()->create([
+            'song_id' => $song->id, 'difficulty' => $difficulty,
+            'jacket_path' => "jackets/prism_".strtolower($difficulty).'.jpg',
+        ]);
+    }
+    Chart::factory()->create(['song_id' => $song->id, 'difficulty' => 'FTR']);
+
+    $this->get('/songs/prism')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            // PST and PRS have separate files here, so they do not collapse into each other.
+            ->has('song.jackets', 3)
+            ->where('song.jackets.0.label', 'PST')
+            ->where('song.jackets.2.label', 'FTR')
+            ->where('song.jackets.2.url', '/storage/jackets/prism.jpg')
+        );
+});
+
+test('a chart whose override file is missing falls back and collapses, so no switch appears', function () {
+    $song = Song::factory()->create([
+        'game_id' => $this->game->id, 'slug' => 'nooverride',
+        'jacket_path' => 'jackets/nooverride.jpg',
+    ]);
+    Chart::factory()->create(['song_id' => $song->id, 'difficulty' => 'FTR']);
+    Chart::factory()->create(['song_id' => $song->id, 'difficulty' => 'BYD', 'jacket_path' => null]);
+
+    $this->get('/songs/nooverride')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page->has('song.jackets', 1));
 });
 
 test('UI strings reach the page as translations instead of being hardcoded in React', function () {

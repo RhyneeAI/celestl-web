@@ -864,22 +864,47 @@ dikerjakan. Sudah kejadian sekali dan harus di-`git checkout` ulang. Formatter y
 Pint (PHP). Untuk TS/TSX, ikuti gaya file di sekitarnya dan andalkan `npx tsc --noEmit` untuk pengecekan.
 
 
-### `jacketOverride` — 57 chart punya jacket SENDIRI, gambarnya BELUM kita punya
+### `jacketOverride` — 57 chart punya jacket art sendiri
 
-Ditemukan saat memeriksa `jacketDesigner` per difficulty (pertanyaan pemilik, Oktober 2026). Selain
-`jacketDesigner`, tiap entri `difficulties[]` di `songlist.json` bisa punya `jacketOverride: true` — artinya
-difficulty itu memakai **gambar jacket yang berbeda** dari jacket lagunya, bukan cuma kreditnya yang beda.
+Selain `jacketDesigner`, tiap entri `difficulties[]` di `songlist.json` bisa punya `jacketOverride: true` —
+artinya difficulty itu memakai **gambar jacket yang berbeda**, bukan cuma kreditnya yang beda. **57 chart di
+50 lagu**, dalam tiga pola:
 
-- **57 chart di 50 lagu** punya flag ini. Mayoritas di slot Beyond.
-- **Kita belum punya file-nya.** `data/jackets/` isinya satu file per lagu (`<id>.jpg`, 565 file, tanpa
-  varian) — konvensi `File:Songs <id>.jpg` dari `Module:SongData` yang dipakai waktu mengambilnya memang cuma
-  mengambil jacket utama. Jadi untuk 57 chart itu, UI sekarang menampilkan jacket lagu yang **salah** (jacket
-  FTR dipakai juga untuk BYD).
-- Skema sekarang juga belum menampung ini: jacket disimpan di `songs.jacket_path`, bukan per chart.
-- **Belum dikerjakan, menunggu keputusan pemilik** — mengambil 57 gambar tambahan berarti mengunduh aset
-  berhak cipta lagi, itu keputusan pemilik bukan Claude. Kalau nanti dikerjakan: perlu kolom jacket di
-  `charts` (nullable, fallback ke jacket lagu) + mencari pola nama file varian di wiki, karena konvensi
-  `File:Songs <id>.jpg` tidak mencakupnya.
+| Pola `ratingClass` | Jumlah lagu | Contoh |
+|---|---|---|
+| `[3]` (Beyond saja) | 42 | GOODTEK, qualia, Axium Crisis |
+| `[0, 1]` (Past + Present) | 7 | Prism, To the Furthest Dream, stager, avril, stasis, ii, protoflicker |
+| `[2]` (Future saja) | 1 | lucidtraveler |
+
+Perhatikan pola kedua: yang di-override justru difficulty **rendah**, dan Future memakai jacket utama lagunya.
+Jadi jangan berasumsi "override = selalu Beyond".
+
+**Konvensi nama file di wiki (dari `Module:SongData`, baris ~711-718):** jacket utama `File:Songs <id>.jpg`,
+override `File:Songs <id> <diffStr>.jpg` dengan `diffStr` ∈ `pst/prs/ftr/byd/etr/ins` (huruf kecil, dari
+`diffStrs` di baris 92). Sudah diverifikasi lewat MediaWiki API: `Songs prism pst.jpg`, `Songs prism prs.jpg`,
+`Songs goodtek byd.jpg` semuanya ada, 768×768.
+
+**Modul wiki itu juga sudah punya perilaku yang kita tiru** (baris 1244-1258): dia membangun **tab** kalau
+jacket-nya lebih dari satu, dan menggabungkan difficulty berurutan yang jacket-nya sama jadi satu tab.
+
+**Sudah diimplementasikan di Celestl:**
+- Kolom `charts.jacket_path`/`jacket_thumb_path` (nullable; null = pakai jacket lagunya).
+- `celestl:import-arcaea-images` mencari `data/jackets/<slug>_<diff>.jpg` per chart.
+- **Dedupe berdasarkan isi file (md5), bukan nama file.** Penting untuk pola `[0, 1]`: wiki menyimpannya
+  sebagai dua file terpisah (`prism pst` dan `prism prs`) yang bisa jadi gambarnya sama persis. Kalau sama
+  dengan jacket lagunya → chart dibiarkan null; kalau sama dengan override lain di lagu yang sama → pakai file
+  yang sudah terbit, tidak menerbitkan salinan kedua. Tanpa ini, UI akan menampilkan tombol switch antara dua
+  gambar yang identik.
+- Chart diproses **urut difficulty terendah dulu** supaya nama file yang terbit deterministik antar-run.
+- Halaman detail lagu menampilkan **tombol switch** (urut ratingClass naik) hanya kalau benar-benar ada lebih
+  dari satu gambar — permintaan pemilik. Chart yang file override-nya tidak ada otomatis jatuh ke jacket lagu
+  dan ikut tergabung, jadi switch tidak pernah muncul untuk gambar yang sama.
+
+**Yang BELUM ada: file gambarnya.** Percobaan mengunduh 57 file override itu **diblokir sandbox Claude Code**
+(bukan error jaringan, bukan masalah wiki). Jadi sampai pemilik menjalankan unduhannya sendiri,
+`charts.jacket_path` semuanya null dan tiap lagu tampil dengan satu jacket seperti sebelumnya — tidak ada yang
+rusak, cuma fiturnya belum kelihatan. Begitu file `<id>_<diff>.jpg` ada di `data/jackets/`, cukup jalankan
+ulang `php artisan celestl:import-arcaea-images` dan switch-nya muncul sendiri.
 
 ### Tabel difficulty di detail lagu: scroll horizontal, bukan sembunyikan kolom
 

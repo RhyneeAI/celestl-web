@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Chart;
 use App\Models\Pack;
 use App\Models\Song;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -122,6 +123,58 @@ test('it rebuilds existing files with --force', function () {
 
     [$width] = getimagesize(Storage::disk('public')->path('jackets/testsong.jpg'));
     expect($width)->toBe(256);
+});
+
+test('it imports a per-difficulty jacket override onto its chart', function () {
+    $song = Song::factory()->create(['slug' => 'goodtek']);
+    $shared = Chart::factory()->create(['song_id' => $song->id, 'difficulty' => 'FTR']);
+    $override = Chart::factory()->create(['song_id' => $song->id, 'difficulty' => 'BYD']);
+
+    makeJpeg("{$this->source}/jackets/goodtek.jpg");
+    // A visibly different image, so it is not deduplicated against the song's own jacket.
+    makeJpeg("{$this->source}/jackets/goodtek_byd.jpg", 512);
+
+    $this->artisan('celestl:import-arcaea-images')->assertSuccessful();
+
+    Storage::disk('public')->assertExists('jackets/goodtek_byd.jpg');
+    Storage::disk('public')->assertExists('jackets/thumbs/goodtek_byd.jpg');
+
+    expect($override->fresh()->jacket_path)->toBe('jackets/goodtek_byd.jpg')
+        // The chart that has no override of its own keeps null and falls back to the song.
+        ->and($shared->fresh()->jacket_path)->toBeNull();
+});
+
+test('an override identical to the song jacket is left as a fallback, not duplicated', function () {
+    $song = Song::factory()->create(['slug' => 'sameart']);
+    $chart = Chart::factory()->create(['song_id' => $song->id, 'difficulty' => 'BYD']);
+
+    makeJpeg("{$this->source}/jackets/sameart.jpg");
+    copy("{$this->source}/jackets/sameart.jpg", "{$this->source}/jackets/sameart_byd.jpg");
+
+    $this->artisan('celestl:import-arcaea-images')->assertSuccessful();
+
+    // Same picture under another name: the page would otherwise show a switch between two
+    // identical images (the Prism / To the Furthest Dream shape).
+    expect($chart->fresh()->jacket_path)->toBeNull();
+    Storage::disk('public')->assertMissing('jackets/sameart_byd.jpg');
+});
+
+test('two difficulties sharing one override picture share one published file', function () {
+    $song = Song::factory()->create(['slug' => 'prism']);
+    $past = Chart::factory()->create(['song_id' => $song->id, 'difficulty' => 'PST']);
+    $present = Chart::factory()->create(['song_id' => $song->id, 'difficulty' => 'PRS']);
+    Chart::factory()->create(['song_id' => $song->id, 'difficulty' => 'FTR']);
+
+    makeJpeg("{$this->source}/jackets/prism.jpg");
+    makeJpeg("{$this->source}/jackets/prism_pst.jpg", 512);
+    copy("{$this->source}/jackets/prism_pst.jpg", "{$this->source}/jackets/prism_prs.jpg");
+
+    $this->artisan('celestl:import-arcaea-images')->assertSuccessful();
+
+    expect($past->fresh()->jacket_path)->toBe('jackets/prism_pst.jpg')
+        ->and($present->fresh()->jacket_path)->toBe('jackets/prism_pst.jpg');
+
+    Storage::disk('public')->assertMissing('jackets/prism_prs.jpg');
 });
 
 test('it fails clearly when the data folder is missing', function () {

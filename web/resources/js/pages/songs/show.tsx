@@ -4,6 +4,7 @@ import { useTranslations } from '@/lib/i18n';
 import { artworkBackground } from '@/lib/jacket';
 import { cn } from '@/lib/utils';
 import { Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
 
 type Chart = {
     difficulty: DifficultyCode;
@@ -18,7 +19,8 @@ type Song = {
     slug: string;
     title: string;
     artist: string | null;
-    jacket: string | null;
+    // Lowest difficulty first. More than one entry means this song has per-difficulty artwork.
+    jackets: { url: string | null; label: string }[];
     bpm: string | null;
     length: string | null;
     side: string | null;
@@ -39,6 +41,8 @@ function formatDate(iso: string): string {
 
 export default function SongShow({ song }: { song: Song }) {
     const t = useTranslations();
+    const [jacketIndex, setJacketIndex] = useState(0);
+    const jacket = song.jackets[jacketIndex] ?? song.jackets[0];
 
     const meta: { label: string; value: string | null }[] = [
         { label: t('song.bpm'), value: song.bpm },
@@ -56,8 +60,34 @@ export default function SongShow({ song }: { song: Song }) {
                 <div className="rounded-3xl bg-card p-4">
                     <div
                         className="aspect-square w-full rounded-2xl"
-                        style={{ background: artworkBackground(song.jacket, song.title) }}
+                        style={{ background: artworkBackground(jacket.url, song.title) }}
                     />
+
+                    {/*
+                     * Only rendered when the song really has more than one artwork -- a chart whose
+                     * override file is absent collapses back into the song's jacket server-side, so
+                     * this never shows a switch between two identical images.
+                     */}
+                    {song.jackets.length > 1 && (
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                            {song.jackets.map((option, index) => (
+                                <button
+                                    key={option.label}
+                                    type="button"
+                                    onClick={() => setJacketIndex(index)}
+                                    aria-pressed={index === jacketIndex}
+                                    className={cn(
+                                        'rounded-full px-3 py-1.5 text-[11.5px] font-bold',
+                                        index === jacketIndex
+                                            ? 'bg-lav text-text'
+                                            : 'bg-violet text-muted hover:text-text',
+                                    )}
+                                >
+                                    {option.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                     <h1 className="mt-4 text-[20px] font-semibold leading-tight">{song.title}</h1>
                     <p className="mt-1 text-[13px] text-muted">
                         {song.artist ?? t('songs.unknown_artist')}
