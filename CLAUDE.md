@@ -968,24 +968,61 @@ TOTP dipilih karena tidak perlu daftar OAuth client, tidak perlu internet saat l
 ketiga yang harus hidup supaya pemilik bisa masuk ke panel admin-nya sendiri. Juga konsisten dengan prinsip
 proyek ini yang tanpa password (§ Akun).
 
-- Secret disimpan di `ADMIN_TOTP_SECRET` (`.env`, gitignored) → `config('celestl.admin.totp_secret')`.
-  Dibuat lewat `php artisan celestl:admin-totp` (menampilkan secret + URI `otpauth://`). Library:
-  `pragmarx/google2fa`.
+### Satu admin, dikunci setelah kode pertama berhasil
+
+Aturan pemilik: **admin cuma satu orang, yaitu dia**, dan begitu email terisi + validasi 2FA berhasil,
+enrolment tidak bisa diganti lagi kecuali kolom email-nya dikosongkan manual di database.
+
+Tabel `admin_accounts` (`email` nullable unique, `totp_secret`, `confirmed_at` nullable, `singleton`):
+
+- `isLocked()` = `email` terisi **dan** `confirmed_at` tidak null. Dua-duanya perlu: secret yang belum pernah
+  dipakai bisa jadi sisa setup yang batal di tengah jalan.
+- `confirmed_at` diisi saat **kode pertama yang valid** masuk, bukan saat QR dibuat. Men-scan QR tidak
+  membuktikan apa-apa; kode yang kembali membuktikan pemilik benar-benar punya secret-nya di app.
+- Kolom `singleton` (boolean, **unique**) bikin "cuma satu admin" jadi **constraint database**, bukan sekadar
+  konvensi kode — baris kedua ditolak MySQL apa pun yang dipercaya kode aplikasi.
+- Jalan keluarnya sengaja manual: `UPDATE admin_accounts SET email = NULL;` di database. Tidak ada halaman,
+  tombol, atau session yang bisa melakukannya.
+- **Sengaja terpisah dari tabel `users`.** `users` untuk pemain (Fase 4, bareng `game_identities`) dan
+  bentuknya belum final; gate admin tidak boleh menunggu itu, dan baris pemain tidak boleh cuma berjarak satu
+  flag dari jadi admin.
+
+### Detail lain
+
+- Enrolment: `php artisan celestl:admin-totp --email=...`. **Secret TIDAK lagi di `.env`** — sempat begitu di
+  commit sebelumnya, lalu dipindah ke database atas permintaan pemilik. `config('celestl.admin.*')` sudah
+  dihapus; command memperingatkan kalau `ADMIN_TOTP_SECRET` masih tertinggal di `.env`.
 - `App\Http\Middleware\EnsureAdmin` menjaga **semua** route `/admin/*` kecuali `/admin/login`. Route
   POST/DELETE ikut dijaga — gate yang cuma menutup GET meninggalkan endpoint yang mengubah data terbuka.
-- **Fail shut:** kalau `ADMIN_TOTP_SECRET` kosong, admin **terkunci**, bukan terbuka. Halaman login
-  menjelaskan cara mengisinya. Kredensial yang hilang bukan alasan membuka pintu.
+- **Fail shut:** belum ada yang enrol → admin terkunci, bukan terbuka.
 - `throttle:5,1` di POST login. Kode TOTP cuma 6 digit dan berlaku dalam window, jadi tebakan tanpa batas
   pada akhirnya akan kena.
 - Session di-`regenerate()` saat login, supaya session id yang sempat terlihat sebelum login tidak bisa
   dipakai ulang sebagai session yang sudah terautentikasi.
-- Toleransi window `1` (±30 detik) untuk beda jam HP vs server; tanpa itu jam yang meleset beberapa detik
-  akan menolak semua kode.
-- **Ini bukan sistem akun.** Cuma satu flag di session (`EnsureAdmin::SESSION_KEY`), karena pemilik satu-
-  satunya admin dan tabel `users` baru dibangun di Fase 4. Saat Fase 4 jalan, ini yang perlu disatukan.
-- Di test: helper `actingAsAdmin()` di `tests/Pest.php`. Test tentang pack/chart tidak perlu jadi test
-  tentang TOTP juga — `tests/Feature/AdminGateTest.php` yang menguji gate-nya sendiri (17 test).
+- Toleransi window `1` (±30 detik) untuk beda jam HP vs server.
+- Di test: helper `actingAsAdmin()` di `tests/Pest.php`. Test tentang pack/chart tidak perlu jadi test tentang
+  TOTP juga — `AdminGateTest.php` (21 test) dan `AdminEnrolmentTest.php` (6 test) yang menguji gate-nya.
+
+### QR di terminal — dan kenapa bukan link ke generator online
+
+Versi pertama command ini cuma mencetak URI `otpauth://` dan menyuruh pemilik menempelkannya ke generator QR
+online. **Itu salah**: URI-nya berisi secret admin, jadi menempelkannya ke situs orang lain = mengirimkan
+kredensial admin ke pihak ketiga. Sekarang QR-nya digambar sendiri di terminal (`bacon/bacon-qr-code`).
+
+Dua jebakan nyata saat membuatnya:
+
+- **`$this->output->writeln()` membuang ANSI.** Di Laravel 13 `$this->output` dibungkus style object
+  (`Laravel\Pao\...OutputStyle`) yang `isDecorated()`-nya false saat stream bukan TTY, dan escape code-nya
+  dihapus — QR jadi satu blok karakter identik yang kelihatan "tergambar" padahal tidak terbaca. `OUTPUT_RAW`
+  saja **tidak cukup**; harus menulis ke `$this->output->getOutput()` (output di bawahnya).
+- **Warna tidak boleh mengandalkan tema terminal.** QR butuh modul gelap di atas latar terang, dan separuh
+  terminal orang temanya terbalik. Jadi fg/bg di-set eksplisit per karakter, memakai half-block `▀` (dua baris
+  modul per baris teks) supaya modulnya tetap persegi — sel terminal tingginya ~2× lebarnya, QR yang gepeng
+  jauh lebih susah di-scan. Quiet zone 4 modul wajib, tanpa itu scanner tidak menemukan tepinya.
+
+Diverifikasi dengan mem-parse ulang output ANSI-nya jadi matriks dan memeriksa ketiga finder pattern 7×7 di
+posisi yang benar plus quiet zone-nya bersih — bukan cuma "kelihatan seperti QR".
 
 **Catatan keamanan untuk sesi mendatang:** jangan pernah menjalankan `celestl:admin-totp` lalu memakai secret
-hasilnya sebagai secret sungguhan — begitu tercetak di transcript, secret itu sudah bocor. Yang dicetak saat
-uji coba di sesi ini (`WXMZP2GG...`) **tidak dipakai**; pemilik membuat sendiri yang baru.
+hasilnya sebagai secret sungguhan — begitu tercetak di transcript, secret itu sudah bocor. Secret yang tercetak
+saat uji coba di sesi ini **tidak dipakai**; pemilik enrol sendiri.

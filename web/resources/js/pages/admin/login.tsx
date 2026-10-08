@@ -7,7 +7,7 @@ import type { FormEvent } from 'react';
  * Deliberately says nothing about what is behind it and shows no hint about the secret -- the only
  * thing this page can tell an unauthenticated visitor is whether their code was right.
  */
-export default function AdminLogin({ configured }: { configured: boolean }) {
+export default function AdminLogin({ enrolled }: { enrolled: boolean }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         code: '',
     });
@@ -29,7 +29,7 @@ export default function AdminLogin({ configured }: { configured: boolean }) {
                     </b>
                 </div>
 
-                {configured ? (
+                {enrolled ? (
                     <form
                         onSubmit={submit}
                         className="rounded-3xl bg-card p-6"
@@ -76,13 +76,11 @@ export default function AdminLogin({ configured }: { configured: boolean }) {
                             Admin is locked
                         </h1>
                         <p className="mt-1.5 text-[12.5px] text-muted">
-                            No authenticator secret is configured on this
-                            install, so there is no code that would work. Run
-                            the setup command and put the secret in{' '}
-                            <code className="text-pst">.env</code>:
+                            Nobody has claimed this install yet, so there is no
+                            code that would work. Enrol once from the server:
                         </p>
                         <pre className="mt-3 overflow-x-auto rounded-xl bg-violet px-4 py-3 font-mono text-[12px] text-text">
-                            php artisan celestl:admin-totp
+                            php artisan celestl:admin-totp --email=you@example.com
                         </pre>
                     </div>
                 )}

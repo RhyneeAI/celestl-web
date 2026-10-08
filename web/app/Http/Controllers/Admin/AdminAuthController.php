@@ -22,8 +22,8 @@ class AdminAuthController extends Controller
         }
 
         return Inertia::render('admin/login', [
-            // The form is pointless without a secret, so say so instead of letting codes fail.
-            'configured' => $this->totp->isConfigured(),
+            // The form is pointless before anyone enrols, so say so instead of letting codes fail.
+            'enrolled' => $this->totp->isConfigured(),
         ]);
     }
 

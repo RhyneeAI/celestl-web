@@ -1,8 +1,9 @@
 <?php
 
 use App\Http\Middleware\EnsureAdmin;
+use App\Models\AdminAccount;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\RateLimiter;
 use PragmaRX\Google2FA\Google2FA;
 
 uses(RefreshDatabase::class);
@@ -10,8 +11,10 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     $this->google2fa = new Google2FA;
     $this->secret = $this->google2fa->generateSecretKey();
-    config(['celestl.admin.totp_secret' => $this->secret]);
-    RateLimiter::clear('');
+    $this->account = AdminAccount::query()->create([
+        'email' => 'owner@example.test',
+        'totp_secret' => $this->secret,
+    ]);
 });
 
 function currentCode(): string
@@ -61,20 +64,20 @@ test('a wrong code is rejected and does not sign in', function () {
     $this->get('/admin')->assertRedirect(route('admin.login'));
 });
 
-test('no code is ever valid when no secret is configured', function () {
+test('no code is ever valid when nobody has enrolled', function () {
     // The gate must fail shut: a missing credential is not a reason to let anyone in.
-    config(['celestl.admin.totp_secret' => null]);
+    AdminAccount::query()->delete();
 
     $this->post('/admin/login', ['code' => currentCode()])->assertSessionHasErrors('code');
     $this->get('/admin')->assertRedirect(route('admin.login'));
 });
 
-test('the sign in page says so when no secret is configured', function () {
-    config(['celestl.admin.totp_secret' => null]);
+test('the sign in page says so when nobody has enrolled', function () {
+    AdminAccount::query()->delete();
 
     $this->get('/admin/login')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->component('admin/login')->where('configured', false));
+        ->assertInertia(fn ($page) => $page->component('admin/login')->where('enrolled', false));
 });
 
 test('guessing is rate limited', function () {
@@ -112,4 +115,41 @@ test('an authenticated admin visiting the sign in page is sent to the dashboard'
 test('the public pages are not behind the gate', function () {
     $this->get('/')->assertOk();
     $this->get('/packs')->assertOk();
+});
+
+test('the first valid code confirms the enrolment and locks it', function () {
+    expect($this->account->confirmed_at)->toBeNull()
+        ->and($this->account->isLocked())->toBeFalse();
+
+    $this->post('/admin/login', ['code' => currentCode()]);
+
+    $account = $this->account->fresh();
+
+    expect($account->confirmed_at)->not->toBeNull()
+        ->and($account->isLocked())->toBeTrue();
+});
+
+test('a wrong code does not confirm the enrolment', function () {
+    $this->post('/admin/login', ['code' => '000000']);
+
+    expect($this->account->fresh()->confirmed_at)->toBeNull();
+});
+
+test('clearing the email unlocks the enrolment again', function () {
+    // The owner's documented way out: it takes a deliberate edit in the database, which no session
+    // and no page can do.
+    $this->post('/admin/login', ['code' => currentCode()]);
+    expect($this->account->fresh()->isLocked())->toBeTrue();
+
+    $this->account->update(['email' => null]);
+
+    expect($this->account->fresh()->isLocked())->toBeFalse();
+});
+
+test('a second admin row cannot exist', function () {
+    // Enforced by the database, not just by the code that happens to call updateOrCreate.
+    expect(fn () => AdminAccount::query()->create([
+        'email' => 'someone@example.test',
+        'totp_secret' => 'OTHERSECRET',
+    ]))->toThrow(QueryException::class);
 });

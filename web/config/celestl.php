@@ -19,21 +19,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Admin gate
-    |--------------------------------------------------------------------------
-    |
-    | Shared secret for the admin TOTP codes (Google Authenticator and friends).
-    | Generate it with `php artisan celestl:admin-totp`. Empty means the admin
-    | panel stays locked -- a missing credential must not open the door.
-    |
-    */
-
-    'admin' => [
-        'totp_secret' => env('ADMIN_TOTP_SECRET'),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Private server ("Unofficial" segment)
     |--------------------------------------------------------------------------
     |

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AdminAccount;
 use PragmaRX\Google2FA\Google2FA;
 
 /**
@@ -12,8 +13,8 @@ use PragmaRX\Google2FA\Google2FA;
  * over "Sign in with Google" because TOTP needs no OAuth client, no internet at sign-in time, and
  * no third party to be reachable for the owner to get into their own admin panel.
  *
- * The secret is shared, not public: anyone holding it can generate codes. It lives in .env, which
- * is gitignored, and never reaches the browser except once in the setup command's output.
+ * The enrolment lives in the `admin_accounts` row rather than .env, so that "this install belongs
+ * to one person" is recorded data with a lock on it, not a value anyone editing a file can swap.
  */
 class AdminTotp
 {
@@ -21,7 +22,7 @@ class AdminTotp
 
     public function isConfigured(): bool
     {
-        return filled($this->secret());
+        return AdminAccount::current() !== null;
     }
 
     public function generateSecret(): string
@@ -38,25 +39,34 @@ class AdminTotp
     }
 
     /**
-     * Is this the code the configured secret produces right now?
+     * Is this the code the enrolled secret produces right now?
+     *
+     * The first code that verifies also confirms the enrolment, which is what closes it to further
+     * changes -- see AdminAccount::isLocked(). Scanning a QR proves nothing on its own; a code
+     * coming back proves the owner really has the secret in their app.
      *
      * The one-step window either side absorbs clock drift between this machine and the phone;
      * without it a watch that is a few seconds out would reject every code.
      */
     public function verify(string $code): bool
     {
-        if (! $this->isConfigured()) {
+        $account = AdminAccount::current();
+
+        if ($account === null) {
             return false;
         }
 
         // Non-digits are stripped so a code pasted as "123 456" still works.
         $code = preg_replace('/\D/', '', $code) ?? '';
 
-        return $this->google2fa->verifyKey($this->secret(), $code, window: 1);
-    }
+        if (! $this->google2fa->verifyKey($account->totp_secret, $code, window: 1)) {
+            return false;
+        }
 
-    private function secret(): string
-    {
-        return (string) config('celestl.admin.totp_secret');
+        if ($account->confirmed_at === null) {
+            $account->update(['confirmed_at' => now()]);
+        }
+
+        return true;
     }
 }
