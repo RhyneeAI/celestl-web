@@ -256,7 +256,7 @@ yang sama yang memelihara proyek parser (`vscode-arcaea-file-format` dll.), jadi
 |---|---|---|
 | BYD | `#BA1130` | dikonfirmasi pemilik |
 | ETR | `#8975A8` | dot ke-4 di Figma (Song Detail, ALTER EGO), sampling piksel presisi |
-| INS | `#0000CD` (MediumBlue) | `.ins-txt` di `arcaea.miraheze.org/MediaWiki:Common.css`, dipakai sesuai permintaan pemilik |
+| INS | `#7474DC` | diturunkan dari `.ins-txt` wiki (`#0000CD` MediumBlue) — hue 240 dipertahankan, lightness/saturasi disesuaikan agar kontrasnya sepadan dengan warna difficulty Celestl lainnya |
 
 PST/PRS/FTR tetap dari Figma (`#03A8E6`/`#ACFF82`/`#F768DD`) — tidak diganti dengan palet wiki, karena beda
 jauh dari desain Celestl sendiri (mis. PST versi wiki `#379dd4`).
@@ -283,11 +283,17 @@ besar ke channel hijau (0.7152) dibanding merah (0.2126) atau biru (0.0722).
 **Sudah diperbaiki:** BYD dinaikkan ke `#E14763` (hue sama, 349°, lightness 40%→58%, kontras jadi 4.84) —
 dikonfirmasi oleh pemilik secara tidak langsung (menanyakan "kenapa mencolok" = minta diperbaiki).
 
-**Belum diperbaiki, perlu keputusan pemilik:** INS (`#0000CD`, kontras 1.72) punya masalah yang sama bahkan
-lebih parah — hampir tidak terlihat di atas background gelap. Supaya kontrasnya sepadan (~4.9), lightness-nya
-perlu naik ke titik warnanya jadi periwinkle terang (`#7171F4`), yang sudah tidak terasa seperti "MediumBlue"
-lagi. Ini trade-off yang perlu pemilik pilih: pertahankan kemiripan dengan referensi wiki (kontras rendah) atau
-prioritaskan keterbacaan (warna jadi lebih terang/beda karakter). Jangan diubah sepihak sebelum dijawab.
+**Sudah diperbaiki (keputusan pemilik: "samakan dengan Celestl").** INS lama `#0000CD` kontrasnya 1.72 —
+praktis tidak terbaca, dan terbukti jelek begitu tabel detail lagu benar-benar dibangun. Sekarang
+**`#7474DC`**: hue tetap 240 (identitas biru MediumBlue-nya dipertahankan), tapi lightness 66% dan saturasi
+diturunkan ke 0.60 sehingga kontrasnya **4.83 terhadap `--bg`** dan **4.41 terhadap `--violet`** — persis
+sepadan dengan BYD (4.84/4.41) dan sedikit di atas ETR (4.74/4.32).
+
+**Kenapa harus turun saturasi, bukan cuma dinaikkan lightness-nya:** biru murni (hue 240, S=1.0) tidak pernah
+mencapai kontras 4.7 walau lightness dinaikkan sampai 68% (cuma 4.06), karena rumus luminance WCAG memberi
+bobot 0.0722 ke channel biru dan 0.7152 ke hijau. Satu-satunya cara menaikkan luminance biru adalah
+mencampurkan channel lain, yaitu menurunkan saturasi. Pola ini berlaku juga untuk warna merah murni — lihat
+kasus BYD di atas.
 
 - **`chartDesigner` yang terlihat seperti mojibake itu genuine, dikonfirmasi pemilik** — contoh:
   Extradimensional Cosmic Phenomenon → `"#0000遒ｧ"` memang begitu juga tampilannya di game. Wiki Fandom-nya
