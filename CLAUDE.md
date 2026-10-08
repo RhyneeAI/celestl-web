@@ -958,3 +958,34 @@ tepi terpotongnya kelihatan = sinyal bisa di-scroll) + `min-w-[520px]` di `<tabl
 **Gotcha yang menyertainya:** `<section>` pembungkusnya **wajib** `min-w-0`. Tanpa itu, grid item-nya tumbuh
 mengikuti `min-width` tabel dan yang ter-scroll jadi SELURUH halaman, bukan tabelnya — gejalanya persis sama
 dengan bug overflow yang lain (jacket dan header ikut terpotong), jadi gampang salah didiagnosis.
+
+
+## Gate admin: TOTP (Google Authenticator), bukan password & bukan OAuth
+
+Keputusan pemilik. Yang dimaksud "2FA Google" ternyata **kode 6 digit dari app Google Authenticator**
+(TOTP, RFC 6238), bukan tombol "Sign in with Google" (OAuth) — dua hal yang beda jauh, jadi ditanyakan dulu.
+TOTP dipilih karena tidak perlu daftar OAuth client, tidak perlu internet saat login, dan tidak ada pihak
+ketiga yang harus hidup supaya pemilik bisa masuk ke panel admin-nya sendiri. Juga konsisten dengan prinsip
+proyek ini yang tanpa password (§ Akun).
+
+- Secret disimpan di `ADMIN_TOTP_SECRET` (`.env`, gitignored) → `config('celestl.admin.totp_secret')`.
+  Dibuat lewat `php artisan celestl:admin-totp` (menampilkan secret + URI `otpauth://`). Library:
+  `pragmarx/google2fa`.
+- `App\Http\Middleware\EnsureAdmin` menjaga **semua** route `/admin/*` kecuali `/admin/login`. Route
+  POST/DELETE ikut dijaga — gate yang cuma menutup GET meninggalkan endpoint yang mengubah data terbuka.
+- **Fail shut:** kalau `ADMIN_TOTP_SECRET` kosong, admin **terkunci**, bukan terbuka. Halaman login
+  menjelaskan cara mengisinya. Kredensial yang hilang bukan alasan membuka pintu.
+- `throttle:5,1` di POST login. Kode TOTP cuma 6 digit dan berlaku dalam window, jadi tebakan tanpa batas
+  pada akhirnya akan kena.
+- Session di-`regenerate()` saat login, supaya session id yang sempat terlihat sebelum login tidak bisa
+  dipakai ulang sebagai session yang sudah terautentikasi.
+- Toleransi window `1` (±30 detik) untuk beda jam HP vs server; tanpa itu jam yang meleset beberapa detik
+  akan menolak semua kode.
+- **Ini bukan sistem akun.** Cuma satu flag di session (`EnsureAdmin::SESSION_KEY`), karena pemilik satu-
+  satunya admin dan tabel `users` baru dibangun di Fase 4. Saat Fase 4 jalan, ini yang perlu disatukan.
+- Di test: helper `actingAsAdmin()` di `tests/Pest.php`. Test tentang pack/chart tidak perlu jadi test
+  tentang TOTP juga — `tests/Feature/AdminGateTest.php` yang menguji gate-nya sendiri (17 test).
+
+**Catatan keamanan untuk sesi mendatang:** jangan pernah menjalankan `celestl:admin-totp` lalu memakai secret
+hasilnya sebagai secret sungguhan — begitu tercetak di transcript, secret itu sudah bocor. Yang dicetak saat
+uji coba di sesi ini (`WXMZP2GG...`) **tidak dipakai**; pemilik membuat sendiri yang baru.

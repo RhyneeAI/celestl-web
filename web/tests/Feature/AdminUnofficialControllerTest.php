@@ -16,7 +16,7 @@ test('the index page lists custom songs with their chart slots', function () {
         'constant' => 7.5,
     ]);
 
-    $response = $this->get('/admin/unofficial');
+    $response = actingAsAdmin()->get('/admin/unofficial');
 
     $response->assertOk();
     $response->assertInertia(
@@ -28,7 +28,7 @@ test('the index page lists custom songs with their chart slots', function () {
 });
 
 test('a custom song can be created with a unique slug', function () {
-    $response = $this->post('/admin/unofficial/songs', [
+    $response = actingAsAdmin()->post('/admin/unofficial/songs', [
         'slug' => 'my-test-song',
         'title' => 'My Test Song',
         'artist' => 'Someone',
@@ -41,7 +41,7 @@ test('a custom song can be created with a unique slug', function () {
 test('creating a custom song fails with a duplicate slug', function () {
     UnofficialSong::factory()->create(['slug' => 'taken']);
 
-    $response = $this->post('/admin/unofficial/songs', [
+    $response = actingAsAdmin()->post('/admin/unofficial/songs', [
         'slug' => 'taken',
         'title' => 'Another title',
     ]);
@@ -55,7 +55,7 @@ test('uploading an .aff file for a difficulty stores it on the private disk and 
 
     $file = UploadedFile::fake()->createWithContent('chart.aff', "AudioOffset:0;\n");
 
-    $response = $this->post("/admin/unofficial/songs/{$song->id}/charts", [
+    $response = actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/charts", [
         'difficulty' => 'FTR',
         'constant' => '9.5',
         'aff' => $file,
@@ -78,11 +78,11 @@ test('uploading again for the same difficulty updates the existing chart instead
     Storage::fake('local');
     $song = UnofficialSong::factory()->create();
 
-    $this->post("/admin/unofficial/songs/{$song->id}/charts", [
+    actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/charts", [
         'difficulty' => 'PST',
         'constant' => '3.0',
     ]);
-    $this->post("/admin/unofficial/songs/{$song->id}/charts", [
+    actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/charts", [
         'difficulty' => 'PST',
         'constant' => '3.5',
     ]);
@@ -94,7 +94,7 @@ test('uploading again for the same difficulty updates the existing chart instead
 test('only the 5 difficulties the base private server supports are accepted', function () {
     $song = UnofficialSong::factory()->create();
 
-    $response = $this->post("/admin/unofficial/songs/{$song->id}/charts", [
+    $response = actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/charts", [
         'difficulty' => 'INS',
         'constant' => '10.0',
     ]);
@@ -105,7 +105,7 @@ test('only the 5 difficulties the base private server supports are accepted', fu
 test('a constant above 12 is accepted (custom charts are not capped)', function () {
     $song = UnofficialSong::factory()->create();
 
-    $this->post("/admin/unofficial/songs/{$song->id}/charts", [
+    actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/charts", [
         'difficulty' => 'ETR',
         'constant' => '13.5',
     ])->assertSessionHasNoErrors();
@@ -116,7 +116,7 @@ test('a constant above 12 is accepted (custom charts are not capped)', function 
 test('a constant with more than 1 decimal digit is rejected', function () {
     $song = UnofficialSong::factory()->create();
 
-    $response = $this->post("/admin/unofficial/songs/{$song->id}/charts", [
+    $response = actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/charts", [
         'difficulty' => 'FTR',
         'constant' => '9.55',
     ]);
@@ -128,13 +128,13 @@ test('deleting a custom song also deletes its stored .aff files', function () {
     Storage::fake('local');
     $song = UnofficialSong::factory()->create(['slug' => 'to-delete']);
     $file = UploadedFile::fake()->createWithContent('chart.aff', "AudioOffset:0;\n");
-    $this->post("/admin/unofficial/songs/{$song->id}/charts", [
+    actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/charts", [
         'difficulty' => 'FTR',
         'aff' => $file,
     ]);
     Storage::disk('local')->assertExists('unofficial-charts/to-delete/FTR.aff');
 
-    $this->delete("/admin/unofficial/songs/{$song->id}");
+    actingAsAdmin()->delete("/admin/unofficial/songs/{$song->id}");
 
     expect(UnofficialSong::find($song->id))->toBeNull();
     Storage::disk('local')->assertMissing('unofficial-charts/to-delete/FTR.aff');

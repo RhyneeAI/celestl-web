@@ -65,7 +65,7 @@ test('pushing a new song creates it on the server, copies the .aff and refreshes
     fakeServer(songExists: false);
     $song = songWithCharts();
 
-    $this->post("/admin/unofficial/songs/{$song->id}/push")
+    actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/push")
         ->assertRedirect(route('admin.unofficial'))
         ->assertSessionHasNoErrors();
 
@@ -93,7 +93,7 @@ test('pushing a song that already exists on the server updates it with PUT', fun
     fakeServer(songExists: true);
     $song = songWithCharts();
 
-    $this->post("/admin/unofficial/songs/{$song->id}/push")->assertSessionHasNoErrors();
+    actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/push")->assertSessionHasNoErrors();
 
     Http::assertSent(fn (Request $r) => $r->method() === 'PUT'
         && $r->url() === 'http://server.test/api/v1/songs/my-song');
@@ -105,7 +105,7 @@ test('pushing without a configured token explains what to set', function () {
     Http::fake();
     $song = songWithCharts();
 
-    $this->post("/admin/unofficial/songs/{$song->id}/push")->assertSessionHasErrors('push');
+    actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/push")->assertSessionHasErrors('push');
 
     Http::assertNothingSent();
 });
@@ -119,7 +119,7 @@ test('a server-side rejection is reported and nothing is marked as pushed', func
     ));
     $song = songWithCharts();
 
-    $this->post("/admin/unofficial/songs/{$song->id}/push")->assertSessionHasErrors('push');
+    actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/push")->assertSessionHasErrors('push');
 
     expect(UnofficialChart::whereNotNull('pushed_at')->count())->toBe(0);
 });
@@ -128,14 +128,14 @@ test('a rejected token is reported', function () {
     Http::fake(fn () => Http::response(['code' => -1, 'data' => [], 'msg' => 'No permission'], 403));
     $song = songWithCharts();
 
-    $this->post("/admin/unofficial/songs/{$song->id}/push")->assertSessionHasErrors('push');
+    actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/push")->assertSessionHasErrors('push');
 });
 
 test('a song with nothing to push is refused', function () {
     Http::fake();
     $song = UnofficialSong::factory()->create();
 
-    $this->post("/admin/unofficial/songs/{$song->id}/push")->assertSessionHasErrors('push');
+    actingAsAdmin()->post("/admin/unofficial/songs/{$song->id}/push")->assertSessionHasErrors('push');
 
     Http::assertNothingSent();
 });

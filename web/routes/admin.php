@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminHomeController;
 use App\Http\Controllers\Admin\AdminPackController;
 use App\Http\Controllers\Admin\AdminSongController;
 use App\Http\Controllers\Admin\AdminUnofficialController;
+use App\Http\Middleware\EnsureAdmin;
 use Illuminate\Support\Facades\Route;
 
 // Route skeleton for Task 5.1/5.2 (porting design/admin-dashboard.html). Home/Packs/Songs & charts
@@ -12,6 +14,17 @@ use Illuminate\Support\Facades\Route;
 // mockup's own "contoh" status for those pages — no real system (accounts/CSV import/vision) exists
 // for them yet.
 Route::prefix('admin')->name('admin.')->group(function () {
+    // Outside the gate, or there would be no way in. The throttle matters: a TOTP code is six
+    // digits and stays valid for a window, so unlimited guessing would eventually land one.
+    Route::get('/login', [AdminAuthController::class, 'show'])->name('login');
+    Route::post('/login', [AdminAuthController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('login.store');
+});
+
+Route::prefix('admin')->name('admin.')->middleware(EnsureAdmin::class)->group(function () {
+    Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
+
     Route::get('/', AdminHomeController::class)->name('home');
     Route::get('/packs', AdminPackController::class)->name('packs');
     Route::get('/songs', AdminSongController::class)->name('songs');

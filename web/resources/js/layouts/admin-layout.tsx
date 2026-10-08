@@ -11,7 +11,7 @@ import {
     UsersIcon,
 } from '@/components/admin/nav-icons';
 import { cn } from '@/lib/utils';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import type { ComponentType, PropsWithChildren, SVGProps } from 'react';
 
@@ -152,9 +152,18 @@ export default function AdminLayout({
                         </div>
                     ))}
                 </nav>
-                <footer className="mt-auto pt-2.5 text-[11px] text-dim">
-                    ver 1.xx · admin
-                </footer>
+                <div className="mt-auto pt-2.5">
+                    <button
+                        type="button"
+                        onClick={() => router.post('/admin/logout')}
+                        className="w-full rounded-xl px-3 py-2.5 text-left text-[13.5px] font-semibold text-muted hover:bg-card-alt hover:text-text"
+                    >
+                        Sign out
+                    </button>
+                    <footer className="px-3 pt-2.5 text-[11px] text-dim">
+                        ver 1.xx · admin
+                    </footer>
+                </div>
             </aside>
 
             <div className="flex min-w-0 flex-col">

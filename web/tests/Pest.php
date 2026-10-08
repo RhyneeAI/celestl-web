@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureAdmin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -44,7 +45,13 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/**
+ * Put the test through the admin gate (App\Http\Middleware\EnsureAdmin).
+ *
+ * Admin routes need a signed-in session, and a test about pack grouping or chart uploads should
+ * not have to be a test about TOTP as well -- AdminGateTest covers the sign-in itself.
+ */
+function actingAsAdmin(): TestCase
 {
-    // ..
+    return test()->withSession([EnsureAdmin::SESSION_KEY => now()->toIso8601String()]);
 }

@@ -139,6 +139,15 @@ Tanpa password. Register sendiri dengan nickname in-game + player ID 9 digit; lo
 
 ## Fase 5 — Admin
 
+### [x] 5.0 Gate admin (TOTP)
+Semua route `/admin/*` dijaga `EnsureAdmin`; login pakai kode 6 digit dari Google Authenticator (TOTP), bukan
+password dan bukan OAuth — keputusan pemilik. Secret di `ADMIN_TOTP_SECRET` (`.env`), dibuat lewat
+`php artisan celestl:admin-totp`. **Fail shut**: secret kosong = admin terkunci, bukan terbuka.
+**Selesai jika:** halaman & endpoint admin tidak bisa diakses tanpa kode valid. ✅
+`tests/Feature/AdminGateTest.php` (17 test: tiap halaman, endpoint POST, kode salah, tanpa secret, rate
+limit, rotasi session, sign out). Diverifikasi juga end-to-end ke server sungguhan dengan kode asli.
+Catatan: ini **belum** sistem akun — cuma satu flag session, disatukan dengan `users` saat Fase 4.
+
 ### [ ] 5.1 Admin: fondasi (layout, Songs & charts, Packs)
 Layout admin (flag is_admin) mengikuti `design/admin-dashboard.html`: sidebar 8 menu (Home, Packs, Songs &
 charts, Users, Game management, Activity log, CSV import, Testing tools — yang terakhir boleh jadi halaman

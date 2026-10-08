@@ -241,7 +241,7 @@ test('Past and Present sharing an override come first, as one entry', function (
     foreach (['PST', 'PRS'] as $difficulty) {
         Chart::factory()->create([
             'song_id' => $song->id, 'difficulty' => $difficulty,
-            'jacket_path' => "jackets/prism_".strtolower($difficulty).'.jpg',
+            'jacket_path' => 'jackets/prism_'.strtolower($difficulty).'.jpg',
         ]);
     }
     Chart::factory()->create(['song_id' => $song->id, 'difficulty' => 'FTR']);
