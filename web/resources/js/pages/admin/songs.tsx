@@ -115,7 +115,7 @@ export default function AdminSongs({
         <AdminLayout title="Songs & charts">
             <Head title="Admin · Songs & charts" />
 
-            <div className="grid grid-cols-[minmax(0,1.5fr)_minmax(400px,1fr)] items-start gap-4">
+            <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(400px,1fr)]">
                 <Panel>
                     <PanelHead
                         title="Songs & charts"
@@ -151,7 +151,7 @@ export default function AdminSongs({
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="Search title, artist, pack…"
-                            className="min-w-[200px] flex-1 rounded-lg bg-card-alt px-3 py-1.5 text-[12.5px] text-text placeholder:text-dim focus:outline-none"
+                            className="min-w-[160px] flex-1 rounded-lg bg-card-alt px-3 py-1.5 text-[12.5px] text-text placeholder:text-dim focus:outline-none"
                         />
                         {packFilter && (
                             <span className="flex items-center gap-1.5 rounded-[9px] bg-violet px-3 py-1.5 text-[11.5px] font-bold text-prs">
@@ -259,7 +259,7 @@ export default function AdminSongs({
                                 <span className="text-[13.5px] text-muted">
                                     {selected.artist ?? 'Unknown artist'}
                                 </span>
-                                <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5">
+                                <div className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2">
                                     {(
                                         [
                                             ['Pack', selected.pack],
@@ -408,7 +408,7 @@ function AddSongModal({
             onClose={onClose}
             onSave={onClose}
         >
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+            <div className="grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2">
                 <ModalField label="Song name">
                     <input
                         className={modalInputClass}

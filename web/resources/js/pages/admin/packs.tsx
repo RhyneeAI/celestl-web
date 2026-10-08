@@ -75,14 +75,19 @@ export default function AdminPacks({
                     }
                 />
 
-                <div className="flex flex-col gap-7 p-[18px]">
+                <div className="flex flex-col gap-7 p-4 sm:p-[18px]">
                     {sections.map((section) => (
                         <div
                             key={section.label}
-                            className="flex items-start gap-4"
+                            className="flex flex-col items-stretch gap-2.5 sm:flex-row sm:items-start sm:gap-4"
                         >
-                            <div className="flex min-h-[160px] w-[30px] flex-none items-center justify-center self-stretch rounded-lg bg-violet">
-                                <span className="rotate-180 font-brand text-xs font-semibold tracking-[0.1em] whitespace-nowrap text-prs uppercase [writing-mode:vertical-rl]">
+                            {/*
+                             * The vertical ribbon is the mockup's look, but on a phone its 30px
+                             * column plus the gap is enough to drop the row from two cards to one.
+                             * Below sm it becomes an ordinary heading above the row instead.
+                             */}
+                            <div className="flex flex-none items-center justify-center rounded-lg bg-violet px-3 py-1.5 sm:min-h-[160px] sm:w-[30px] sm:self-stretch sm:px-0 sm:py-0">
+                                <span className="font-brand text-xs font-semibold tracking-[0.1em] whitespace-nowrap text-prs uppercase sm:rotate-180 sm:[writing-mode:vertical-rl]">
                                     {section.label}
                                 </span>
                             </div>
@@ -90,7 +95,9 @@ export default function AdminPacks({
                                 {section.packs.map((pack) => (
                                     <div
                                         key={pack.id}
-                                        className="flex w-[168px] flex-col gap-1.5"
+                                        // Narrower on a phone so two fit per row: 63 tall portrait
+                                        // cards in a single column is a very long scroll.
+                                        className="flex w-[calc(50%-7px)] flex-col gap-1.5 sm:w-[168px]"
                                     >
                                         <div className="text-center text-[10.5px] font-semibold text-muted">
                                             {pack.song_count} song
@@ -185,7 +192,7 @@ function AddPackModal({
             onClose={onClose}
             onSave={onClose}
         >
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+            <div className="grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2">
                 <ModalField label="Pack name">
                     <input
                         className={modalInputClass}

@@ -772,11 +772,26 @@ edit yang Save-nya tidak benar-benar menyimpan dianggap lebih menyesatkan (usele
 menampilkannya sama sekali, beda dari modal "Add song"/"Add pack" yang statusnya "prototipe" memang sudah
 jelas dari labelnya sendiri. Edit mode menyusul begitu endpoint update sungguhan dibuat.
 
-**Belum diuji responsif.** Semua halaman admin baru diverifikasi di lebar desktop (headless screenshot
-1400px) — sesuai arahan CLAUDE.md bahwa admin mengikuti frame desktop Figma, bukan mobile, tapi grid layout
-(`AdminLayout`'s `grid-cols-[224px_1fr]`, Songs & charts' `grid-cols-[minmax(0,1.5fr)_minmax(400px,1fr)]`)
-belum punya breakpoint sama sekali — di layar sempit akan rusak, bukan sekadar "kurang rapi". Ini sisa
-pekerjaan sebelum Task 5.1 bisa dicentang selesai (lihat TASKS.md).
+**Responsif: sudah dikerjakan** (permintaan pemilik, 3 kelas ukuran — laptop / tablet / smartphone).
+Breakpoint yang dipakai: `lg` (1024px) memisahkan laptop dari tablet, `sm` (640px) memisahkan tablet dari HP.
+
+- **Sidebar jadi drawer di bawah `lg`.** Di laptop tetap kolom tetap 224px dalam grid; di bawah itu jadi panel
+  `fixed` yang digeser keluar layar (`-translate-x-full`) dengan tombol hamburger di header dan backdrop yang
+  bisa diklik. **Wajib menutup dirinya sendiri saat navigasi** (`useEffect` pada `url`) — kalau tidak, drawer
+  tetap menutupi halaman yang baru saja dibuka.
+- Header: breadcrumb dipendekkan ("Admin ›" hilang di bawah `sm`), kolom pencarian pindah ke baris sendiri di
+  HP (kalau dipaksa sebaris dengan breadcrumb, lebarnya tidak cukup untuk mengetik), nama user disembunyikan
+  di bawah `md` dan hanya avatar yang tersisa.
+- Songs & charts: master-detail `grid-cols-[1.5fr_400px]` jadi satu kolom di bawah `lg`.
+- Home: dua panel atas jadi satu kolom di bawah `xl` (bukan `lg` — di 1024px masih terlalu sempit untuk dua).
+- Packs: pita label vertikal (30px + gap) **diganti judul horizontal di bawah `sm`**. Itu bukan soal estetika:
+  30px itu persis yang membuat baris turun dari 2 kartu jadi 1, dan 63 kartu potret dalam satu kolom adalah
+  scroll yang sangat panjang. Kartunya sendiri jadi `w-[calc(50%-7px)]` di HP, bukan lebar tetap.
+- Grid key/value 2 kolom (panel detail & modal) jadi 1 kolom di bawah `sm`.
+- Tabel lebar (Users, CSV import, tabel difficulty di Songs & charts) sudah dibungkus `overflow-x-auto`
+  sebelumnya, jadi tidak perlu diubah.
+
+Diverifikasi lewat screenshot di 360 / 390 / 820 / 1440 px, termasuk kondisi drawer terbuka.
 
 **Jacket/pack art di halaman asli: SUDAH jalan** (lihat § Gambar di aplikasi sungguhan di bawah). Catatan
 lama di sini yang bilang "belum ada mekanisme untuk mengisi folder itu" sudah tidak berlaku sejak Task 1.3b —

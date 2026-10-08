@@ -12,6 +12,7 @@ import {
 } from '@/components/admin/nav-icons';
 import { cn } from '@/lib/utils';
 import { Link, usePage } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 import type { ComponentType, PropsWithChildren, SVGProps } from 'react';
 
 type NavItem = {
@@ -82,10 +83,31 @@ export default function AdminLayout({
     children,
 }: PropsWithChildren<{ title: string }>) {
     const { url } = usePage();
+    const [navOpen, setNavOpen] = useState(false);
+
+    // Laptop keeps the sidebar permanently in the grid; below that it becomes a drawer, so it has
+    // to close itself after a navigation or it would cover the page it just opened.
+    useEffect(() => setNavOpen(false), [url]);
 
     return (
-        <div className="grid min-h-screen grid-cols-[224px_1fr] bg-bg text-text">
-            <aside className="sticky top-0 flex h-screen flex-col gap-0.5 overflow-y-auto bg-card px-3.5 py-5">
+        <div className="min-h-screen bg-bg text-text lg:grid lg:grid-cols-[224px_1fr]">
+            {/* Tapping the page behind an open drawer closes it, as a drawer is expected to. */}
+            {navOpen && (
+                <button
+                    type="button"
+                    aria-label="Close menu"
+                    onClick={() => setNavOpen(false)}
+                    className="fixed inset-0 z-20 bg-bg/70 lg:hidden"
+                />
+            )}
+
+            <aside
+                className={cn(
+                    'fixed inset-y-0 left-0 z-30 flex w-[244px] flex-col gap-0.5 overflow-y-auto bg-card px-3.5 py-5 transition-transform',
+                    'lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:w-auto lg:translate-x-0 lg:transition-none',
+                    navOpen ? 'translate-x-0' : '-translate-x-full',
+                )}
+            >
                 <div className="flex items-center gap-2.5 px-2 pt-1 pb-5">
                     <div className="size-7 flex-none rotate-45 rounded-[9px] bg-lav" />
                     <b className="font-brand text-[17px] font-semibold tracking-wide">
@@ -136,13 +158,40 @@ export default function AdminLayout({
             </aside>
 
             <div className="flex min-w-0 flex-col">
-                <header className="sticky top-0 z-[5] flex flex-wrap items-center gap-3.5 bg-bg px-6 py-3.5">
-                    <div className="flex items-center gap-1.5 text-[13px] text-muted">
-                        <span>Admin</span>
-                        <span className="text-dim">›</span>
-                        <b className="font-semibold text-text">{title}</b>
+                <header className="sticky top-0 z-[5] flex flex-wrap items-center gap-x-3.5 gap-y-2.5 bg-bg px-4 py-3.5 sm:px-6">
+                    <button
+                        type="button"
+                        onClick={() => setNavOpen(true)}
+                        aria-label="Open menu"
+                        aria-expanded={navOpen}
+                        className="-ml-1 rounded-lg p-1.5 text-muted hover:bg-card hover:text-text lg:hidden"
+                    >
+                        <svg
+                            width={20}
+                            height={20}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                        >
+                            <path d="M4 7h16M4 12h16M4 17h16" />
+                        </svg>
+                    </button>
+
+                    <div className="flex min-w-0 items-center gap-1.5 text-[13px] text-muted">
+                        <span className="hidden sm:inline">Admin</span>
+                        <span className="hidden text-dim sm:inline">›</span>
+                        <b className="truncate font-semibold text-text">
+                            {title}
+                        </b>
                     </div>
-                    <div className="relative ml-auto max-w-[360px] min-w-[160px] flex-1">
+
+                    {/*
+                     * On a phone the search field takes the whole second row rather than being
+                     * squeezed next to the breadcrumb, where it would be too narrow to type in.
+                     */}
+                    <div className="relative order-last w-full sm:order-none sm:ml-auto sm:w-auto sm:max-w-[360px] sm:min-w-[160px] sm:flex-1">
                         <SearchIcon className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-dim" />
                         <label htmlFor="q" className="absolute left-[-9999px]">
                             Search songs
@@ -155,11 +204,13 @@ export default function AdminLayout({
                             className="w-full rounded-xl bg-card py-2.5 pr-3.5 pl-9 text-[13.5px] text-text placeholder:text-dim focus:outline-none"
                         />
                     </div>
-                    <div className="flex items-center gap-2.5">
+
+                    <div className="ml-auto flex items-center gap-2.5 sm:ml-0">
                         <div className="grid size-[30px] flex-none place-items-center rounded-full bg-badge text-xs font-bold">
                             A
                         </div>
-                        <div className="leading-[1.25]">
+                        {/* The player id is the useful half; the nickname goes first when space allows. */}
+                        <div className="hidden leading-[1.25] md:block">
                             <div className="text-[12.5px] font-bold">
                                 AnisphiaaaUwU
                             </div>
@@ -170,7 +221,7 @@ export default function AdminLayout({
                     </div>
                 </header>
 
-                <main className="flex flex-col gap-[18px] px-6 pt-4 pb-9">
+                <main className="flex flex-col gap-[18px] px-4 pt-4 pb-9 sm:px-6">
                     {children}
                 </main>
             </div>

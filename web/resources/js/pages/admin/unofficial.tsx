@@ -283,7 +283,7 @@ function AddSongModal({ onClose }: { onClose: () => void }) {
             onSave={submit}
             saveLabel={processing ? 'Saving…' : 'Save'}
         >
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+            <div className="grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2">
                 <ModalField label="Song ID (slug)">
                     <input
                         className={modalInputClass}

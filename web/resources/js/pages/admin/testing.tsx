@@ -36,7 +36,7 @@ export default function AdminTesting() {
                 OCR dan hash jacket belum jalan sungguhan.
             </Notice>
 
-            <div className="grid grid-cols-[minmax(0,1fr)_300px] items-start gap-4">
+            <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
                 <Panel>
                     <PanelHead
                         title="Best 50 OCR tester"

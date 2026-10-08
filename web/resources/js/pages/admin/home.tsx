@@ -60,7 +60,7 @@ export default function AdminHome({ stats, recent }: Props) {
                 bawah masih contoh — menunggu Fase 4/5.
             </Notice>
 
-            <section className="grid grid-cols-[1.1fr_1fr] items-stretch gap-4">
+            <section className="grid grid-cols-1 items-stretch gap-4 xl:grid-cols-[1.1fr_1fr]">
                 <div className="flex flex-col gap-[18px] rounded-[20px] bg-card px-6 py-[26px]">
                     <div>
                         <span className="text-[11px] font-bold tracking-[0.14em] text-muted uppercase">

@@ -42,7 +42,7 @@ export default function AdminUsers() {
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="Search nickname or Player ID…"
-                            className="w-[220px] rounded-[10px] bg-card-alt px-3 py-1.5 text-[12.5px] text-text placeholder:text-dim focus:outline-none"
+                            className="w-full max-w-[220px] rounded-[10px] bg-card-alt px-3 py-1.5 text-[12.5px] text-text placeholder:text-dim focus:outline-none"
                         />
                     }
                 />
