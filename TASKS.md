@@ -74,9 +74,10 @@ Diverifikasi visual di 390 / 820 / 1440 px — termasuk lagu 6-difficulty (DREAD
 menyembunyikan kolom designer), dan kolom **Jacket design** ikut ditampilkan — terbukti 17 lagu punya jacket
 designer berbeda di slot Beyond. Halaman detail juga punya **tombol switch jacket** (urut ratingClass naik,
 hanya muncul kalau lagunya memang punya lebih dari satu gambar) untuk 57 chart `jacketOverride` — lihat
-CLAUDE.md § `jacketOverride`. **Kode & test-nya lengkap, tapi 57 file gambarnya belum ada**: percobaan
-mengunduhnya diblokir sandbox, jadi perlu dijalankan pemilik sendiri lalu
-`php artisan celestl:import-arcaea-images` diulang.
+CLAUDE.md § `jacketOverride`. Pemilik sudah menjalankan unduhannya sendiri (unduhan dari Claude
+diblokir sandbox): **54 dari 57 file ada, 47 dari 50 lagu sudah punya switch**. Sisa 3
+(`heavensdoor_byd`, `libertas_byd`, `vexaria_byd`) gagal unduh — ulangi
+`python3 -I data/fetch-jacket-overrides.py` lalu import lagi.
 
 **Catatan terbuka:** warna INS (`#0000CD`) di tabel detail lagu praktis tidak terbaca di atas sel `--violet`,
 persis seperti yang sudah dihitung di CLAUDE.md § Kontras warna difficulty (kontras 1.72). Sekarang

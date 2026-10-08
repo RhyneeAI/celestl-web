@@ -56,9 +56,9 @@ class ImportArcaeaImages extends Command
         $packs = $this->importPackArt($source, $disk->path(''));
 
         $this->newLine();
-        $this->info("Jackets: {$songs['copied']} copied, {$songs['skipped']} already present, {$songs['missing']} without a source file.");
-        $this->info("Per-difficulty jackets: {$overrides['copied']} copied, {$overrides['skipped']} already present, {$overrides['missing']} without a source file.");
-        $this->info("Pack art: {$packs['copied']} copied, {$packs['skipped']} already present, {$packs['missing']} without a source file.");
+        $this->summarize('Jackets', $songs);
+        $this->summarize('Per-difficulty jackets', $overrides);
+        $this->summarize('Pack art', $packs);
 
         if (! File::exists(public_path('storage'))) {
             $this->newLine();
@@ -69,11 +69,11 @@ class ImportArcaeaImages extends Command
     }
 
     /**
-     * @return array{copied: int, skipped: int, missing: int}
+     * @return array{copied: int, skipped: int, missing: int, invalid: int}
      */
     private function importJackets(string $source, string $publicRoot): array
     {
-        $stats = ['copied' => 0, 'skipped' => 0, 'missing' => 0];
+        $stats = ['copied' => 0, 'skipped' => 0, 'missing' => 0, 'invalid' => 0];
         $songs = Song::query()->get(['id', 'slug', 'jacket_path', 'jacket_thumb_path']);
         $bar = $this->output->createProgressBar($songs->count());
         $bar->setFormat(' Jackets  %current%/%max% [%bar%] %message%');
@@ -96,12 +96,15 @@ class ImportArcaeaImages extends Command
             $path = "jackets/{$song->slug}.jpg";
             $thumb = "jackets/thumbs/{$song->slug}.jpg";
 
-            $written = $this->publish($file, $publicRoot.$path, $publicRoot.$thumb, 'jpeg');
-            $stats[$written ? 'copied' : 'skipped']++;
+            $result = $this->publish($file, $publicRoot.$path, $publicRoot.$thumb, 'jpeg');
+            $stats[$result]++;
 
-            // Always refresh the columns: the file can already be there from an earlier run while
-            // the database was rebuilt from scratch.
-            $song->update(['jacket_path' => $path, 'jacket_thumb_path' => $thumb]);
+            if ($result !== 'invalid') {
+                // Always refresh the columns: the file can already be there from an earlier run
+                // while the database was rebuilt from scratch.
+                $song->update(['jacket_path' => $path, 'jacket_thumb_path' => $thumb]);
+            }
+
             $bar->advance();
         }
 
@@ -124,11 +127,11 @@ class ImportArcaeaImages extends Command
      * separate wiki files that may hold the same picture; comparing bytes keeps those as a single
      * artwork, so the detail page offers a switch only when there is really something to switch to.
      *
-     * @return array{copied: int, skipped: int, missing: int}
+     * @return array{copied: int, skipped: int, missing: int, invalid: int}
      */
     private function importChartJackets(string $source, string $publicRoot): array
     {
-        $stats = ['copied' => 0, 'skipped' => 0, 'missing' => 0];
+        $stats = ['copied' => 0, 'skipped' => 0, 'missing' => 0, 'invalid' => 0];
 
         $songs = Song::query()
             ->with('charts:id,song_id,difficulty,jacket_path,jacket_thumb_path')
@@ -175,8 +178,14 @@ class ImportArcaeaImages extends Command
                 $path = "jackets/{$song->slug}_{$difficulty}.jpg";
                 $thumb = "jackets/thumbs/{$song->slug}_{$difficulty}.jpg";
 
-                $written = $this->publish($file, $publicRoot.$path, $publicRoot.$thumb, 'jpeg');
-                $stats[$written ? 'copied' : 'skipped']++;
+                $result = $this->publish($file, $publicRoot.$path, $publicRoot.$thumb, 'jpeg');
+                $stats[$result]++;
+
+                if ($result === 'invalid') {
+                    // Leave the chart pointing at nothing, so it falls back to the song's jacket
+                    // instead of linking a file that was never written.
+                    continue;
+                }
 
                 $byHash[$hash] = ['path' => $path, 'thumb' => $thumb];
                 $chart->update(['jacket_path' => $path, 'jacket_thumb_path' => $thumb]);
@@ -187,11 +196,11 @@ class ImportArcaeaImages extends Command
     }
 
     /**
-     * @return array{copied: int, skipped: int, missing: int}
+     * @return array{copied: int, skipped: int, missing: int, invalid: int}
      */
     private function importPackArt(string $source, string $publicRoot): array
     {
-        $stats = ['copied' => 0, 'skipped' => 0, 'missing' => 0];
+        $stats = ['copied' => 0, 'skipped' => 0, 'missing' => 0, 'invalid' => 0];
         $packs = Pack::query()->with('parent:id,slug')->get();
 
         foreach ($packs as $pack) {
@@ -215,8 +224,12 @@ class ImportArcaeaImages extends Command
 
             // PNG, not JPEG: pack art is transparent, and the card's aspect ratio comes from the
             // non-transparent bounding box (CLAUDE.md § tinggi kartu Pack).
-            $written = $this->publish($file, $publicRoot.$path, $publicRoot.$thumb, 'png');
-            $stats[$written ? 'copied' : 'skipped']++;
+            $result = $this->publish($file, $publicRoot.$path, $publicRoot.$thumb, 'png');
+            $stats[$result]++;
+
+            if ($result === 'invalid') {
+                continue;
+            }
 
             [$trimWidth, $trimHeight] = $this->contentSize($file);
 
@@ -304,10 +317,47 @@ class ImportArcaeaImages extends Command
     }
 
     /**
-     * Copy one source image and build its thumbnail. Returns false when both already existed.
+     * @param  array{copied: int, skipped: int, missing: int, invalid: int}  $stats
      */
-    private function publish(string $source, string $target, string $thumb, string $format): bool
+    private function summarize(string $label, array $stats): void
     {
+        $this->info("{$label}: {$stats['copied']} copied, {$stats['skipped']} already present, {$stats['missing']} without a source file.");
+
+        if ($stats['invalid'] > 0) {
+            // Loud, because a broken source file is a download that needs redoing, not a song that
+            // simply has no art on this install.
+            $this->error("{$label}: {$stats['invalid']} source file(s) could not be read and were skipped. Re-download them, then run this again.");
+        }
+    }
+
+    /**
+     * Is this a file GD can actually decode?
+     *
+     * A truncated or empty download looks like a perfectly good .jpg to the filesystem, and
+     * passing one to imagecreatefromjpeg() raises a warning that Laravel turns into an exception,
+     * killing the whole import over one bad file. Checking first turns that into a skip.
+     */
+    private function isUsableImage(string $file): bool
+    {
+        return filesize($file) > 0 && @getimagesize($file) !== false;
+    }
+
+    /**
+     * Copy one source image and build its thumbnail.
+     *
+     * Returns 'copied', 'skipped' when both outputs already existed, or 'invalid' when the source
+     * cannot be decoded -- in which case nothing is written, so a broken download never reaches
+     * the public disk or the database.
+     */
+    private function publish(string $source, string $target, string $thumb, string $format): string
+    {
+        if (! $this->isUsableImage($source)) {
+            $this->newLine();
+            $this->warn("  unreadable source, skipped: {$source}");
+
+            return 'invalid';
+        }
+
         $force = (bool) $this->option('force');
         $written = false;
 
@@ -321,15 +371,17 @@ class ImportArcaeaImages extends Command
             $written = true;
         }
 
-        return $written;
+        return $written ? 'copied' : 'skipped';
     }
 
     private function thumbnail(string $source, string $target, string $format): void
     {
-        $image = $format === 'png' ? imagecreatefrompng($source) : imagecreatefromjpeg($source);
+        // Callers check isUsableImage() first, so a failure here means GD knows the format but
+        // cannot decode this particular file; fall back to shipping it unresized rather than dying.
+        $image = $format === 'png' ? @imagecreatefrompng($source) : @imagecreatefromjpeg($source);
 
         if ($image === false) {
-            $this->warn("  unreadable image, copied as-is: {$source}");
+            $this->warn("  could not resize, copied at full size: {$source}");
             File::copy($source, $target);
 
             return;

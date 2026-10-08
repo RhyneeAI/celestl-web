@@ -177,6 +177,39 @@ test('two difficulties sharing one override picture share one published file', f
     Storage::disk('public')->assertMissing('jackets/prism_prs.jpg');
 });
 
+test('a truncated or empty source file is skipped, not fatal', function () {
+    // A failed download leaves a 0-byte .jpg behind. Handing one to GD raises a warning that
+    // Laravel turns into an exception, which used to abort the whole import on the first bad file.
+    $good = Song::factory()->create(['slug' => 'good']);
+    $broken = Song::factory()->create(['slug' => 'broken']);
+
+    makeJpeg("{$this->source}/jackets/good.jpg");
+    touch("{$this->source}/jackets/broken.jpg");
+
+    $this->artisan('celestl:import-arcaea-images')->assertSuccessful();
+
+    // The good one still went through, and the broken one was left alone entirely.
+    expect($good->fresh()->jacket_path)->toBe('jackets/good.jpg')
+        ->and($broken->fresh()->jacket_path)->toBeNull();
+
+    Storage::disk('public')->assertMissing('jackets/broken.jpg');
+});
+
+test('a chart whose override file is broken falls back to the song jacket', function () {
+    $song = Song::factory()->create(['slug' => 'partial']);
+    $chart = Chart::factory()->create(['song_id' => $song->id, 'difficulty' => 'BYD']);
+
+    makeJpeg("{$this->source}/jackets/partial.jpg");
+    touch("{$this->source}/jackets/partial_byd.jpg");
+
+    $this->artisan('celestl:import-arcaea-images')->assertSuccessful();
+
+    expect($song->fresh()->jacket_path)->toBe('jackets/partial.jpg')
+        ->and($chart->fresh()->jacket_path)->toBeNull();
+
+    Storage::disk('public')->assertMissing('jackets/partial_byd.jpg');
+});
+
 test('it fails clearly when the data folder is missing', function () {
     config(['celestl.arcaea_data_path' => base_path('tests/fixtures/does-not-exist')]);
 

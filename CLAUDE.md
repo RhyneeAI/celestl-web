@@ -900,11 +900,32 @@ jacket-nya lebih dari satu, dan menggabungkan difficulty berurutan yang jacket-n
   dari satu gambar — permintaan pemilik. Chart yang file override-nya tidak ada otomatis jatuh ke jacket lagu
   dan ikut tergabung, jadi switch tidak pernah muncul untuk gambar yang sama.
 
-**Yang BELUM ada: file gambarnya.** Percobaan mengunduh 57 file override itu **diblokir sandbox Claude Code**
-(bukan error jaringan, bukan masalah wiki). Jadi sampai pemilik menjalankan unduhannya sendiri,
-`charts.jacket_path` semuanya null dan tiap lagu tampil dengan satu jacket seperti sebelumnya — tidak ada yang
-rusak, cuma fiturnya belum kelihatan. Begitu file `<id>_<diff>.jpg` ada di `data/jackets/`, cukup jalankan
-ulang `php artisan celestl:import-arcaea-images` dan switch-nya muncul sendiri.
+**Status file gambar (dijalankan pemilik sendiri — unduhan dari Claude diblokir sandbox):** 54 dari 57 file
+sudah ada dan terpakai, jadi **47 dari 50 lagu** sudah menampilkan switch. Sisa 3 (`heavensdoor_byd`,
+`libertas_byd`, `vexaria_byd`) unduhannya gagal; jalankan ulang `python3 -I data/fetch-jacket-overrides.py`
+lalu import lagi. Skrip unduhnya ada di `data/fetch-jacket-overrides.py` (gitignored).
+
+**Hasil nyata yang mengoreksi dugaan:** dedupe-isi-file ternyata jarang kena — dari 7 lagu pola `[0, 1]`,
+cuma **`protoflicker`** yang PST/PRS-nya identik. Prism dan To the Furthest Dream justru punya **3 jacket
+berbeda** (PST, PRS, dan FTR masing-masing sendiri). Jadi dugaan awal "PST+PRS pasti gambar yang sama" salah,
+dan dedupe-nya tetap perlu untuk kasus protoflicker.
+
+### Bug nyata: satu file 0-byte menghentikan seluruh import
+
+Unduhan pemilik menghasilkan 3 file `.jpg` berukuran 0 byte (gagal diam-diam). Akibatnya:
+
+- `imagecreatefromjpeg()` pada file kosong memunculkan **warning PHP**, dan Laravel mengubah warning jadi
+  `ErrorException` — jadi penjagaan `if ($image === false)` yang sudah ada **tidak pernah terpanggil**, dan
+  seluruh command mati di file pertama yang rusak. **Pelajaran umum: di Laravel, memeriksa nilai balik fungsi
+  GD/`file_*` tidak cukup; warning-nya sudah jadi exception sebelum nilai balik sempat diperiksa.** Sekarang
+  divalidasi lebih dulu lewat `isUsableImage()` (`filesize() > 0` + `@getimagesize()`), bukan ditangkap setelah
+  kejadian.
+- `publish()` menyalin file ke public disk **sebelum** membuat thumbnail, jadi file 0-byte itu sempat terbit
+  ke `storage/app/public/` walau command-nya crash. Sekarang sumber yang tidak terbaca dilewati total: tidak
+  disalin, tidak masuk database, dan dilaporkan sebagai error terpisah (`invalid`) di ringkasan.
+- Skrip unduhnya juga diperbaiki: tulis ke `.part` dulu, verifikasi magic bytes JPEG (`FF D8 FF`), baru
+  `os.replace` ke nama akhir; retry 3×; dan file 0-byte diperlakukan sebagai "belum ada" supaya tidak
+  terlewat saat dijalankan ulang.
 
 ### Tabel difficulty di detail lagu: scroll horizontal, bukan sembunyikan kolom
 
