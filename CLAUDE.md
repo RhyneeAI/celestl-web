@@ -1037,3 +1037,53 @@ posisi yang benar plus quiet zone-nya bersih — bukan cuma "kelihatan seperti Q
 **Catatan keamanan untuk sesi mendatang:** jangan pernah menjalankan `celestl:admin-totp` lalu memakai secret
 hasilnya sebagai secret sungguhan — begitu tercetak di transcript, secret itu sudah bocor. Secret yang tercetak
 saat uji coba di sesi ini **tidak dipakai**; pemilik enrol sendiri.
+
+
+## Kalkulator (Task 2.2)
+
+Halaman publik `/calculator`: pilih lagu → difficulty → skor → lamp, play rating muncul seketika.
+
+### Riwayat disimpan di browser, bukan di server
+
+Keputusan pemilik, dan ini yang akhirnya menyelesaikan ketegangan dengan "mode guest" di § Akun: selama belum
+ada sistem akun (Fase 4), **riwayat perhitungan disimpan di `localStorage`** (`celestl.calculator.history.v1`,
+lihat `resources/js/lib/calculator-history.ts`), tidak pernah dikirim ke server.
+
+- Tabel `plays` **sudah dibuat** (`user_id` nullable — pemilik memilih ini dari 3 opsi — `chart_id`, `score`,
+  `lamp`, `source`, `played_at`) tapi **belum ada yang menulis ke situ**. Nullable supaya baris yang nanti
+  dicatat sebelum akun ada bisa diadopsi lewat `UPDATE`, bukan migration.
+- **`user_id` sengaja tanpa foreign key** ke `users`: tabel itu masih bawaan starter kit dan Fase 4 akan
+  merombaknya (§ multi-game identity). Memasang constraint sekarang = membekukan keputusan yang belum diambil.
+- **Play rating sengaja TIDAK disimpan** di `plays`. Itu fungsi murni dari constant+skor+lamp, dan constant
+  bisa direvisi wiki; rating tersimpan akan diam-diam basi terhadap engine. Hitung ulang saja, murah.
+- Setiap baca/tulis `localStorage` dibungkus try/catch — di private window aksesnya bisa melempar, dan nilai
+  yang rusak/diedit tangan tidak boleh menjatuhkan halaman.
+
+### ADA DUA IMPLEMENTASI RUMUS RATING — keduanya wajib diubah bersamaan
+
+Rating dihitung ulang tiap ketikan, jadi round-trip per karakter tidak mungkin → rumusnya **di-port ke
+TypeScript** (`resources/js/lib/arcaea-rating.ts`) di samping `App\Services\ArcaeaRating` yang sudah ada.
+
+Ini duplikasi yang disengaja, dan pengamannya adalah **tabel nilai uji yang sama persis** dipakai di dua
+tempat: `tests/Unit/ArcaeaRatingTest.php` (Pest) dan `resources/js/lib/arcaea-rating.test.ts` (Vitest, 33
+test). Kalau dua file itu tidak sepakat, salah satunya salah. **Jangan mengubah satu sisi saja.**
+
+Vitest ditambahkan ke proyek untuk ini (`npm test` → `vitest run`). Sebelumnya tidak ada test runner JS.
+
+### Detail lain
+
+- **Chart tanpa constant dikirim sebagai `null`, bukan ditebak.** Ada 3 chart yang wiki belum menilai; angka
+  karangan akan menghasilkan rating yang terlihat yakin tapi salah. UI menampilkan peringatan dan menonaktifkan
+  tombol simpan untuk kasus itu.
+- Potential ditampilkan **3 desimal**, mengikuti cara game mencetaknya di kartu Top 50.
+- Skor ditampilkan gaya Arcaea (`09’900’167`, petik lengkung U+2019) lewat `formatScore()`.
+- **Diverifikasi end-to-end dengan data asli:** Extradimensional Cosmic Phenomenon ETR (constant 11.3 hasil
+  import) + skor 9.900.167 + Normal Clear → halaman menampilkan **13.001**, sama persis dengan yang tercetak
+  di game. Ini sekaligus membuktikan rantai import constant → engine → UI benar, bukan cuma unit test yang
+  cocok dengan dirinya sendiri.
+- **Section "Drop Image" sengaja mati total** (`aria-disabled`, tanpa handler). Sesuai desain Figma (58:24,
+  kotak garis putus-putus), tapi logika CV baru ada di Fase 3 — dan keterangannya bilang begitu. Kontrol yang
+  kelihatan hidup tapi tidak melakukan apa-apa lebih buruk daripada kontrol yang jujur bilang belum siap.
+- Komponen hasil meniru "Result Detail" Figma (104:18): kolom label `--lav`, kolom data `--violet`. Desain
+  aslinya menampilkan **rentang** (`09’995’547 → 09’998’593`) — itu Task 2.4 (simulasi skor target); bentuk
+  komponennya sudah siap menampung dua nilai.

@@ -99,9 +99,16 @@ contoh asli dari game, tiap lamp, batas 9.8M/9.9M/10M dan di atasnya, clamp nol,
 Test ditulis dulu dan dipastikan gagal sebelum implementasi. Angkanya juga diverifikasi silang dengan
 hitungan ulang presisi tinggi di luar PHP, bukan cuma "kode cocok dengan dirinya sendiri".
 
-### [ ] 2.2 Kalkulator + log perhitungan
-Form kalkulator (cari lagu, difficulty, skor, lamp) dengan play rating real-time. Sediakan juga **section "Drop Image"** sesuai desain Figma, tapi non-aktif/placeholder dulu — logika CV baru ada di Fase 3. Tiap perhitungan disimpan sebagai log di tabel `plays` (chart_id, score, lamp enum, played_at, source enum manual/scan) dan bisa dilihat di halaman riwayat. Sebelum ada akun (Fase 4), log boleh tanpa `user_id` atau diasosiasikan ke satu identitas default — putuskan dengan pemilik saat task ini mulai.
-**Selesai jika:** rating tampil real-time, log tersimpan.
+### [x] 2.2 Kalkulator + log perhitungan
+Halaman publik `/calculator`: cari lagu, pilih difficulty, isi skor, pilih lamp → play rating seketika.
+Section **"Drop Image"** ada sesuai desain Figma tapi **mati total** (Fase 3). **Keputusan pemilik soal log:**
+`plays.user_id` nullable, TAPI untuk sementara (belum ada akun) riwayat disimpan di **localStorage browser**,
+tidak dikirim ke server — sekaligus memenuhi "mode guest" di CLAUDE.md § Akun. Tabel `plays` sudah dibuat dan
+siap, belum ada yang menulis ke situ sampai Fase 4.
+**Selesai jika:** rating tampil real-time, log tersimpan. ✅ `tests/Feature/CalculatorTest.php` (5 test) +
+`resources/js/lib/arcaea-rating.test.ts` (33 test Vitest — rumusnya di-port ke TS supaya tidak perlu
+round-trip per ketikan; lihat CLAUDE.md § Kalkulator soal dua implementasi). Diverifikasi end-to-end dengan
+data asli: Extradimensional ETR + 9.900.167 + clear → **13.001**, sama dengan angka di game.
 
 ### [ ] 2.3 Top 50 (dari log)
 Halaman Top 50: skor terbaik per chart, urut play rating, 50 teratas. **Tanpa PTT total** sampai rumusnya terverifikasi.

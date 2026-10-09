@@ -21,6 +21,11 @@ export default function AppLayout({
     const nav = [
         { href: '/', label: t('nav.songs'), match: (u: string) => u === '/' || u.startsWith('/songs') },
         { href: '/packs', label: t('nav.packs'), match: (u: string) => u.startsWith('/packs') },
+        {
+            href: '/calculator',
+            label: t('nav.calculator'),
+            match: (u: string) => u.startsWith('/calculator'),
+        },
     ];
 
     return (
