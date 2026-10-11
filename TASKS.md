@@ -166,7 +166,7 @@ pertama, penolakan enrol ulang, dan baris admin kedua ditolak DB. Diverifikasi j
 sungguhan dengan kode asli.
 Catatan: ini **belum** sistem akun pemain — `users`/`game_identities` menyusul di Fase 4.
 
-### [ ] 5.1 Admin: fondasi (layout, Songs & charts, Packs)
+### [x] 5.1 Admin: fondasi (layout, Songs & charts, Packs)
 Layout admin (flag is_admin) mengikuti `design/admin-dashboard.html`: sidebar 8 menu (Home, Packs, Songs &
 charts, Users, Game management, Activity log, CSV import, Testing tools — yang terakhir boleh jadi halaman
 kosong "coming soon" dulu kalau vision/ belum ada). Songs & charts: tabel level-lagu (No/Song/Composer/Jacket
@@ -198,13 +198,19 @@ soon": CSV import menjelaskan dengan jujur bahwa jalur CSV tidak pernah dibangun
 langsung) dan menampilkan hasil nyata `celestl:import-arcaea-content` terakhir; Testing tools tetap murni
 pratinjau non-fungsional (sesuai rencana — `vision/` baru Fase 3) dengan label "Belum fungsional" yang jelas.
 
-Belum ada flag `is_admin`/middleware proteksi (belum ada sistem akun — Fase 4 — jadi `/admin` masih bisa
-diakses siapa saja untuk sekarang, **sengaja**, bukan lupa). **Belum diuji responsif** (mobile/tablet) — semua
-halaman admin baru dicek di lebar desktop (1400px); layout grid (`grid-cols-[224px_1fr]` sidebar,
-`grid-cols-[minmax(0,1.5fr)_minmax(400px,1fr)]` master-detail Songs & charts) belum punya breakpoint sama
-sekali. Ini satu-satunya sisa sebelum kriteria "selesai" task ini terpenuhi.
+**Proteksi: selesai, tapi BUKAN lewat flag `is_admin`.** Rencana awal di atas mengasumsikan admin adalah
+salah satu user biasa dengan flag. Yang dibangun berbeda dan lebih sesuai permintaan pemilik: Task 5.0, gate
+TOTP dengan tabel `admin_accounts` sendiri, **sengaja terpisah dari `users`** supaya baris pemain tidak pernah
+cuma berjarak satu flag dari jadi admin. Lihat CLAUDE.md § Gate admin.
+
+**Responsif: selesai.** Sidebar jadi drawer di bawah `lg`, master-detail Songs & charts jadi satu kolom,
+pita label Packs jadi judul horizontal di bawah `sm`. Diverifikasi di 360/390/820/1440px termasuk drawer
+terbuka — lihat CLAUDE.md § Port admin mockup → Responsif.
 **Selesai jika:** Songs & charts dan Packs bisa dicari/difilter (✅), detail per-difficulty tampil benar (✅),
-responsif (❌ belum).
+responsif (✅).
+
+**Sisa yang sengaja ditinggalkan** (bukan penghalang "selesai"): mode edit belum diporting karena belum ada
+endpoint update; modal "+ Add song"/"+ Add pack" masih prototipe yang Save-nya menutup modal saja.
 
 ### [ ] 5.2 Admin: Users, Activity log, Game management
 Users: tabel user + identitas game (siapkan kolom untuk banyak identitas per user kalau § Rencana jauh:
