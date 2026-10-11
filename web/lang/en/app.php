@@ -78,6 +78,26 @@ return [
         ],
     ],
 
+    'account' => [
+        'sign_in' => 'Sign in',
+        'sign_out' => 'Sign out',
+        'register' => 'Create account',
+        'guest' => 'Continue as guest',
+        'identity' => 'Player ID or nickname',
+        'identity_placeholder' => '000 000 000',
+        'player_id' => 'Player ID',
+        'nickname' => 'Nickname',
+        'nickname_placeholder' => 'AnisphiaaaUwU',
+        'player_id_hint' => '9 digits, from your Arcaea account page.',
+        'nickname_hint' => 'Shown on your profile. You can change it later, just like in game.',
+        'no_account' => 'No account yet?',
+        'have_account' => 'Already have an account?',
+        'heads_up' => 'Heads up',
+        'no_password_warning' => 'Celestl has no passwords. Your Player ID and nickname both appear on any Best 50 image you share, so anyone who has seen one can open your history.',
+        'profile' => 'Profile',
+        'member_since' => 'Member since',
+    ],
+
     'packs' => [
         'title' => 'Packs',
         'count' => ':count packs',

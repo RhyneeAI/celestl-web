@@ -38,13 +38,16 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            // Only what the chrome needs to choose between "Sign in" and the profile link.
+            // Not the User model: that would put the account id, and anything later added to the
+            // table, into the HTML of every single response.
+            'auth' => fn () => ($identity = $request->user()?->identityFor('arcaea')) === null
+                ? null
+                : ['nickname' => $identity->display_name],
             // UI strings live in lang/<locale>/app.php, never hardcoded in the React pages
             // (CLAUDE.md § Stack). The file is small enough to ship whole on every response.
             'locale' => app()->getLocale(),
             'translations' => trans('app'),
-            'auth' => [
-                'user' => $request->user(),
-            ],
         ];
     }
 }

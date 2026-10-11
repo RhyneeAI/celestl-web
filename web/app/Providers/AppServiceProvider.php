@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -23,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Laravel's `guest` middleware sends signed-in visitors to "/" by default. Their profile
+        // is the more useful answer to clicking Sign in while already signed in.
+        RedirectIfAuthenticated::redirectUsing(fn () => route('profile'));
+
         $this->configureDefaults();
     }
 

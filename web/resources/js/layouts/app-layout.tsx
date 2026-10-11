@@ -16,7 +16,8 @@ export default function AppLayout({
     back,
 }: PropsWithChildren<{ back?: { href: string; label?: string } }>) {
     const t = useTranslations();
-    const { url } = usePage();
+    const { url, props } = usePage();
+    const auth = props.auth as unknown as { nickname: string } | null;
 
     const nav = [
         { href: '/', label: t('nav.songs'), match: (u: string) => u === '/' || u.startsWith('/songs') },
@@ -50,6 +51,18 @@ export default function AppLayout({
                                 {item.label}
                             </Link>
                         ))}
+
+                        <Link
+                            href={auth ? '/profile' : '/login'}
+                            className={cn(
+                                'ml-1 max-w-[120px] truncate rounded-xl px-3 py-1.5 text-[13.5px] font-semibold',
+                                url.startsWith('/profile') || url.startsWith('/login')
+                                    ? 'bg-violet text-text'
+                                    : 'text-muted hover:bg-card-alt hover:text-text',
+                            )}
+                        >
+                            {auth ? auth.nickname : t('account.sign_in')}
+                        </Link>
                     </nav>
                 </div>
             </header>
