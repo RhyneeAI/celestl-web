@@ -2,42 +2,59 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 
 /**
+ * A Celestl account, and nothing more.
+ *
+ * No name, no email, no password: sign-in is by in-game identity (CLAUDE.md § Akun), and who this
+ * account is inside a game lives on GameIdentity. Still Authenticatable so Laravel's session guard
+ * works -- the password half of that contract is simply never used, because nothing ever calls
+ * Auth::attempt().
+ *
+ * The one column left besides the id is `remember_token`, which keeps someone signed in past the
+ * session lifetime -- worth more here than usual, since the alternative to a cookie is retyping a
+ * 9-digit id rather than a saved password.
+ *
  * @property int $id
- * @property string $name
- * @property string $email
- * @property Carbon|null $email_verified_at
- * @property string $password
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
+#[Hidden(['remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory;
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * @return HasMany<GameIdentity, $this>
      */
-    protected function casts(): array
+    public function gameIdentities(): HasMany
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(GameIdentity::class);
+    }
+
+    /**
+     * @return HasMany<Play, $this>
+     */
+    public function plays(): HasMany
+    {
+        return $this->hasMany(Play::class);
+    }
+
+    /**
+     * This account's identity in one game, or null when it has none.
+     */
+    public function identityFor(string $gameSlug): ?GameIdentity
+    {
+        return $this->gameIdentities->first(
+            fn (GameIdentity $identity) => $identity->game->slug === $gameSlug,
+        );
     }
 }
