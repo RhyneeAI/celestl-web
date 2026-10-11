@@ -99,6 +99,14 @@ return [
         'no_password_warning' => 'Celestl has no passwords. Your Player ID and nickname both appear on any Best 50 image you share, so anyone who has seen one can open your history.',
         'profile' => 'Profile',
         'member_since' => 'Member since',
+        'top_average' => 'Top :count average',
+        'plays_logged' => 'Plays logged',
+        'charts_played' => 'Charts played',
+        'best_play' => 'Best play',
+        'no_plays' => 'Nothing logged yet. Work out a rating in the calculator and save it.',
+        'why_no_potential' => 'Why no Potential?',
+        'why_no_potential_body' => 'Arcaea feeds its Potential from something beyond these plays, so Celestl will not print one until that rule is confirmed. The average above is exactly what it says: the mean of your best rated charts.',
+        'from_best_50' => 'Clear breakdown and progress over time are read from Best 50 images, which Celestl cannot read yet.',
     ],
 
     'packs' => [

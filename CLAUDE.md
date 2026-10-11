@@ -1087,3 +1087,86 @@ Vitest ditambahkan ke proyek untuk ini (`npm test` → `vitest run`). Sebelumnya
 - Komponen hasil meniru "Result Detail" Figma (104:18): kolom label `--lav`, kolom data `--violet`. Desain
   aslinya menampilkan **rentang** (`09’995’547 → 09’998’593`) — itu Task 2.4 (simulasi skor target); bentuk
   komponennya sudah siap menampung dua nilai.
+
+
+## Akun (Task 4.1) — tanpa password, identitas game
+
+Dua keputusan pemilik diambil di awal task ini:
+
+1. **`game_identities` dibuat sekarang**, bukan ditunda. Rekomendasi lama di § multi-game identity akhirnya
+   dijalankan karena `users` masih kosong — gratis sekarang, berarti migrasi data akun kalau ditunda.
+2. **Ship terbuka, tanpa kunci rahasia.** Risikonya nyata dan sudah ditulis pemilik sendiri di mockup: Player
+   ID dan nickname dua-duanya tercetak di gambar Best 50 yang biasa dibagikan. Peringatan terus terang di
+   halaman register adalah *seluruh* proteksinya, jadi jangan diperhalus. Kalau nanti berubah pikiran, lihat
+   opsi "kunci rahasia opsional" yang sempat ditawarkan.
+
+### Skema
+
+- `users` tinggal `id` + timestamps + **`remember_token`**. `name`/`email`/`password` dibuang. `remember_token`
+  sengaja dipertahankan: itu bukan mesin password, tapi yang membuat orang tetap masuk melewati session
+  lifetime — lebih penting di sini daripada app biasa, karena alternatifnya mengetik ulang 9 digit, bukan
+  memanggil password manager.
+- `game_identities`: `user_id`, `game_id`, `identifier_type` (`player_id`), `identifier_value`,
+  `display_name`, `verified_at` nullable. Unique `(game_id, identifier_type, identifier_value)`.
+- **Player ID disimpan sebagai digit polos** (`160500737`). Game mencetaknya berkelompok dan orang menyalinnya
+  begitu, jadi menyimpan bentuk tercetak membuat satu ID gagal cocok dengan dirinya sendiri. Dikelompokkan
+  lagi hanya saat ditampilkan (`GameIdentity::formattedIdentifier()`).
+- **Nickname sengaja TIDAK unique.** Arcaea membolehkan siapa pun menggantinya kapan saja, jadi dua akun
+  bernama sama itu data yang sah — bukan error yang bisa dicegah database.
+
+### Login: satu field, dan yang penting adalah penolakannya
+
+Isinya digit semua (berapa pun spasinya) → Player ID; selain itu → nickname. **Kalau satu nickname cocok ke
+lebih dari satu akun, login DITOLAK** dan diminta pakai Player ID. Mengambil yang pertama akan memasukkan
+orang ke riwayat orang lain cuma karena namanya kebetulan sama — ini bukan edge case teoretis, nickname
+Arcaea memang bebas diganti.
+
+Register jalan dalam transaction: akun tanpa identity tidak akan pernah bisa dimasuki lagi, dan menyandera
+Player ID-nya.
+
+`RedirectIfAuthenticated::redirectUsing()` di `AppServiceProvider` diarahkan ke `profile` — default Laravel
+membuang orang yang sudah login ke `/`, yang bukan jawaban berguna untuk klik "Sign in".
+
+### Shared props cuma nickname
+
+`HandleInertiaRequests` mengirim `auth` berisi **nickname saja**, bukan model `User`. Starter kit aslinya
+mengirim `$request->user()` utuh — itu menaruh id akun (dan apa pun yang nanti ditambahkan ke tabel) ke HTML
+setiap response.
+
+### Kalkulator: login → server, guest → browser
+
+`plays` akhirnya punya penulis. Sudah login: simpan ke server, riwayat datang dari `plays`, rating
+**dihitung ulang saat dibaca** oleh `App\Services\ArcaeaRating` (pemakai pertamanya!). Guest: tetap
+`localStorage`, tidak berubah. Controller hanya mengirim prop `history` saat ada akun — **`null` itulah cara
+halaman tahu dia sedang di mode mana.**
+
+Riwayat lokal **ditawarkan** untuk diimpor, tidak diambil otomatis. Mengunggah perhitungan seseorang begitu
+dia login itu mengagetkan; membuangnya menghilangkan kerjanya. Payload-nya dari `localStorage` yang bisa
+diedit siapa saja, jadi tiap baris divalidasi ulang dan chart-nya dicari ulang: baris yang menyebut chart tidak
+ada **dilewati** (entri basi jangan menggagalkan sisanya), baris dengan skor mustahil **menggagalkan** seluruh
+import. `played_at` ikut dipertahankan — kalau tidak, impor akan terlihat seperti ledakan play di detik login.
+
+### Bug nyata ditemukan saat verifikasi: baris `plays` yatim
+
+Menghapus akun uji di database asli ternyata **meninggalkan 4 baris `plays`**. `plays.user_id` sengaja tanpa
+foreign key waktu dibuat, alasannya `users` masih bentuk starter kit dan Fase 4 akan merombaknya — alasan yang
+sudah kedaluwarsa begitu Fase 4 jalan. Sekarang ada FK `cascadeOnDelete`.
+
+**Kenapa cascade, bukan `nullOnDelete`** (sempat salah pilih): menull-kan akan menyisakan tumpukan baris tanpa
+pemilik yang tidak bisa dijangkau query mana pun, tapi tetap menyimpan hal yang justru diminta dihapus
+orangnya. Dan dipasang sebagai **constraint**, bukan model event, supaya berlaku juga untuk `DELETE` mentah.
+
+### Profile menampilkan hanya yang benar-benar kita punya
+
+Rata-rata top 50 (diberi label jumlah yang benar-benar dihitung, mis. "Top 4 average"), jumlah play, jumlah
+chart, dan play terbaik. **Satu chart dihitung sekali, lewat hasil terbaiknya** — sepuluh percobaan di satu
+lagu tidak boleh menyingkirkan sembilan lagu lain. Chart tanpa constant **tidak ikut peringkat sama sekali**;
+constant karangan akan menghasilkan rata-rata yang terlihat yakin tapi salah.
+
+**Rata-rata itu BUKAN Potential dan tidak boleh diberi label begitu** (§ Potential total). Halaman
+menjelaskan alasannya, meneruskan teks yang sudah ditulis pemilik di mockup. Breakdown clear dan grafik
+antar-upload yang ada di mockup sengaja absen — sumbernya gambar Best 50, baru ada di Fase 3.
+
+**Diverifikasi end-to-end ke server asli:** register → login by nickname → login by Player ID → logout,
+lalu profile dengan 4 play sungguhan menampilkan best play Extradimensional **13.001** dan Top 4 average
+10.8001. Akun ujinya dihapus setelahnya.

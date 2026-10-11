@@ -176,3 +176,16 @@ test('a guest cannot import into anyone', function () {
 
     expect(Play::query()->count())->toBe(0);
 });
+
+test('deleting an account takes its logged plays with it', function () {
+    // Found the hard way: without the constraint the rows outlived the account, unreachable but
+    // still holding what someone asked to be rid of.
+    Play::query()->create([
+        'user_id' => $this->user->id, 'chart_id' => $this->chart->id, 'score' => 9_900_000,
+        'lamp' => Lamp::NormalClear, 'source' => PlaySource::Manual, 'played_at' => now(),
+    ]);
+
+    $this->user->delete();
+
+    expect(Play::query()->count())->toBe(0);
+});

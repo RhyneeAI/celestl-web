@@ -138,9 +138,15 @@ Simpan snapshot (tanggal generate, nickname, 50 entri) dan menu untuk melihat sn
 
 ## Fase 4 — Akun
 
-### [ ] 4.1 Register, login, profile, mode guest
+### [x] 4.1 Register, login, profile, mode guest
 Tanpa password. Register sendiri dengan nickname in-game + player ID 9 digit; login dengan salah satunya. Player ID (ternormalisasi tanpa spasi) adalah kunci akun; nickname display-only dan bisa berubah. Halaman profile. Mode tanpa login: kalkulator jalan tanpa menyimpan riwayat di server. Hubungkan log `plays` dan snapshot Best 50 dari Fase 2–3 ke akun yang baru dibuat. Proyek personal skala kecil (lihat CLAUDE.md) — alur boleh sederhana, tidak perlu proteksi tingkat produk publik.
-**Selesai jika:** register/login/logout dan guest berjalan, ada test untuk keduanya.
+**Selesai jika:** register/login/logout dan guest berjalan, ada test untuk keduanya. ✅
+`AccountSchemaTest` (11), `AccountAuthTest` (26), `PlayLogTest` (17), `ProfileStatsTest` (7).
+Keputusan pemilik: **`game_identities` dibuat sekarang** (bukan ditunda) dan **ship terbuka tanpa kunci
+rahasia**, dengan peringatan terus terang di halaman register. Nickname bentrok → login ditolak, minta Player
+ID. `plays` akhirnya punya penulis (login → server, guest → browser), riwayat lokal ditawarkan untuk diimpor.
+Profile menampilkan rata-rata top 50 + play terbaik, **bukan** PTT. Lihat CLAUDE.md § Akun (Task 4.1).
+**Catatan:** snapshot Best 50 belum bisa disambungkan — sumbernya Fase 3, belum ada.
 
 ---
 
