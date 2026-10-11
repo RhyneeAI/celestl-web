@@ -15,7 +15,7 @@ import { DIFFICULTY_COLOR, type DifficultyCode } from '@/lib/difficulty';
 import { useTranslations } from '@/lib/i18n';
 import { artworkBackground } from '@/lib/jacket';
 import { cn } from '@/lib/utils';
-import { Head } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
 
 type ChartOption = {
@@ -32,20 +32,42 @@ type SongOption = {
     charts: ChartOption[];
 };
 
-export default function Calculator({ songs }: { songs: SongOption[] }) {
+/** A play already on the account. Shaped to match a local entry closely enough to share a list. */
+type ServerPlay = {
+    id: number;
+    slug: string;
+    title: string;
+    difficulty: string;
+    score: number;
+    lamp: Lamp;
+    rating: number | null;
+    playedAt: string;
+};
+
+export default function Calculator({
+    songs,
+    history: serverHistory,
+}: {
+    songs: SongOption[];
+    history: ServerPlay[] | null;
+}) {
     const t = useTranslations();
+    // `history` being non-null is the signal that there is an account: the controller only sends
+    // it when someone is signed in.
+    const signedIn = serverHistory !== null;
 
     const [query, setQuery] = useState('');
     const [slug, setSlug] = useState<string | null>(null);
     const [difficulty, setDifficulty] = useState<DifficultyCode | null>(null);
     const [score, setScore] = useState(9_900_000);
     const [lamp, setLamp] = useState<Lamp>('normal_clear');
-    const [history, setHistory] = useState<HistoryEntry[]>([]);
+    const [localHistory, setLocalHistory] = useState<HistoryEntry[]>([]);
     const [justSaved, setJustSaved] = useState(false);
 
     // Read on mount, not during render: localStorage does not exist while Inertia renders this on
-    // the server, and a render that touches it would differ from the markup already sent.
-    useEffect(() => setHistory(readHistory()), []);
+    // the server, and a render that touches it would differ from the markup already sent. Still
+    // read when signed in, so the leftovers can be offered for import.
+    useEffect(() => setLocalHistory(readHistory()), []);
 
     const song = useMemo(
         () => songs.find((candidate) => candidate.slug === slug) ?? null,
@@ -86,6 +108,27 @@ export default function Calculator({ songs }: { songs: SongOption[] }) {
     function save() {
         if (!song || !chart || chart.constant == null || rating == null) return;
 
+        if (signedIn) {
+            router.post(
+                '/plays',
+                {
+                    slug: song.slug,
+                    difficulty: chart.difficulty,
+                    score,
+                    lamp,
+                },
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        setJustSaved(true);
+                        window.setTimeout(() => setJustSaved(false), 1500);
+                    },
+                },
+            );
+
+            return;
+        }
+
         const entry: HistoryEntry = {
             id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
             slug: song.slug,
@@ -98,17 +141,43 @@ export default function Calculator({ songs }: { songs: SongOption[] }) {
             playedAt: new Date().toISOString(),
         };
 
-        const next = [entry, ...history].slice(0, 200);
-        setHistory(next);
+        const next = [entry, ...localHistory].slice(0, 200);
+        setLocalHistory(next);
         writeHistory(next);
         setJustSaved(true);
         window.setTimeout(() => setJustSaved(false), 1500);
     }
 
-    function remove(id: string) {
-        const next = history.filter((entry) => entry.id !== id);
-        setHistory(next);
+    function removeLocal(id: string) {
+        const next = localHistory.filter((entry) => entry.id !== id);
+        setLocalHistory(next);
         writeHistory(next);
+    }
+
+    /**
+     * Hand the browser's leftovers to the account, then clear them locally so the same
+     * calculations are not offered for import a second time.
+     */
+    function importLocal() {
+        router.post(
+            '/plays/import',
+            {
+                plays: localHistory.map((entry) => ({
+                    slug: entry.slug,
+                    difficulty: entry.difficulty,
+                    score: entry.score,
+                    lamp: entry.lamp,
+                    playedAt: entry.playedAt,
+                })),
+            },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setLocalHistory([]);
+                    writeHistory([]);
+                },
+            },
+        );
     }
 
     return (
@@ -313,10 +382,20 @@ export default function Calculator({ songs }: { songs: SongOption[] }) {
                         onSave={save}
                     />
 
-                    <History history={history} onRemove={remove} onClear={() => {
-                        setHistory([]);
-                        writeHistory([]);
-                    }} />
+                    <History
+                        signedIn={signedIn}
+                        serverHistory={serverHistory}
+                        localHistory={localHistory}
+                        onRemoveLocal={removeLocal}
+                        onRemoveServer={(id) =>
+                            router.delete(`/plays/${id}`, { preserveScroll: true })
+                        }
+                        onClearLocal={() => {
+                            setLocalHistory([]);
+                            writeHistory([]);
+                        }}
+                        onImport={importLocal}
+                    />
                 </div>
             </div>
         </AppLayout>
@@ -392,16 +471,71 @@ function Result({
     );
 }
 
-function History({
-    history,
+/** One row, whether it came from the account or from this browser. */
+function HistoryRow({
+    title,
+    difficulty,
+    score,
+    rating,
     onRemove,
-    onClear,
 }: {
-    history: HistoryEntry[];
-    onRemove: (id: string) => void;
-    onClear: () => void;
+    title: string;
+    difficulty: string;
+    score: number;
+    rating: number | null;
+    onRemove: () => void;
 }) {
     const t = useTranslations();
+
+    return (
+        <li className="flex items-center gap-2 rounded-xl bg-card-alt px-3 py-2">
+            <span className="min-w-0 flex-1">
+                <span className="block truncate text-[12.5px] font-semibold">{title}</span>
+                <span className="block truncate font-mono text-[11px] text-dim">
+                    <span className={DIFFICULTY_COLOR[difficulty as DifficultyCode]?.[0]}>
+                        {difficulty}
+                    </span>{' '}
+                    {formatScore(score)}
+                </span>
+            </span>
+            <span className="flex-none font-mono text-[13px] font-bold tabular-nums">
+                {rating === null ? '—' : rating.toFixed(3)}
+            </span>
+            <button
+                type="button"
+                onClick={onRemove}
+                aria-label={t('calculator.remove')}
+                className="flex-none rounded-lg px-1.5 text-[16px] leading-none text-dim hover:text-text"
+            >
+                ×
+            </button>
+        </li>
+    );
+}
+
+function History({
+    signedIn,
+    serverHistory,
+    localHistory,
+    onRemoveLocal,
+    onRemoveServer,
+    onClearLocal,
+    onImport,
+}: {
+    signedIn: boolean;
+    serverHistory: ServerPlay[] | null;
+    localHistory: HistoryEntry[];
+    onRemoveLocal: (id: string) => void;
+    onRemoveServer: (id: number) => void;
+    onClearLocal: () => void;
+    onImport: () => void;
+}) {
+    const t = useTranslations();
+    const { props } = usePage();
+    const imported = (props.flash as { imported?: number } | undefined)?.imported;
+
+    const rows = signedIn ? (serverHistory ?? []) : localHistory;
+    const empty = rows.length === 0;
 
     return (
         <section className="rounded-3xl bg-card p-4">
@@ -409,10 +543,10 @@ function History({
                 <h2 className="text-[11px] font-bold tracking-[0.14em] text-dim uppercase">
                     {t('calculator.history')}
                 </h2>
-                {history.length > 0 && (
+                {!signedIn && localHistory.length > 0 && (
                     <button
                         type="button"
-                        onClick={onClear}
+                        onClick={onClearLocal}
                         className="ml-auto text-[11.5px] font-semibold text-muted hover:text-text"
                     >
                         {t('calculator.history_clear')}
@@ -420,52 +554,58 @@ function History({
                 )}
             </div>
 
-            {history.length === 0 ? (
+            {/*
+             * Offered, never automatic. Uploading someone's local calculations the moment they
+             * sign in would be a surprise, and silently dropping them would lose their work.
+             */}
+            {signedIn && localHistory.length > 0 && (
+                <button
+                    type="button"
+                    onClick={onImport}
+                    className="mt-2 w-full rounded-xl border-2 border-dashed border-lav py-2.5 text-[12.5px] font-semibold text-muted hover:text-text"
+                >
+                    {t('calculator.import_local', { count: localHistory.length })}
+                </button>
+            )}
+
+            {imported !== undefined && (
+                <p className="mt-2 px-1 text-[12px] text-prs">
+                    {t('calculator.imported', { count: imported })}
+                </p>
+            )}
+
+            {empty ? (
                 <p className="mt-2 px-1 text-[12.5px] text-dim">
                     {t('calculator.history_empty')}
                 </p>
             ) : (
                 <ul className="mt-2 space-y-1">
-                    {history.map((entry) => (
-                        <li
-                            key={entry.id}
-                            className="flex items-center gap-2 rounded-xl bg-card-alt px-3 py-2"
-                        >
-                            <span className="min-w-0 flex-1">
-                                <span className="block truncate text-[12.5px] font-semibold">
-                                    {entry.title}
-                                </span>
-                                <span className="block truncate font-mono text-[11px] text-dim">
-                                    <span
-                                        className={
-                                            DIFFICULTY_COLOR[
-                                                entry.difficulty as DifficultyCode
-                                            ]?.[0]
-                                        }
-                                    >
-                                        {entry.difficulty}
-                                    </span>{' '}
-                                    {formatScore(entry.score)}
-                                </span>
-                            </span>
-                            <span className="flex-none font-mono text-[13px] font-bold tabular-nums">
-                                {entry.rating.toFixed(3)}
-                            </span>
-                            <button
-                                type="button"
-                                onClick={() => onRemove(entry.id)}
-                                aria-label={t('calculator.remove')}
-                                className="flex-none rounded-lg px-1.5 text-[16px] leading-none text-dim hover:text-text"
-                            >
-                                ×
-                            </button>
-                        </li>
-                    ))}
+                    {signedIn
+                        ? (serverHistory ?? []).map((play) => (
+                              <HistoryRow
+                                  key={play.id}
+                                  title={play.title}
+                                  difficulty={play.difficulty}
+                                  score={play.score}
+                                  rating={play.rating}
+                                  onRemove={() => onRemoveServer(play.id)}
+                              />
+                          ))
+                        : localHistory.map((entry) => (
+                              <HistoryRow
+                                  key={entry.id}
+                                  title={entry.title}
+                                  difficulty={entry.difficulty}
+                                  score={entry.score}
+                                  rating={entry.rating}
+                                  onRemove={() => onRemoveLocal(entry.id)}
+                              />
+                          ))}
                 </ul>
             )}
 
             <p className="mt-3 px-1 text-[11px] text-dim">
-                {t('calculator.history_local')}
+                {signedIn ? t('calculator.history_account') : t('calculator.history_local')}
             </p>
         </section>
     );

@@ -4,20 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Difficulty;
 use App\Models\Chart;
+use App\Models\Play;
 use App\Models\Song;
+use App\Services\ArcaeaRating;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
  * Play rating calculator (Task 2.2).
  *
- * Everything the page needs ships with it: the rating is recomputed on every keystroke, so a round
- * trip per character is out, and a signed-out player's history lives in their own browser (the
- * owner's decision -- see CLAUDE.md § Kalkulator). That leaves this controller with one job,
- * handing over the catalogue.
+ * The catalogue ships with the page because the rating is recomputed on every keystroke, which
+ * rules out a round trip per character.
+ *
+ * History is the one part that depends on who is asking: signed in, it lives in `plays` here;
+ * signed out, in the player's own browser (the owner's decision -- CLAUDE.md § Kalkulator).
  */
 class CalculatorController extends Controller
 {
+    public function __construct(private readonly ArcaeaRating $rating) {}
+
     public function __invoke(): Response
     {
         $order = array_column(Difficulty::cases(), 'value');
@@ -46,6 +52,38 @@ class CalculatorController extends Controller
 
         return Inertia::render('calculator', [
             'songs' => $songs,
+            'history' => Auth::check() ? $this->history() : null,
         ]);
+    }
+
+    /**
+     * The signed-in account's logged plays, newest first.
+     *
+     * The rating is computed here rather than stored (see the plays migration): it is a pure
+     * function of the constant, the score and the lamp, and constants get revised.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function history(): array
+    {
+        return Play::query()
+            ->where('user_id', Auth::id())
+            ->with('chart.song:id,slug,title')
+            ->latest('played_at')
+            ->limit(200)
+            ->get()
+            ->map(fn (Play $play) => [
+                'id' => $play->id,
+                'slug' => $play->chart->song->slug,
+                'title' => $play->chart->song->title,
+                'difficulty' => $play->chart->difficulty->value,
+                'score' => $play->score,
+                'lamp' => $play->lamp->value,
+                'rating' => $play->chart->constant === null
+                    ? null
+                    : round($this->rating->playRating((float) $play->chart->constant, $play->score, $play->lamp), 6),
+                'playedAt' => $play->played_at->toIso8601String(),
+            ])
+            ->all();
     }
 }

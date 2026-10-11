@@ -46,6 +46,10 @@ class HandleInertiaRequests extends Middleware
                 : ['nickname' => $identity->display_name],
             // UI strings live in lang/<locale>/app.php, never hardcoded in the React pages
             // (CLAUDE.md § Stack). The file is small enough to ship whole on every response.
+            // One-shot messages from a redirect, e.g. how many plays an import adopted.
+            'flash' => [
+                'imported' => fn () => $request->session()->get('imported'),
+            ],
             'locale' => app()->getLocale(),
             'translations' => trans('app'),
         ];

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\PackController;
+use App\Http\Controllers\PlayController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SongController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,10 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', ProfileController::class)->name('profile');
+
+    Route::post('/plays', [PlayController::class, 'store'])->name('plays.store');
+    Route::post('/plays/import', [PlayController::class, 'import'])->name('plays.import');
+    Route::delete('/plays/{play}', [PlayController::class, 'destroy'])->name('plays.destroy');
     Route::post('/logout', [AccountController::class, 'logout'])->name('logout');
 });
 
