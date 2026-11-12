@@ -10,3 +10,13 @@
 # referensi/eksperimen "Unofficial" segment, bukan bagian dari riwayat Celestl. Lihat CLAUDE.md.
 /Arcaea-server/
 /ArcaeaServerFork/
+/*.apk
+/*.so
+
+# Server & patcher scripts (managed in Celest-server)
+/*.py
+/*.sh
+/*.js
+/*.idsig
+/database/
+__pycache__/
