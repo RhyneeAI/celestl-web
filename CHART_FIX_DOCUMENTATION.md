@@ -203,9 +203,30 @@ Unsur-unsur berikut **tidak didukung dan wajib dibersihkan atau diganti** secara
 
 ## 6. Automated Testing Suite & CI/CD Pre-Build Hook
 
-### 6.1. Menjalankan Automated Test
-Skrip pengujian otomatis telah disediakan dan dapat dijalankan kapan saja dari root repository atau folder tools:
+### 6.1. Menjalankan Automated Test & Shortcut CLI
+Skrip pengujian otomatis telah disediakan dan dapat dijalankan kapan saja dari root repository, folder tools, atau langsung dari terminal via shortcut global di PATH:
 
+```bash
+# === SHORTCUT GLOBAL (Dapat dijalankan langsung dari direktori mana saja) ===
+# 1. Menampilkan Statistik Ekonomi Server & Progresi Songlist (Bagian 7) secara instan:
+celest-stats
+# Atau:
+celest-audit --stats
+
+# 2. Mode Audit Penuh (Memeriksa integritas seluruh 128 lagu dan 432 chart):
+celest-audit --check
+
+# 3. Mode Auto-Repair (Memeriksa dan otomatis memperbaiki semua issue yang terdeteksi):
+celest-audit --fix
+
+# 4. Audit Ketersediaan Background (Vanilla APK vs Custom Assets vs Patched Client):
+celest-audit --bg
+
+# 5. Uji Coba Lagu Tertentu Secara Spesifik:
+celest-audit --song <song_id>
+```
+
+Atau menggunakan pemanggilan skrip langsung:
 ```bash
 # 1. Mode Audit (Hanya memeriksa tanpa mengubah file):
 /home/luhung/.venvs/arcaea-server/bin/python check_chart_integrity.py --check
@@ -240,8 +261,8 @@ Sebelum memulai packaging APK, tool audit integrity secara otomatis mengkalkulas
   - *Yue* (`yue`): 500 Memories (17 lagu)
   - *Observer / Esoteric Order* (`observer`): 500 Memories (1 lagu)
 * **Pembelian Lagu Tunggal (Single)**:
-  - Database terdaftar saat ini (92 single): **`9,200 Memories`** (100 memories per lagu; `rinka` & `traumerei` 200 memories)
-* **Total Kebutuhan Memories Server**: **`11,200 Memories`** (4 pack + 92 single).
+  - Database terdaftar saat ini (92 single): **`99,370 Memories`** (dihitung dinamis dari `highest_constant * 100` di SQLite database)
+* **Total Kebutuhan Memories Server**: **`101,370 Memories`** (4 pack + 92 single).
 
 ### 7.3. Total Lagu per Difficulty Class
 Dari total **128 lagu** di katalog server, terdapat **432 chart file**:
@@ -290,13 +311,15 @@ Pengecekan integritas background memverifikasi seluruh deklarasi `bg`, `bg_inver
 * **Total Referensi Background Diverifikasi**: **`185 referensi`**
 * **Tersedia di Vanilla Client APK**: **`120 referensi`** (misal: `base_light`, `base_conflict`, `pentiment`, `chunithmnew_conflict`, `lanota-light`, dll.)
 * **Tersedia di Custom Server Assets**: **`65 referensi`** (background kustom fanmade beresolusi $\ge 1080$p)
-* **Status Patched Client APK**: **`184 / 185 ter-bundle`**
-  * *Pending Rebuild*: 1 background kustom baru (`terabyte` pada lagu `terabyteconnection`) memerlukan rebuild APK via `patch_arcaea.py` agar masuk ke dalam client.
+* **Status Patched Client APK**: **`185 / 185 ter-bundle (100% Bundled)`** (termasuk background `terabyte` pada lagu `terabyteconnection`)
 * **Missing Backgrounds (Fatal Crash Cocos2d-x)**: **`0 (Zero Missing)`** — seluruh 185 background terverifikasi 100% aman dan tidak ada aset yang hilang.
 
 Tool CLI ini dapat dijalankan mandiri kapan saja dengan:
 ```bash
-/home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/check_chart_integrity.py --check-bg
+celest-audit --bg
+# Atau untuk lagu tertentu:
+celest-audit --bg --song <song_id>
+```
 # Atau untuk lagu tertentu:
 /home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/check_chart_integrity.py --check-bg --song <song_id>
 ```

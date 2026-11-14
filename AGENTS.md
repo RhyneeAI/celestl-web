@@ -90,27 +90,30 @@ Before packaging, automated integrity check prints out 6 core metrics:
 
 ## 3. Automated CLI Commands
 
-All tasks must be run using the server's virtual environment:
+Global shortcut commands are available directly in your PATH (`~/.local/bin/`):
 ```bash
-VENV_PY="/home/luhung/.venvs/arcaea-server/bin/python"
+# 1. Instantly display Section 7 Progression & Economic Statistics (0.05s)
+celest-stats
+# or: celest-audit --stats
 
-# 1. Run automated chart integrity test (Audit mode)
-$VENV_PY /home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/check_chart_integrity.py --check
+# 2. Run full automated chart integrity audit (Checks all 128 songs & 432 charts)
+celest-audit --check
 
-# 2. Run automated chart integrity test (Auto-repair mode)
-$VENV_PY /home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/check_chart_integrity.py --fix
+# 3. Run automated chart integrity test (Auto-repair mode)
+celest-audit --fix
 
-# 3. Test a single song
-$VENV_PY /home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/check_chart_integrity.py --fix --song <song_id>
+# 4. Audit a single song only
+celest-audit --fix --song <song_id>
 
-# 4. Audit background availability against client APK and server assets
-$VENV_PY /home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/check_chart_integrity.py --check-bg
+# 5. Audit background availability against client APK and server assets
+celest-audit --bg
 
-# 5. Rebuild patched APK (Pre-build integrity hook will automatically run)
+# 6. Rebuild patched APK (Pre-build integrity hook will automatically run)
 cd /home/luhung/Documents/project/Celestl
-$VENV_PY ArcaeaServerFork/tools/patch_arcaea.py --output arcaea_7.1.0c_patched.apk
+/home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/patch_arcaea.py --output arcaea_7.1.0c_patched.apk
 
-# 6. Install patched APK without incremental exception
-adb install -r --no-incremental arcaea_7.1.0c_patched.apk
+# 7. Connect ADB to Waydroid and install patched APK
+adb connect 192.168.240.112:5555
+adb install -r --no-incremental /home/luhung/Documents/project/Celestl/arcaea_7.1.0c_patched.apk
 ```
 
