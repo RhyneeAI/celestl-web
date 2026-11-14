@@ -1,0 +1,4901 @@
+{
+    "songs": [
+        {
+            "idx": 821,
+            "id": "rinka",
+            "title_localized": {
+                "en": "燐華"
+            },
+            "artist": "Gram",
+            "search_title": {
+                "ja": [
+                    "りんか",
+                    "燐華",
+                    "rinka",
+                    "린카"
+                ],
+                "ko": [
+                    "りんか",
+                    "燐華",
+                    "rinka",
+                    "린카"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "ぐらむ",
+                    "Gram"
+                ],
+                "ko": [
+                    "그램",
+                    "Gram"
+                ]
+            },
+            "bpm": "256",
+            "bpm_base": 256,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 59776,
+            "audioPreviewEnd": 93750,
+            "side": 1,
+            "bg": "rinka",
+            "date": 1700000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "track": "dark_vs",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Gram",
+                    "jacketDesigner": "",
+                    "rating": 7
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Gram",
+                    "jacketDesigner": "",
+                    "rating": 9,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Gram",
+                    "jacketDesigner": "",
+                    "rating": 11,
+                    "legacy11": true
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "Gram",
+                    "jacketDesigner": "",
+                    "rating": 12,
+                    "legacy11": true,
+                    "date": 1700000000,
+                    "version": "7.1"
+                }
+            ]
+        },
+        {
+            "idx": 822,
+            "id": "alive",
+            "title_localized": {
+                "en": "Alive"
+            },
+            "artist": "eicateve",
+            "search_title": {
+                "ja": [
+                    "Alive",
+                    "얼라이브",
+                    "alive",
+                    "アライブ"
+                ],
+                "ko": [
+                    "Alive",
+                    "얼라이브",
+                    "alive",
+                    "アライブ"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "eicateve"
+                ],
+                "ko": [
+                    "eicateve"
+                ]
+            },
+            "bpm": "190",
+            "bpm_base": 190,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 42722,
+            "audioPreviewEnd": 67722,
+            "side": 1,
+            "bg": "alive",
+            "date": 1705276800,
+            "version": "7.1",
+            "remote_dl": true,
+            "track": "dark_vs",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "雨野",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "雨野",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-Life Essence of Illot-",
+                    "jacketDesigner": "雨野",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 823,
+            "id": "avataar",
+            "title_localized": {
+                "en": "Avataar ~Reincarnation of Kalpa~"
+            },
+            "artist": "Scarlette a.k.a CrYmson",
+            "search_title": {
+                "ja": [
+                    "Avataar Reincarnation of Kalpa",
+                    "avataar",
+                    "Avataar",
+                    "아바타",
+                    "アバター"
+                ],
+                "ko": [
+                    "Avataar Reincarnation of Kalpa",
+                    "avataar",
+                    "Avataar",
+                    "아바타",
+                    "アバター"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Scarlette",
+                    "CrYmson"
+                ],
+                "ko": [
+                    "Scarlette",
+                    "CrYmson"
+                ]
+            },
+            "bpm": "180",
+            "bpm_base": 180,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 52411,
+            "audioPreviewEnd": 77411,
+            "side": 1,
+            "bg": "avataar",
+            "date": 1700352000,
+            "version": "7.1",
+            "remote_dl": true,
+            "track": "dark_vs",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "ZG",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "ZG",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "メグリネ ~ a.k.a YueTh. \n as ~Melody of Harmony~",
+                    "jacketDesigner": "ZG",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 824,
+            "id": "chronomia",
+            "title_localized": {
+                "en": "Chronomia"
+            },
+            "artist": "Lime",
+            "search_title": {
+                "ja": [
+                    "Chronomia",
+                    "크로노미아",
+                    "クロノミア",
+                    "chronomia"
+                ],
+                "ko": [
+                    "Chronomia",
+                    "크로노미아",
+                    "クロノミア",
+                    "chronomia"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Lime"
+                ],
+                "ko": [
+                    "Lime"
+                ]
+            },
+            "bpm": "227",
+            "bpm_base": 227,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 44770,
+            "audioPreviewEnd": 69770,
+            "side": 2,
+            "bg": "epilogue",
+            "date": 1725667200,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "inukoro",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "inukoro",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Rhine vs Raimeiki",
+                    "jacketDesigner": "inukoro",
+                    "rating": 10
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "YueTh.",
+                    "jacketDesigner": "inukoro",
+                    "rating": 10,
+                    "date": 1725667200,
+                    "version": "7.1"
+                }
+            ]
+        },
+        {
+            "idx": 825,
+            "id": "converge",
+            "title_localized": {
+                "en": "Converge"
+            },
+            "artist": "SOTUI & Hundotte",
+            "search_title": {
+                "ja": [
+                    "Converge",
+                    "converge"
+                ],
+                "ko": [
+                    "Converge",
+                    "converge"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "SOTUI",
+                    "Hundotte"
+                ],
+                "ko": [
+                    "SOTUI",
+                    "Hundotte"
+                ]
+            },
+            "bpm": "180",
+            "bpm_base": 180,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 37574,
+            "audioPreviewEnd": 62574,
+            "side": 1,
+            "bg": "converge",
+            "date": 1693785600,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "straysoularound",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Chi Chi Chang",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Chi Chi Chang",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Megurine.",
+                    "jacketDesigner": "Chi Chi Chang",
+                    "rating": 9,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 826,
+            "id": "darlingdance",
+            "title_localized": {
+                "en": "Darling Dance"
+            },
+            "artist": "かいりきベア (MORE MORE JUMP! × 初音ミク)",
+            "search_title": {
+                "ja": [
+                    "달링 댄스",
+                    "darlingdance",
+                    "ダーリンダンス",
+                    "Darling Dance"
+                ],
+                "ko": [
+                    "달링 댄스",
+                    "darlingdance",
+                    "ダーリンダンス",
+                    "Darling Dance"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "かいりきベア",
+                    "初音ミク"
+                ],
+                "ko": [
+                    "카이리키 베어"
+                ]
+            },
+            "bpm": "153",
+            "bpm_base": 153,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 30963,
+            "audioPreviewEnd": 55963,
+            "side": 0,
+            "bg": "hime_light",
+            "date": 1692230400,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "hime_conflict",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "SPIKE",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "SPIKE",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "YueTh.",
+                    "jacketDesigner": "SPIKE",
+                    "rating": 8
+                }
+            ]
+        },
+        {
+            "idx": 827,
+            "id": "hopeisthething",
+            "title_localized": {
+                "en": "Hope is The Thing With Feathers"
+            },
+            "artist": "HOYO-MiX (Chevy)",
+            "search_title": {
+                "ja": [
+                    "hopeisthething",
+                    "Hope is The Thing With Feathers"
+                ],
+                "ko": [
+                    "hopeisthething",
+                    "Hope is The Thing With Feathers"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "HOYO-MiX",
+                    "Chevy"
+                ],
+                "ko": [
+                    "HOYO-MiX",
+                    "Chevy"
+                ]
+            },
+            "bpm": "128",
+            "bpm_base": 128,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 52652,
+            "audioPreviewEnd": 77652,
+            "side": 2,
+            "bg": "epilogue",
+            "date": 1717718400,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "HOYO-MiX",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "HOYO-MiX",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "HOYO-MiX",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "悅.YueTh`",
+                    "jacketDesigner": "HOYO-MiX",
+                    "rating": 9,
+                    "ratingPlus": true,
+                    "date": 1717718400,
+                    "version": "7.1"
+                }
+            ]
+        },
+        {
+            "idx": 828,
+            "id": "ificanstoponeheart",
+            "title_localized": {
+                "en": "If I Can Stop One Heart From Breaking"
+            },
+            "artist": "HOYO-MiX (Chevy)",
+            "search_title": {
+                "ja": [
+                    "If I Can Stop One Heart From Breaking",
+                    "ificanstoponeheart"
+                ],
+                "ko": [
+                    "If I Can Stop One Heart From Breaking",
+                    "ificanstoponeheart"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "HOYO-MiX",
+                    "Chevy"
+                ],
+                "ko": [
+                    "HOYO-MiX",
+                    "Chevy"
+                ]
+            },
+            "bpm": "160",
+            "bpm_base": 160,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 61352,
+            "audioPreviewEnd": 86352,
+            "side": 2,
+            "bg": "epilogue",
+            "date": 1721952000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "HOYO-MiX",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "HOYO-MiX",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "HOYO-MiX",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "悅.YueTh`",
+                    "jacketDesigner": "HOYO-MiX",
+                    "rating": 10,
+                    "date": 1721952000,
+                    "version": "7.1"
+                }
+            ]
+        },
+        {
+            "idx": 829,
+            "id": "jouou",
+            "title_localized": {
+                "en": "嬢王"
+            },
+            "artist": "八王子P",
+            "search_title": {
+                "ja": [
+                    "jouou",
+                    "嬢王",
+                    "여왕",
+                    "じょうおう"
+                ],
+                "ko": [
+                    "jouou",
+                    "嬢王",
+                    "여왕",
+                    "じょうおう"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "はちおうじP",
+                    "八王子P"
+                ],
+                "ko": [
+                    "하치오지P"
+                ]
+            },
+            "bpm": "200",
+            "bpm_base": 200,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 43342,
+            "audioPreviewEnd": 68342,
+            "side": 1,
+            "bg": "jouou",
+            "date": 1771286400,
+            "version": "7.1",
+            "remote_dl": true,
+            "track": "dark_vs",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "daichi",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "daichi",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "daichi",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "YueTh.",
+                    "jacketDesigner": "daichi",
+                    "rating": 11,
+                    "date": 1771286400,
+                    "version": "7.1"
+                }
+            ]
+        },
+        {
+            "idx": 830,
+            "id": "lyricalstrike",
+            "title_localized": {
+                "en": "Lyrical Strike!"
+            },
+            "artist": "REDALiCE",
+            "search_title": {
+                "ja": [
+                    "Lyrical Strike!",
+                    "リリカルストライク",
+                    "Lyrical Strike",
+                    "lyricalstrike"
+                ],
+                "ko": [
+                    "Lyrical Strike!",
+                    "リリカルストライク",
+                    "Lyrical Strike",
+                    "lyricalstrike"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "REDALiCE",
+                    "Lyrical Lily"
+                ],
+                "ko": [
+                    "REDALiCE",
+                    "Lyrical Lily"
+                ]
+            },
+            "bpm": "185",
+            "bpm_base": 185,
+            "set": "single",
+            "category": "original",
+            "purchase": "lyricalstrike",
+            "audioPreview": 40543,
+            "audioPreviewEnd": 65543,
+            "side": 3,
+            "bg": "azalea",
+            "date": 1700000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "KazUeeeeeeee \n as 私たち---- リリカルリリです！",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "date": 1700000000,
+                    "version": "7.1"
+                }
+            ]
+        },
+        {
+            "idx": 831,
+            "id": "mistilteinn",
+            "title_localized": {
+                "en": "Mistilteinn"
+            },
+            "artist": "LucaProject",
+            "search_title": {
+                "ja": [
+                    "Mistilteinn",
+                    "ミスティルテイン",
+                    "mistilteinn"
+                ],
+                "ko": [
+                    "Mistilteinn",
+                    "ミスティルテイン",
+                    "mistilteinn"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "LucaProject"
+                ],
+                "ko": [
+                    "LucaProject"
+                ]
+            },
+            "bpm": "167",
+            "bpm_base": 167,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 42339,
+            "audioPreviewEnd": 67339,
+            "side": 0,
+            "bg": "eden_light",
+            "date": 1776038400,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "eden_conflict",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "YueTh.",
+                    "jacketDesigner": "",
+                    "rating": 9,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 832,
+            "id": "opheliaphantasm",
+            "title_localized": {
+                "en": "Ophelia -Phantasm-"
+            },
+            "artist": "Lime",
+            "search_title": {
+                "ja": [
+                    "Ophelia Phantasm",
+                    "Ophelia",
+                    "オフィーリア",
+                    "opheliaphantasm"
+                ],
+                "ko": [
+                    "Ophelia Phantasm",
+                    "Ophelia",
+                    "オフィーリア",
+                    "opheliaphantasm"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Lime"
+                ],
+                "ko": [
+                    "Lime"
+                ]
+            },
+            "bpm": "186",
+            "bpm_base": 186,
+            "set": "single",
+            "category": "original",
+            "purchase": "opheliaphantasm",
+            "audioPreview": 42116,
+            "audioPreviewEnd": 67116,
+            "side": 1,
+            "bg": "observer_conflict",
+            "date": 1698969600,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "observer_light",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Kalpa",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Kalpa",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Raimeiki",
+                    "jacketDesigner": "Kalpa",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 833,
+            "id": "ringingbloom",
+            "title_localized": {
+                "en": "Ringing Bloom"
+            },
+            "artist": "Roselia (Fujinaga Ryotaro)",
+            "search_title": {
+                "ja": [
+                    "Ringing Bloom",
+                    "ringingbloom"
+                ],
+                "ko": [
+                    "Ringing Bloom",
+                    "ringingbloom"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Roselia",
+                    "藤永龍太郎"
+                ],
+                "ko": [
+                    "Roselia"
+                ]
+            },
+            "bpm": "195",
+            "bpm_base": 195,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 37593,
+            "audioPreviewEnd": 62593,
+            "side": 1,
+            "bg": "nextstage_conflict",
+            "date": 1679529600,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "nextstage_light",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Fujinaga Ryotaro",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Fujinaga Ryotaro",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Louis",
+                    "jacketDesigner": "Fujinaga Ryotaro",
+                    "rating": 10
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "nuts.KABOOM",
+                    "jacketDesigner": "Fujinaga Ryotaro",
+                    "rating": 10,
+                    "ratingPlus": true,
+                    "date": 1679529600,
+                    "version": "7.1"
+                }
+            ]
+        },
+        {
+            "idx": 834,
+            "id": "starcape",
+            "title_localized": {
+                "en": "Star Cape"
+            },
+            "artist": "打打だいず",
+            "search_title": {
+                "ja": [
+                    "starcape",
+                    "Star Cape"
+                ],
+                "ko": [
+                    "starcape",
+                    "Star Cape"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "打打だいず"
+                ],
+                "ko": [
+                    "打打だいず"
+                ]
+            },
+            "bpm": "92",
+            "bpm_base": 92,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 42081,
+            "audioPreviewEnd": 67081,
+            "side": 3,
+            "bg": "eden_light",
+            "date": 1713225600,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "eden_conflict",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Axle",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Axle",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Axle",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "YueTh.",
+                    "jacketDesigner": "Axle",
+                    "rating": 9,
+                    "date": 1713225600,
+                    "version": "7.1"
+                }
+            ]
+        },
+        {
+            "idx": 835,
+            "id": "stellarfragment",
+            "title_localized": {
+                "en": "Stellar Fragment"
+            },
+            "artist": "BLV3HAZUKI",
+            "search_title": {
+                "ja": [
+                    "stellarfragment",
+                    "Stellar Fragment"
+                ],
+                "ko": [
+                    "stellarfragment",
+                    "Stellar Fragment"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "BLV3HAZUKI"
+                ],
+                "ko": [
+                    "BLV3HAZUKI"
+                ]
+            },
+            "bpm": "179",
+            "bpm_base": 179,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 45320,
+            "audioPreviewEnd": 70320,
+            "side": 0,
+            "bg": "stellarfragment",
+            "date": 1689292800,
+            "version": "7.1",
+            "remote_dl": true,
+            "track": "rei",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Daph.",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Daph.",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Yue. Affc by AR+1",
+                    "jacketDesigner": "Daph.",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 836,
+            "id": "straysoularound",
+            "title_localized": {
+                "en": "ストレイソウル ・ アラウンド"
+            },
+            "artist": "みーに",
+            "search_title": {
+                "ja": [
+                    "ストレイソウル・アラウンド",
+                    "straysoularound",
+                    "ストレイソウル",
+                    "스트레이 소울 어라운드"
+                ],
+                "ko": [
+                    "ストレイソウル・アラウンド",
+                    "straysoularound",
+                    "ストレイソウル",
+                    "스트레이 소울 어라운드"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "みーに"
+                ],
+                "ko": [
+                    "미니"
+                ]
+            },
+            "bpm": "150",
+            "bpm_base": 150,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 40590,
+            "audioPreviewEnd": 65590,
+            "side": 0,
+            "bg": "straysoularound",
+            "date": 1700870400,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "みーに",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "みーに",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "YueTh.",
+                    "jacketDesigner": "みーに",
+                    "rating": 9,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 837,
+            "id": "traumerei",
+            "title_localized": {
+                "en": "夢想曲 -Träumerei-"
+            },
+            "artist": "RONDO",
+            "search_title": {
+                "ja": [
+                    "Trumerei",
+                    "Träumerei",
+                    "夢想曲",
+                    "몽상곡",
+                    "traumerei"
+                ],
+                "ko": [
+                    "Trumerei",
+                    "Träumerei",
+                    "夢想曲",
+                    "몽상곡",
+                    "traumerei"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "RONDO"
+                ],
+                "ko": [
+                    "RONDO"
+                ]
+            },
+            "bpm": "190",
+            "bpm_base": 190,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 45042,
+            "audioPreviewEnd": 70042,
+            "side": 1,
+            "bg": "traumerei",
+            "date": 1733616000,
+            "version": "7.1",
+            "remote_dl": true,
+            "track": "dark_vs",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "RONDO",
+                    "jacketDesigner": "",
+                    "rating": 11,
+                    "date": 1733616000,
+                    "version": "7.1"
+                }
+            ]
+        },
+        {
+            "idx": 838,
+            "id": "unlimatedimageworld",
+            "title_localized": {
+                "en": "Unlimated Image World"
+            },
+            "artist": "Campuss Furry",
+            "search_title": {
+                "ja": [
+                    "Unlimated Image World",
+                    "unlimatedimageworld"
+                ],
+                "ko": [
+                    "Unlimated Image World",
+                    "unlimatedimageworld"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Campuss Furry"
+                ],
+                "ko": [
+                    "Campuss Furry"
+                ]
+            },
+            "bpm": "201",
+            "bpm_base": 201,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 46310,
+            "audioPreviewEnd": 71310,
+            "side": 1,
+            "bg": "unlimatedimageworld",
+            "date": 1764374400,
+            "version": "7.1",
+            "remote_dl": true,
+            "track": "pentiment",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "RAWWR. -|- YueTh.",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 839,
+            "id": "venomofvenus",
+            "title_localized": {
+                "en": "Venom of Venus"
+            },
+            "artist": "Powerwolf",
+            "search_title": {
+                "ja": [
+                    "Venom of Venus",
+                    "venomofvenus"
+                ],
+                "ko": [
+                    "Venom of Venus",
+                    "venomofvenus"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Powerwolf"
+                ],
+                "ko": [
+                    "Powerwolf"
+                ]
+            },
+            "bpm": "164",
+            "bpm_base": 164,
+            "set": "yue",
+            "category": "original",
+            "purchase": "yue",
+            "audioPreview": 62604,
+            "audioPreviewEnd": 87604,
+            "side": 4,
+            "bg": "venomofvenus",
+            "date": 1727568000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "YueTh.",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 840,
+            "id": "42flux",
+            "title_localized": {
+                "en": "42-flux"
+            },
+            "artist": "rN vs. nm-y (Cataclysmia)",
+            "search_title": {
+                "ja": [
+                    "42flux",
+                    "42-flux"
+                ],
+                "ko": [
+                    "42flux",
+                    "42-flux"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "rN vs. nm-y (Cataclysmia)"
+                ],
+                "ko": [
+                    "rN vs. nm-y (Cataclysmia)"
+                ]
+            },
+            "bpm": "225",
+            "bpm_base": 225,
+            "set": "wanderlust",
+            "category": "original",
+            "purchase": "wanderlust",
+            "audioPreview": 47479,
+            "audioPreviewEnd": 72479,
+            "side": 1,
+            "bg": "42flux",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "track": "black",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "enkay (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 7
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "ZydeKun (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 9,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "0thElement, Yama, \n ZydeKun (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 841,
+            "id": "aloneintelligence",
+            "title_localized": {
+                "en": "Alone intelligence"
+            },
+            "artist": "かめりあ",
+            "search_title": {
+                "ja": [
+                    "aloneintelligence",
+                    "Alone intelligence"
+                ],
+                "ko": [
+                    "aloneintelligence",
+                    "Alone intelligence"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "かめりあ"
+                ],
+                "ko": [
+                    "かめりあ"
+                ]
+            },
+            "bpm": "150",
+            "bpm_base": 150,
+            "set": "wanderlust",
+            "category": "original",
+            "purchase": "wanderlust",
+            "audioPreview": 47892,
+            "audioPreviewEnd": 72892,
+            "side": 0,
+            "bg": "wanderer_light",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "wanderer_conflict",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Froot (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Froot (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 8,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Froot (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 842,
+            "id": "asmodeus",
+            "title_localized": {
+                "en": "Asmodeus ~Be loyal to your desires~"
+            },
+            "artist": "Garbagecan vs. CS4W",
+            "search_title": {
+                "ja": [
+                    "Asmodeus ~Be loyal to your desires~",
+                    "asmodeus",
+                    "Asmodeus Be loyal to your desires"
+                ],
+                "ko": [
+                    "Asmodeus ~Be loyal to your desires~",
+                    "asmodeus",
+                    "Asmodeus Be loyal to your desires"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Garbagecan vs. CS4W"
+                ],
+                "ko": [
+                    "Garbagecan vs. CS4W"
+                ]
+            },
+            "bpm": "200",
+            "bpm_base": 200,
+            "set": "wanderlust",
+            "category": "original",
+            "purchase": "wanderlust",
+            "audioPreview": 53940,
+            "audioPreviewEnd": 78940,
+            "side": 1,
+            "bg": "asmodeus",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "track": "dark_vs",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "EclipsioN (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "EclipsioN (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "EclipsioN vs. 0thElement \n (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 843,
+            "id": "chronofuror",
+            "title_localized": {
+                "en": "Chrono Furor -Reloaded-"
+            },
+            "artist": "Felysrator",
+            "search_title": {
+                "ja": [
+                    "chronofuror",
+                    "Chrono Furor Reloaded",
+                    "Chrono Furor -Reloaded-"
+                ],
+                "ko": [
+                    "chronofuror",
+                    "Chrono Furor Reloaded",
+                    "Chrono Furor -Reloaded-"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Felysrator"
+                ],
+                "ko": [
+                    "Felysrator"
+                ]
+            },
+            "bpm": "197",
+            "bpm_base": 197,
+            "set": "wanderlust",
+            "category": "original",
+            "purchase": "wanderlust",
+            "audioPreview": 46434,
+            "audioPreviewEnd": 71434,
+            "side": 0,
+            "bg": "wanderer_light",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "wanderer_conflict",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "new5 (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "new5 (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "new5 (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 844,
+            "id": "epilogue",
+            "title_localized": {
+                "en": "epilogue"
+            },
+            "artist": "VeetaCrush",
+            "search_title": {
+                "ja": [
+                    "epilogue"
+                ],
+                "ko": [
+                    "epilogue"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "VeetaCrush"
+                ],
+                "ko": [
+                    "VeetaCrush"
+                ]
+            },
+            "bpm": "186",
+            "bpm_base": 186,
+            "set": "wanderlust",
+            "category": "original",
+            "purchase": "wanderlust",
+            "audioPreview": 36133,
+            "audioPreviewEnd": 61133,
+            "side": 1,
+            "bg": "wanderer_conflict",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "wanderer_light",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "ZydeKun (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "ZydeKun (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 7
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "ZydeKun (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 9
+                }
+            ]
+        },
+        {
+            "idx": 845,
+            "id": "sightless",
+            "title_localized": {
+                "en": "A Gleam For The Sightless"
+            },
+            "artist": "Lidelle × BilliumMoto",
+            "search_title": {
+                "ja": [
+                    "A Gleam For The Sightless",
+                    "sightless"
+                ],
+                "ko": [
+                    "A Gleam For The Sightless",
+                    "sightless"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Lidelle × BilliumMoto"
+                ],
+                "ko": [
+                    "Lidelle × BilliumMoto"
+                ]
+            },
+            "bpm": "174",
+            "bpm_base": 174,
+            "set": "wanderlust",
+            "category": "original",
+            "purchase": "wanderlust",
+            "audioPreview": 47016,
+            "audioPreviewEnd": 72016,
+            "side": 1,
+            "bg": "wanderer_conflict",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "wanderer_light",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "EclipsioN (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 1
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "new5 (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "EclipsioN (Timeless Archive)",
+                    "jacketDesigner": "",
+                    "rating": 9
+                }
+            ]
+        },
+        {
+            "idx": 213,
+            "id": "aegleseeker",
+            "title_localized": {
+                "en": "Aegleseeker"
+            },
+            "artist": "Silentroom vs Frums",
+            "search_title": {
+                "ja": [
+                    "aegleseeker",
+                    "Aegleseeker"
+                ],
+                "ko": [
+                    "aegleseeker",
+                    "Aegleseeker"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Silentroom vs Frums"
+                ],
+                "ko": [
+                    "Silentroom vs Frums"
+                ]
+            },
+            "bpm": "234",
+            "bpm_base": 234,
+            "set": "observer",
+            "category": "original",
+            "purchase": "observer",
+            "audioPreview": 44307,
+            "audioPreviewEnd": 69307,
+            "side": 0,
+            "bg": "aegleseeker",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": false,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "⟨RECORD START⟩ 0:",
+                    "jacketDesigner": "シエラ",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "⟨OBSRV⟩ boundary(?°a,?°A)",
+                    "jacketDesigner": "シエラ",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "L₆ː The Void",
+                    "jacketDesigner": "シエラ",
+                    "rating": 11,
+                    "legacy11": true
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "9thSeeker",
+                    "jacketDesigner": "mirimo",
+                    "jacketOverride": true,
+                    "audioOverride": true,
+                    "bg": "aegleseeker",
+                    "rating": 11,
+                    "date": 1706140801,
+                    "version": "7.1"
+                }
+            ]
+        },
+        {
+            "idx": 49,
+            "id": "rabbitintheblackroom",
+            "title_localized": {
+                "en": "Rabbit In The Black Room"
+            },
+            "artist": "Rabbit House",
+            "search_title": {
+                "ja": [
+                    "rabbitintheblackroom",
+                    "Rabbit In The Black Room"
+                ],
+                "ko": [
+                    "rabbitintheblackroom",
+                    "Rabbit In The Black Room"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Rabbit House"
+                ],
+                "ko": [
+                    "Rabbit House"
+                ]
+            },
+            "bpm": "220",
+            "bpm_base": 220.0,
+            "set": "base",
+            "category": "original",
+            "purchase": "",
+            "audioPreview": 69818,
+            "audioPreviewEnd": 93818,
+            "side": 1,
+            "bg": "base_conflict",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": false,
+            "bg_inverse": "base_light",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "EarlGrey",
+                    "jacketDesigner": "",
+                    "rating": 11
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "Rabbit In The Black Room (2023 VIP)",
+                    "jacketDesigner": "MiyU",
+                    "rating": 11,
+                    "jacketOverride": true,
+                    "audioOverride": true,
+                    "bg": "arccreate_conflict"
+                }
+            ]
+        },
+        {
+            "idx": 846,
+            "id": "queenofwhite",
+            "title_localized": {
+                "en": "エセ交響詩「若き白の女王」"
+            },
+            "artist": "rN",
+            "search_title": {
+                "ja": [
+                    "queenofwhite",
+                    "エセ交響詩「若き白の女王」"
+                ],
+                "ko": [
+                    "queenofwhite",
+                    "エセ交響詩「若き白の女王」"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "rN"
+                ],
+                "ko": [
+                    "rN"
+                ]
+            },
+            "bpm": "249",
+            "bpm_base": 249.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "queenofwhite",
+            "audioPreview": 67469,
+            "audioPreviewEnd": 91566,
+            "side": 3,
+            "bg": "lephon",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Tefrish \n 白-世界が終わる時",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 847,
+            "id": "abyssgazer",
+            "title_localized": {
+                "en": "Abyssgazer"
+            },
+            "artist": "xi vs. Sakuzyo",
+            "search_title": {
+                "ja": [
+                    "abyssgazer",
+                    "Abyssgazer"
+                ],
+                "ko": [
+                    "abyssgazer",
+                    "Abyssgazer"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "xi vs. Sakuzyo"
+                ],
+                "ko": [
+                    "xi vs. Sakuzyo"
+                ]
+            },
+            "bpm": "191",
+            "bpm_base": 191.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "abyssgazer",
+            "audioPreview": 49478,
+            "audioPreviewEnd": 74478,
+            "side": 0,
+            "bg": "abyssgazer",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "子一",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "子一",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "> charter_denied \n > [ERROR] Relocating output source...",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "> charter_denied \n > \"final gaze into void and emptiness\"",
+                    "jacketDesigner": "子一",
+                    "rating": 11
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "Unlucky \n △ CREATION :: The Fractured △",
+                    "jacketDesigner": "子一",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 848,
+            "id": "amethyst",
+            "title_localized": {
+                "en": "Amethyst"
+            },
+            "artist": "かねこちはる",
+            "search_title": {
+                "ja": [
+                    "amethyst",
+                    "Amethyst"
+                ],
+                "ko": [
+                    "amethyst",
+                    "Amethyst"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "かねこちはる"
+                ],
+                "ko": [
+                    "かねこちはる"
+                ]
+            },
+            "bpm": "170",
+            "bpm_base": 170.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "amethyst",
+            "audioPreview": 61000,
+            "audioPreviewEnd": 83588,
+            "side": 4,
+            "bg": "rotaeno_conflict",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "bg_inverse": "rotaeno_light",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Nich",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Nich",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Nich",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "Arcthesia \n Over&#124;Shattered",
+                    "jacketDesigner": "Nich",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 849,
+            "id": "angelhalo",
+            "title_localized": {
+                "en": "ANGEL HALO",
+                "ja": "天使光輪"
+            },
+            "artist": "REDALiCE & cosMo＠暴走P",
+            "search_title": {
+                "ja": [
+                    "angelhalo",
+                    "ANGEL HALO"
+                ],
+                "ko": [
+                    "angelhalo",
+                    "ANGEL HALO"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "REDALiCE & cosMo＠暴走P"
+                ],
+                "ko": [
+                    "REDALiCE & cosMo＠暴走P"
+                ]
+            },
+            "bpm": "203",
+            "bpm_base": 203.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "angelhalo",
+            "audioPreview": 66403,
+            "audioPreviewEnd": 85320,
+            "side": 0,
+            "bg": "wacca_boss",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "大熊まい",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "大熊まい",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "RADiANT.",
+                    "jacketDesigner": "大熊まい",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 850,
+            "id": "anotherme",
+            "title_localized": {
+                "en": "Another Me"
+            },
+            "artist": "D_AAN",
+            "search_title": {
+                "ja": [
+                    "anotherme",
+                    "Another Me"
+                ],
+                "ko": [
+                    "anotherme",
+                    "Another Me"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "D_AAN"
+                ],
+                "ko": [
+                    "D_AAN"
+                ]
+            },
+            "bpm": "210",
+            "bpm_base": 210.0,
+            "set": "kurumi",
+            "category": "original",
+            "purchase": "kurumi",
+            "audioPreview": 74880,
+            "audioPreviewEnd": 93165,
+            "side": 1,
+            "bg": "anotherme",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "ZG",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "ZG",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "T·as·K (TinySnowPig x Kurumi087)",
+                    "jacketDesigner": "ZG",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 851,
+            "id": "arcaeamashup",
+            "title_localized": {
+                "en": "Arcaea Mash-up! 2 (Cansol bootleg)"
+            },
+            "artist": "Cansol",
+            "search_title": {
+                "ja": [
+                    "Arcaea Mash-up! 2 (Cansol bootleg)",
+                    "Arcaea Mashup 2 Cansol bootleg",
+                    "arcaeamashup"
+                ],
+                "ko": [
+                    "Arcaea Mash-up! 2 (Cansol bootleg)",
+                    "Arcaea Mashup 2 Cansol bootleg",
+                    "arcaeamashup"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Cansol"
+                ],
+                "ko": [
+                    "Cansol"
+                ]
+            },
+            "bpm": "200",
+            "bpm_base": 200.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "arcaeamashup",
+            "audioPreview": 57600,
+            "audioPreviewEnd": 81600,
+            "side": 2,
+            "bg": "byd_2_light",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "byd_2_conflict",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "Kazena \n with Zenth and Yue.",
+                    "jacketDesigner": "Uwaaak",
+                    "rating": 12
+                }
+            ]
+        },
+        {
+            "idx": 852,
+            "id": "artemibility",
+            "title_localized": {
+                "en": "Artemizija Irreversibility"
+            },
+            "artist": "CS4W",
+            "search_title": {
+                "ja": [
+                    "artemibility",
+                    "Artemizija Irreversibility"
+                ],
+                "ko": [
+                    "artemibility",
+                    "Artemizija Irreversibility"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "CS4W"
+                ],
+                "ko": [
+                    "CS4W"
+                ]
+            },
+            "bpm": "175",
+            "bpm_base": 200.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "artemibility",
+            "audioPreview": 60000,
+            "audioPreviewEnd": 84000,
+            "side": 1,
+            "bg": "apophenia",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "KazuilA -Irreversibility- \n Reverse'",
+                    "jacketDesigner": "さのり",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 853,
+            "id": "artemiguration",
+            "title_localized": {
+                "en": "Artemizija Transfiguration"
+            },
+            "artist": "CS4W",
+            "search_title": {
+                "ja": [
+                    "artemiguration",
+                    "Artemizija Transfiguration"
+                ],
+                "ko": [
+                    "artemiguration",
+                    "Artemizija Transfiguration"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "CS4W"
+                ],
+                "ko": [
+                    "CS4W"
+                ]
+            },
+            "bpm": "175",
+            "bpm_base": 175.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "artemiguration",
+            "audioPreview": 60000,
+            "audioPreviewEnd": 84000,
+            "side": 1,
+            "bg": "apophenia",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "かぜな \n ~Transcended~",
+                    "jacketDesigner": "さのり",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 854,
+            "id": "blackswan",
+            "title_localized": {
+                "en": "BLACK SWAN"
+            },
+            "artist": "ぺのれり",
+            "search_title": {
+                "ja": [
+                    "BLACK SWAN",
+                    "blackswan"
+                ],
+                "ko": [
+                    "BLACK SWAN",
+                    "blackswan"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "ぺのれり"
+                ],
+                "ko": [
+                    "ぺのれり"
+                ]
+            },
+            "bpm": "201",
+            "bpm_base": 201.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "blackswan",
+            "audioPreview": 56119,
+            "audioPreviewEnd": 75223,
+            "side": 1,
+            "bg": "blackswan",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "RayClust",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 855,
+            "id": "blanoir",
+            "title_localized": {
+                "en": "βlαnoir"
+            },
+            "artist": "Aoi",
+            "search_title": {
+                "ja": [
+                    "lnoir",
+                    "βlαnoir",
+                    "blanoir"
+                ],
+                "ko": [
+                    "lnoir",
+                    "βlαnoir",
+                    "blanoir"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Aoi"
+                ],
+                "ko": [
+                    "Aoi"
+                ]
+            },
+            "bpm": "202",
+            "bpm_base": 202.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "blanoir",
+            "audioPreview": 58217,
+            "audioPreviewEnd": 77227,
+            "side": 1,
+            "bg": "chunithm_new_conflict",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "chunithm_new_light",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "miya*ki",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "miya*ki",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "EarlGrey",
+                    "jacketDesigner": "miya*ki",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 856,
+            "id": "blinfmin",
+            "title_localized": {
+                "en": "Bl∞min'"
+            },
+            "artist": "MisoilePunch♪ -Forever-",
+            "search_title": {
+                "ja": [
+                    "Bl∞min'",
+                    "blinfmin",
+                    "Blmin"
+                ],
+                "ko": [
+                    "Bl∞min'",
+                    "blinfmin",
+                    "Blmin"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "MisoilePunch♪ -Forever-"
+                ],
+                "ko": [
+                    "MisoilePunch♪ -Forever-"
+                ]
+            },
+            "bpm": "117-234",
+            "bpm_base": 234.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "blinfmin",
+            "audioPreview": 77948,
+            "audioPreviewEnd": 98461,
+            "side": 0,
+            "bg": "blinfmin",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "UtopiaGarden \n -ArcHitecture- [Redefine Infinity]",
+                    "jacketDesigner": "",
+                    "rating": 11,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 857,
+            "id": "c0pyf0x",
+            "title_localized": {
+                "en": "c0pyf0x (Cut Ver.)"
+            },
+            "artist": "かたぎり",
+            "search_title": {
+                "ja": [
+                    "c0pyf0x Cut Ver",
+                    "c0pyf0x (Cut Ver.)",
+                    "c0pyf0x"
+                ],
+                "ko": [
+                    "c0pyf0x Cut Ver",
+                    "c0pyf0x (Cut Ver.)",
+                    "c0pyf0x"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "かたぎり"
+                ],
+                "ko": [
+                    "かたぎり"
+                ]
+            },
+            "bpm": "84-288",
+            "bpm_base": 228.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "c0pyf0x",
+            "audioPreview": 75789,
+            "audioPreviewEnd": 96842,
+            "side": 1,
+            "bg": "copyfox",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "pineapple",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "pineapple",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "CoreAndCrew \n m1rr0ra1pha +-----× -VS- &#124;° &#124;",
+                    "jacketDesigner": "pineapple",
+                    "rating": 10
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "prtccl -VS- CoreAndCrew \n p4st3w0lf Subsolar Insignia",
+                    "jacketDesigner": "pineapple",
+                    "rating": 11,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 858,
+            "id": "collapse",
+            "title_localized": {
+                "en": "Collapse"
+            },
+            "artist": "Laur feat. 藍月なくる",
+            "search_title": {
+                "ja": [
+                    "collapse",
+                    "Collapse"
+                ],
+                "ko": [
+                    "collapse",
+                    "Collapse"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Laur feat. 藍月なくる",
+                    "Laur"
+                ],
+                "ko": [
+                    "Laur feat. 藍月なくる",
+                    "Laur"
+                ]
+            },
+            "bpm": "155",
+            "bpm_base": 155.0,
+            "set": "kurumi",
+            "category": "original",
+            "purchase": "kurumi",
+            "audioPreview": 69677,
+            "audioPreviewEnd": 92903,
+            "side": 2,
+            "bg": "base_colorless",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "みしゃも",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "みしゃも",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "星の輝き feat.くるみ",
+                    "jacketDesigner": "みしゃも",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 859,
+            "id": "dextroy",
+            "title_localized": {
+                "en": "Dextroy"
+            },
+            "artist": "kanone",
+            "search_title": {
+                "ja": [
+                    "dextroy",
+                    "Dextroy"
+                ],
+                "ko": [
+                    "dextroy",
+                    "Dextroy"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "kanone"
+                ],
+                "ko": [
+                    "kanone"
+                ]
+            },
+            "bpm": "270-4000",
+            "bpm_base": 270.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "dextroy",
+            "audioPreview": 57777,
+            "audioPreviewEnd": 80000,
+            "side": 1,
+            "bg": "rotaeno_conflict",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "rotaeno_light",
+            "track": "dark",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Saclia",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Saclia",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Saclia",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "Spike \n ~Chaos across the chart, jank among the patterns~",
+                    "jacketDesigner": "Saclia",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 860,
+            "id": "ephemeralization",
+            "title_localized": {
+                "en": "ephemeralization"
+            },
+            "artist": "ぴれんどらー",
+            "search_title": {
+                "ja": [
+                    "ephemeralization"
+                ],
+                "ko": [
+                    "ephemeralization"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "ぴれんどらー"
+                ],
+                "ko": [
+                    "ぴれんどらー"
+                ]
+            },
+            "bpm": "190",
+            "bpm_base": 190.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "ephemeralization",
+            "audioPreview": 68210,
+            "audioPreviewEnd": 93473,
+            "side": 1,
+            "bg": "rotaeno_conflict",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "rotaeno_light",
+            "track": "dark",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Saclia",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Saclia",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Saclia",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "Aki -εxoplanεt-",
+                    "jacketDesigner": "Saclia",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 861,
+            "id": "exoplanetarymirage",
+            "title_localized": {
+                "en": "Exoplanetary Mirage"
+            },
+            "artist": "かめりあ",
+            "search_title": {
+                "ja": [
+                    "Exoplanetary Mirage",
+                    "exoplanetarymirage"
+                ],
+                "ko": [
+                    "Exoplanetary Mirage",
+                    "exoplanetarymirage"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "かめりあ"
+                ],
+                "ko": [
+                    "かめりあ"
+                ]
+            },
+            "bpm": "192",
+            "bpm_base": 192.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "exoplanetarymirage",
+            "audioPreview": 62500,
+            "audioPreviewEnd": 82500,
+            "side": 1,
+            "bg": "exoplanetarymirage",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "神居冰绘 feat. 祈莲.",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "神居冰绘 feat. 祈莲.",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "神居冰绘 feat. 祈莲.",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "Unlucky \n Reshaping the Planet",
+                    "jacketDesigner": "神居冰绘 feat. 祈莲.",
+                    "rating": 11,
+                    "ratingClassAlias": 1,
+                    "legacy11": true
+                }
+            ]
+        },
+        {
+            "idx": 862,
+            "id": "flay",
+            "title_localized": {
+                "en": "Fractured Skies"
+            },
+            "artist": "Flay! feat. xia & Yoominel",
+            "search_title": {
+                "ja": [
+                    "Fractured Skies (Flay)",
+                    "Fractured Skies Flay",
+                    "flay"
+                ],
+                "ko": [
+                    "Fractured Skies (Flay)",
+                    "Fractured Skies Flay",
+                    "flay"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Flay! feat. xia & Yoominel"
+                ],
+                "ko": [
+                    "Flay! feat. xia & Yoominel"
+                ]
+            },
+            "bpm": "140",
+            "bpm_base": 140.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "flay",
+            "audioPreview": 58285,
+            "audioPreviewEnd": 82285,
+            "side": 1,
+            "bg": "rotaeno_conflict",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "rotaeno_light",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "琉Ryuh",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "琉Ryuh",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "琉Ryuh",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "Kazen \n Ⅳ - Abyssal Pierrot⇄Wraith",
+                    "jacketDesigner": "琉Ryuh",
+                    "rating": 10,
+                    "ratingPlus": true,
+                    "ratingClassAlias": 1,
+                    "legacy11": true
+                }
+            ]
+        },
+        {
+            "idx": 863,
+            "id": "i",
+            "title_localized": {
+                "en": "I"
+            },
+            "artist": "黒魔",
+            "search_title": {
+                "ja": [
+                    "i",
+                    "I"
+                ],
+                "ko": [
+                    "i",
+                    "I"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "黒魔"
+                ],
+                "ko": [
+                    "黒魔"
+                ]
+            },
+            "bpm": "225",
+            "bpm_base": 225.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "i",
+            "audioPreview": 56000,
+            "audioPreviewEnd": 80000,
+            "side": 0,
+            "bg": "ai_3",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Aoi Tagami",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Aoi Tagami",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "MitsuneMuko \n 「ムコ」.. .-.. .-",
+                    "jacketDesigner": "Aoi Tagami",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 864,
+            "id": "illnesslilin",
+            "title_localized": {
+                "en": "iLLness LiLin"
+            },
+            "artist": "かねこちはる",
+            "search_title": {
+                "ja": [
+                    "iLLness LiLin",
+                    "illnesslilin"
+                ],
+                "ko": [
+                    "iLLness LiLin",
+                    "illnesslilin"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "かねこちはる"
+                ],
+                "ko": [
+                    "かねこちはる"
+                ]
+            },
+            "bpm": "280",
+            "bpm_base": 280.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "illnesslilin",
+            "audioPreview": 58285,
+            "audioPreviewEnd": 80571,
+            "side": 1,
+            "bg": "illnesslilin",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Aoi Tagami",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "Aoi Tagami",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "MitsuneMuko, ZydeKun \n Fantoche ~Dystopia~",
+                    "jacketDesigner": "Aoi Tagami",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 865,
+            "id": "khymexa",
+            "title_localized": {
+                "en": "KHYMΞXΛ"
+            },
+            "artist": "のらねこさい feat.ricono",
+            "search_title": {
+                "ja": [
+                    "KHYMΞXΛ",
+                    "KHYMX",
+                    "khymexa"
+                ],
+                "ko": [
+                    "KHYMΞXΛ",
+                    "KHYMX",
+                    "khymexa"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "のらねこさい feat.ricono"
+                ],
+                "ko": [
+                    "のらねこさい feat.ricono"
+                ]
+            },
+            "bpm": "220",
+            "bpm_base": 220.0,
+            "set": "kurumi",
+            "category": "original",
+            "purchase": "kurumi",
+            "audioPreview": 69818,
+            "audioPreviewEnd": 91636,
+            "side": 1,
+            "bg": "touhou_conflict",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "touhou_light",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "KΛRΛMY vs MΞTHΞNO",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 866,
+            "id": "lostrequiem",
+            "title_localized": {
+                "en": "Lost Requiem"
+            },
+            "artist": "Ludicin",
+            "search_title": {
+                "ja": [
+                    "Lost Requiem",
+                    "lostrequiem"
+                ],
+                "ko": [
+                    "Lost Requiem",
+                    "lostrequiem"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Ludicin"
+                ],
+                "ko": [
+                    "Ludicin"
+                ]
+            },
+            "bpm": "100-240",
+            "bpm_base": 210.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "lostrequiem",
+            "audioPreview": 68571,
+            "audioPreviewEnd": 91428,
+            "side": 4,
+            "bg": "lostrequiem",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Adr ft. Arma",
+                    "jacketDesigner": "",
+                    "rating": 12
+                }
+            ]
+        },
+        {
+            "idx": 867,
+            "id": "lostrequiembyd",
+            "title_localized": {
+                "en": "Lost Requiem"
+            },
+            "artist": "Ludicin",
+            "search_title": {
+                "ja": [
+                    "Lost Requiem",
+                    "lostrequiembyd"
+                ],
+                "ko": [
+                    "Lost Requiem",
+                    "lostrequiembyd"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Ludicin"
+                ],
+                "ko": [
+                    "Ludicin"
+                ]
+            },
+            "bpm": "100-240",
+            "bpm_base": 200.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "lostrequiembyd",
+            "audioPreview": 70000,
+            "audioPreviewEnd": 92000,
+            "side": 4,
+            "bg": "lostrequiem",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "77 Chemist",
+                    "jacketDesigner": "",
+                    "rating": 12,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 868,
+            "id": "mayhem",
+            "title_localized": {
+                "en": "MAYHEM"
+            },
+            "artist": "RoughSketch x CANVAS feat. Quimär",
+            "search_title": {
+                "ja": [
+                    "mayhem",
+                    "MAYHEM"
+                ],
+                "ko": [
+                    "mayhem",
+                    "MAYHEM"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "RoughSketch x CANVAS feat. Quimär"
+                ],
+                "ko": [
+                    "RoughSketch x CANVAS feat. Quimär"
+                ]
+            },
+            "bpm": "998",
+            "bpm_base": 998.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "mayhem",
+            "audioPreview": 57715,
+            "audioPreviewEnd": 81763,
+            "side": 1,
+            "bg": "mayhem_4",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "アユタ",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "アユタ",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "MitsuneMuko \n Banshee Virus",
+                    "jacketDesigner": "アユタ",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 869,
+            "id": "memoria",
+            "title_localized": {
+                "en": "ΛΛemoria"
+            },
+            "artist": "MisoilePunch♪",
+            "search_title": {
+                "ja": [
+                    "emoria",
+                    "ΛΛemoria",
+                    "memoria"
+                ],
+                "ko": [
+                    "emoria",
+                    "ΛΛemoria",
+                    "memoria"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "MisoilePunch♪"
+                ],
+                "ko": [
+                    "MisoilePunch♪"
+                ]
+            },
+            "bpm": "118",
+            "bpm_base": 118.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "memoria",
+            "audioPreview": 52881,
+            "audioPreviewEnd": 73220,
+            "side": 1,
+            "bg": "memoria",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "MitsuneMuko \n ΛΛuko-kun♪",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 870,
+            "id": "mixxion",
+            "title_localized": {
+                "en": "MixxioN"
+            },
+            "artist": "MisoilePunch♪",
+            "search_title": {
+                "ja": [
+                    "MixxioN",
+                    "mixxion"
+                ],
+                "ko": [
+                    "MixxioN",
+                    "mixxion"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "MisoilePunch♪"
+                ],
+                "ko": [
+                    "MisoilePunch♪"
+                ]
+            },
+            "bpm": "275",
+            "bpm_base": 275.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "mixxion",
+            "audioPreview": 69818,
+            "audioPreviewEnd": 87272,
+            "side": 1,
+            "bg": "mixxion",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Pilcrow \n Jester. »ExecuxioN«",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "ZydeKun, Dikea \n ZydeKun against Dikea. »InixialixatioN«",
+                    "jacketDesigner": "",
+                    "rating": 12
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "MitXuneMuXo as ×ExterminatoR×",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 871,
+            "id": "mobius",
+            "title_localized": {
+                "en": "Möbius"
+            },
+            "artist": "USAO & Camellia",
+            "search_title": {
+                "ja": [
+                    "Möbius",
+                    "Mbius",
+                    "mobius"
+                ],
+                "ko": [
+                    "Möbius",
+                    "Mbius",
+                    "mobius"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "USAO & Camellia"
+                ],
+                "ko": [
+                    "USAO & Camellia"
+                ]
+            },
+            "bpm": "230",
+            "bpm_base": 230.0,
+            "set": "kurumi",
+            "category": "original",
+            "purchase": "kurumi",
+            "audioPreview": 58434,
+            "audioPreviewEnd": 83478,
+            "side": 1,
+            "bg": "mobius",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-Kμrηπi-",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 872,
+            "id": "omoide",
+            "title_localized": {
+                "en": "オモイデ・パッチワーク・サービス"
+            },
+            "artist": "t+pazolite & ミツキヨ feat. ななひら",
+            "search_title": {
+                "ja": [
+                    "omoide",
+                    "オモイデ・パッチワーク・サービス"
+                ],
+                "ko": [
+                    "omoide",
+                    "オモイデ・パッチワーク・サービス"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "t+pazolite & ミツキヨ feat. ななひら"
+                ],
+                "ko": [
+                    "t+pazolite & ミツキヨ feat. ななひら"
+                ]
+            },
+            "bpm": "150",
+            "bpm_base": 150.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "omoide",
+            "audioPreview": 51600,
+            "audioPreviewEnd": 77200,
+            "side": 1,
+            "bg": "omoide",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Kazen",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 873,
+            "id": "op1",
+            "title_localized": {
+                "en": "Op.I《fear-TITΛN-》"
+            },
+            "artist": "xi vs かねこちはる",
+            "search_title": {
+                "ja": [
+                    "Op.I《fear-TITΛN-》",
+                    "op1",
+                    "OpIfearTITN"
+                ],
+                "ko": [
+                    "Op.I《fear-TITΛN-》",
+                    "op1",
+                    "OpIfearTITN"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "xi vs かねこちはる"
+                ],
+                "ko": [
+                    "xi vs かねこちはる"
+                ]
+            },
+            "bpm": "212",
+            "bpm_base": 212.0,
+            "set": "kurumi",
+            "category": "original",
+            "purchase": "kurumi",
+            "audioPreview": 67924,
+            "audioPreviewEnd": 90566,
+            "side": 0,
+            "bg": "virtus",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "《fear-KURΠMI-》",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 874,
+            "id": "opfer",
+            "title_localized": {
+                "en": "Opfer"
+            },
+            "artist": "かねこちはる",
+            "search_title": {
+                "ja": [
+                    "Opfer",
+                    "opfer"
+                ],
+                "ko": [
+                    "Opfer",
+                    "opfer"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "かねこちはる"
+                ],
+                "ko": [
+                    "かねこちはる"
+                ]
+            },
+            "bpm": "175",
+            "bpm_base": 175.0,
+            "set": "kurumi",
+            "category": "original",
+            "purchase": "kurumi",
+            "audioPreview": 68571,
+            "audioPreviewEnd": 92571,
+            "side": 0,
+            "bg": "ongeki_conflict",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Kurumi087",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 875,
+            "id": "pasyattocheese",
+            "title_localized": {
+                "en": "パシャっとCheese!!"
+            },
+            "artist": "Maron feat.ななぽんち",
+            "search_title": {
+                "ja": [
+                    "Cheese",
+                    "パシャっとCheese!!",
+                    "pasyattocheese"
+                ],
+                "ko": [
+                    "Cheese",
+                    "パシャっとCheese!!",
+                    "pasyattocheese"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Maron feat.ななぽんち"
+                ],
+                "ko": [
+                    "Maron feat.ななぽんち"
+                ]
+            },
+            "bpm": "165",
+            "bpm_base": 165.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "pasyattocheese",
+            "audioPreview": 58181,
+            "audioPreviewEnd": 81454,
+            "side": 3,
+            "bg": "pasyattocheese",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "track": "rei",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "zeRinn \n ピーズ！！ A ̶b̶i̶g̶ litle fan \n of ななひら & ころねぽんち",
+                    "jacketDesigner": "",
+                    "rating": 9,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 876,
+            "id": "petrichor",
+            "title_localized": {
+                "en": "Petrichor"
+            },
+            "artist": "void (mournfinale)",
+            "search_title": {
+                "ja": [
+                    "petrichor",
+                    "Petrichor"
+                ],
+                "ko": [
+                    "petrichor",
+                    "Petrichor"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "void (mournfinale)"
+                ],
+                "ko": [
+                    "void (mournfinale)"
+                ]
+            },
+            "bpm": "163",
+            "bpm_base": 163.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "petrichor",
+            "audioPreview": 83926,
+            "audioPreviewEnd": 107484,
+            "side": 2,
+            "bg": "petrichor",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "青鸟 (Qingniao) feat. 祈莲 (Qilian)",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "青鸟 (Qingniao) feat. 祈莲 (Qilian)",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "青鸟 (Qingniao) feat. 祈莲 (Qilian)",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "Ar+1 \n Return I -",
+                    "jacketDesigner": "青鸟 (Qingniao) feat. 祈莲 (Qilian)",
+                    "rating": 11,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 877,
+            "id": "postliminium",
+            "title_localized": {
+                "en": "Postliminium"
+            },
+            "artist": "ARForest",
+            "search_title": {
+                "ja": [
+                    "postliminium",
+                    "Postliminium"
+                ],
+                "ko": [
+                    "postliminium",
+                    "Postliminium"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "ARForest"
+                ],
+                "ko": [
+                    "ARForest"
+                ]
+            },
+            "bpm": "220",
+            "bpm_base": 110.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "postliminium",
+            "audioPreview": 65454,
+            "audioPreviewEnd": 87272,
+            "side": 1,
+            "bg": "postliminium",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "EarlGrey",
+                    "jacketDesigner": "",
+                    "rating": 8,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 878,
+            "id": "recollectlines",
+            "title_localized": {
+                "en": "Recollect Lines"
+            },
+            "artist": "ああああ vs ぺのれり",
+            "search_title": {
+                "ja": [
+                    "recollectlines",
+                    "Recollect Lines"
+                ],
+                "ko": [
+                    "recollectlines",
+                    "Recollect Lines"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "ああああ vs ぺのれり"
+                ],
+                "ko": [
+                    "ああああ vs ぺのれり"
+                ]
+            },
+            "bpm": "238",
+            "bpm_base": 215.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "recollectlines",
+            "audioPreview": 76124,
+            "audioPreviewEnd": 118563,
+            "side": 0,
+            "bg": "ongeki_light",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "ongeki_conflict",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "NarHiezad \n Parthénos",
+                    "jacketDesigner": "",
+                    "rating": 7,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "NarHiezad assist by Minami_Artzumaru \n SINCE 2018.07.26. \n \"The STARTLINER, recollect everything.\"",
+                    "jacketDesigner": "",
+                    "rating": 9,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "[Make UP Future!] K//ssana \n [Make UP Future!] Artzumaru \n [Make UP Future!] NarHiezad",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "RGC Charting Team「寂しいと悲しい丸い男たち」 \n 「これから」も奏でていこうよ!!",
+                    "jacketDesigner": "",
+                    "rating": 11
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "Kurumi087",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 879,
+            "id": "reunion",
+            "title_localized": {
+                "en": "RE:UNION -Duo Blade Against-"
+            },
+            "artist": "Ice vs. Morimori Atsushi",
+            "search_title": {
+                "ja": [
+                    "reunion",
+                    "RE:UNION -Duo Blade Against-",
+                    "REUNION Duo Blade Against"
+                ],
+                "ko": [
+                    "reunion",
+                    "RE:UNION -Duo Blade Against-",
+                    "REUNION Duo Blade Against"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Ice vs. Morimori Atsushi"
+                ],
+                "ko": [
+                    "Ice vs. Morimori Atsushi"
+                ]
+            },
+            "bpm": "202",
+            "bpm_base": 202.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "reunion",
+            "audioPreview": 59405,
+            "audioPreviewEnd": 83168,
+            "side": 0,
+            "bg": "alice_light",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "alice_conflict",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "ZydeKun \n ZydeKun -Single Past Against-",
+                    "jacketDesigner": "",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "ZydeKun \n ZydeKun -Single Present Against-",
+                    "jacketDesigner": "",
+                    "rating": 8,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "EternaløSilencer, Komeiji514 \n RestartReality vs. Komeiji514",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 880,
+            "id": "somioncernullset",
+            "title_localized": {
+                "en": "Somniomancer [null set]"
+            },
+            "artist": "塞壬唱片-MSR / Crywolf",
+            "search_title": {
+                "ja": [
+                    "Somniomancer [null set]",
+                    "Somniomancer null set",
+                    "somioncernullset"
+                ],
+                "ko": [
+                    "Somniomancer [null set]",
+                    "Somniomancer null set",
+                    "somioncernullset"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "塞壬唱片-MSR / Crywolf"
+                ],
+                "ko": [
+                    "塞壬唱片-MSR / Crywolf"
+                ]
+            },
+            "bpm": "150",
+            "bpm_base": 150.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "somioncernullset",
+            "audioPreview": 57600,
+            "audioPreviewEnd": 80000,
+            "side": 3,
+            "bg": "somioncernullset",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "泽贰七 \n μΩ.scriptor",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 881,
+            "id": "suddendeath",
+            "title_localized": {
+                "en": "SuddeИDeath"
+            },
+            "artist": "xi vs. モリモリあつし",
+            "search_title": {
+                "ja": [
+                    "suddendeath",
+                    "SuddeDeath",
+                    "SuddeИDeath"
+                ],
+                "ko": [
+                    "suddendeath",
+                    "SuddeDeath",
+                    "SuddeИDeath"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "xi vs. モリモリあつし"
+                ],
+                "ko": [
+                    "xi vs. モリモリあつし"
+                ]
+            },
+            "bpm": "236",
+            "bpm_base": 118.0,
+            "set": "kurumi",
+            "category": "original",
+            "purchase": "kurumi",
+            "audioPreview": 61016,
+            "audioPreviewEnd": 85423,
+            "side": 0,
+            "bg": "single2_light",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "single2_conflict",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Kurumi087 \n ki vs. 天雨チヨ",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 882,
+            "id": "suito",
+            "title_localized": {
+                "en": "翠杜"
+            },
+            "artist": "隣の庭は青い(庭師+Aoi)",
+            "search_title": {
+                "ja": [
+                    "suito",
+                    "翠杜"
+                ],
+                "ko": [
+                    "suito",
+                    "翠杜"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "隣の庭は青い(庭師+Aoi)"
+                ],
+                "ko": [
+                    "隣の庭は青い(庭師+Aoi)"
+                ]
+            },
+            "bpm": "180",
+            "bpm_base": 180.0,
+            "set": "kurumi",
+            "category": "original",
+            "purchase": "kurumi",
+            "audioPreview": 66666,
+            "audioPreviewEnd": 90000,
+            "side": 0,
+            "bg": "suito",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "月裏",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "月裏",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Kurumi087",
+                    "jacketDesigner": "月裏",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 883,
+            "id": "thecoloroftaintedsorrow",
+            "title_localized": {
+                "en": "汚れっちまった悲しみの色 (t+pazolite Remix)"
+            },
+            "artist": "Hiroshi Egawa",
+            "search_title": {
+                "ja": [
+                    "汚れっちまった悲しみの色 (t+pazolite Remix)",
+                    "thecoloroftaintedsorrow",
+                    "tpazolite Remix"
+                ],
+                "ko": [
+                    "汚れっちまった悲しみの色 (t+pazolite Remix)",
+                    "thecoloroftaintedsorrow",
+                    "tpazolite Remix"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Hiroshi Egawa"
+                ],
+                "ko": [
+                    "Hiroshi Egawa"
+                ]
+            },
+            "bpm": "180",
+            "bpm_base": 180.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "thecoloroftaintedsorrow",
+            "audioPreview": 60000,
+            "audioPreviewEnd": 84000,
+            "side": 0,
+            "bg": "thecoloroftaintedsorrow",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "ZenaColorful \n 白い言葉",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 884,
+            "id": "thelastpage",
+            "title_localized": {
+                "en": "The Last Page"
+            },
+            "artist": "ARForest",
+            "search_title": {
+                "ja": [
+                    "thelastpage",
+                    "The Last Page"
+                ],
+                "ko": [
+                    "thelastpage",
+                    "The Last Page"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "ARForest"
+                ],
+                "ko": [
+                    "ARForest"
+                ]
+            },
+            "bpm": "195",
+            "bpm_base": 97.5,
+            "set": "single",
+            "category": "original",
+            "purchase": "thelastpage",
+            "audioPreview": 64615,
+            "audioPreviewEnd": 89230,
+            "side": 0,
+            "bg": "thelastpage",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "EarlGrey",
+                    "jacketDesigner": "",
+                    "rating": 9
+                }
+            ]
+        },
+        {
+            "idx": 885,
+            "id": "titania",
+            "title_localized": {
+                "en": "Titania"
+            },
+            "artist": "xi",
+            "search_title": {
+                "ja": [
+                    "Titania",
+                    "titania"
+                ],
+                "ko": [
+                    "Titania",
+                    "titania"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "xi"
+                ],
+                "ko": [
+                    "xi"
+                ]
+            },
+            "bpm": "212",
+            "bpm_base": 212.0,
+            "set": "kurumi",
+            "category": "original",
+            "purchase": "kurumi",
+            "audioPreview": 67924,
+            "audioPreviewEnd": 90566,
+            "side": 0,
+            "bg": "titania",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "<i>Kurumi.</i>",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 886,
+            "id": "utakatanosekaide",
+            "title_localized": {
+                "en": "うたかたのせかいで"
+            },
+            "artist": "DJ Raisei vs Setca. feat.nayuta",
+            "search_title": {
+                "ja": [
+                    "うたかたのせかいで",
+                    "utakatanosekaide"
+                ],
+                "ko": [
+                    "うたかたのせかいで",
+                    "utakatanosekaide"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "DJ Raisei vs Setca. feat.nayuta"
+                ],
+                "ko": [
+                    "DJ Raisei vs Setca. feat.nayuta"
+                ]
+            },
+            "bpm": "216",
+            "bpm_base": 216.0,
+            "set": "kurumi",
+            "category": "original",
+            "purchase": "kurumi",
+            "audioPreview": 66666,
+            "audioPreviewEnd": 91111,
+            "side": 1,
+            "bg": "utakatanosekaide",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "天雨",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 887,
+            "id": "veil",
+            "title_localized": {
+                "en": "Veil"
+            },
+            "artist": "Misuzu Hataya",
+            "search_title": {
+                "ja": [
+                    "Veil",
+                    "veil"
+                ],
+                "ko": [
+                    "Veil",
+                    "veil"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Misuzu Hataya"
+                ],
+                "ko": [
+                    "Misuzu Hataya"
+                ]
+            },
+            "bpm": "150",
+            "bpm_base": 150.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "veil",
+            "audioPreview": 64000,
+            "audioPreviewEnd": 88000,
+            "side": 4,
+            "bg": "veil",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "track": "dark_vs",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "Kazen w/Rinn x Ar+1 \n Half 夜浪",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 888,
+            "id": "walpurugisnachT",
+            "title_localized": {
+                "en": "WalpurgisnachT"
+            },
+            "artist": "Raimukun",
+            "search_title": {
+                "ja": [
+                    "walpurugisnachT",
+                    "WalpurgsnachT",
+                    "WalpurgisnachT"
+                ],
+                "ko": [
+                    "walpurugisnachT",
+                    "WalpurgsnachT",
+                    "WalpurgisnachT"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Raimukun"
+                ],
+                "ko": [
+                    "Raimukun"
+                ]
+            },
+            "bpm": "210",
+            "bpm_base": 210.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "walpurugisnachT",
+            "audioPreview": 68571,
+            "audioPreviewEnd": 91428,
+            "side": 1,
+            "bg": "walpurgisnacht",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "Nazena+1 \n \"Phenomenon\"",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 889,
+            "id": "worldsendloneliness",
+            "title_localized": {
+                "en": "World's end loneliness"
+            },
+            "artist": "打打だいず",
+            "search_title": {
+                "ja": [
+                    "World's end loneliness",
+                    "Worlds end loneliness",
+                    "worldsendloneliness"
+                ],
+                "ko": [
+                    "World's end loneliness",
+                    "Worlds end loneliness",
+                    "worldsendloneliness"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "打打だいず"
+                ],
+                "ko": [
+                    "打打だいず"
+                ]
+            },
+            "bpm": "180",
+            "bpm_base": 180.0,
+            "set": "kurumi",
+            "category": "original",
+            "purchase": "kurumi",
+            "audioPreview": 66666,
+            "audioPreviewEnd": 90000,
+            "side": 2,
+            "bg": "vs_light",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "vs_conflict",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "Phenolph vs Kurumi",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 890,
+            "id": "xhronoxapsule",
+            "title_localized": {
+                "en": "XHRONOXAPSULΞ"
+            },
+            "artist": "Silentroom",
+            "search_title": {
+                "ja": [
+                    "XHRONOXAPSUL",
+                    "xhronoxapsule",
+                    "XHRONOXAPSULΞ"
+                ],
+                "ko": [
+                    "XHRONOXAPSUL",
+                    "xhronoxapsule",
+                    "XHRONOXAPSULΞ"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Silentroom"
+                ],
+                "ko": [
+                    "Silentroom"
+                ]
+            },
+            "bpm": "277",
+            "bpm_base": 277.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "xhronoxapsule",
+            "audioPreview": 60649,
+            "audioPreviewEnd": 82310,
+            "side": 0,
+            "bg": "xhronoxapsule",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "MitsuneMuko \n Ⅰ-Ø-A-◇-Λ 「Nostalgia」",
+                    "jacketDesigner": "",
+                    "rating": 11
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "MitsuneMuko \n MIT~X~UNΞ 《黒NØIZΞ》",
+                    "jacketDesigner": "",
+                    "rating": 12
+                }
+            ]
+        },
+        {
+            "idx": 891,
+            "id": "koishitemacaronage",
+            "title_localized": {
+                "en": "恋してマカロナージュ"
+            },
+            "artist": "U-Ske feat. ななひら",
+            "search_title": {
+                "ja": [
+                    "koishitemacaronage",
+                    "恋してマカロナージュ"
+                ],
+                "ko": [
+                    "koishitemacaronage",
+                    "恋してマカロナージュ"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "U-Ske feat. ななひら"
+                ],
+                "ko": [
+                    "U-Ske feat. ななひら"
+                ]
+            },
+            "bpm": "26-103",
+            "bpm_base": 103,
+            "set": "single",
+            "category": "original",
+            "purchase": "koishitemacaronage",
+            "audioPreview": 66384,
+            "audioPreviewEnd": 91384,
+            "side": 0,
+            "bg": "eden_append_light",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "eden_append_conflict",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "甘い",
+                    "jacketDesigner": "",
+                    "rating": 9
+                }
+            ]
+        },
+        {
+            "idx": 892,
+            "id": "akasha",
+            "title_localized": {
+                "en": "Λkasha"
+            },
+            "artist": "BlackY feat. Risa Yuzuki",
+            "search_title": {
+                "ja": [
+                    "kasha",
+                    "Λkasha",
+                    "akasha"
+                ],
+                "ko": [
+                    "kasha",
+                    "Λkasha",
+                    "akasha"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "BlackY feat. Risa Yuzuki"
+                ],
+                "ko": [
+                    "BlackY feat. Risa Yuzuki"
+                ]
+            },
+            "bpm": "180",
+            "bpm_base": 180.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "akasha",
+            "audioPreview": 67046,
+            "audioPreviewEnd": 87046,
+            "side": 1,
+            "bg": "akasha",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "track": "black",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Yagi, ZydeKun, SShimoe \n (GOD ～ヤギ：ザイド：下江～)",
+                    "jacketDesigner": "",
+                    "rating": 11
+                }
+            ]
+        },
+        {
+            "idx": 893,
+            "id": "alfheim",
+            "title_localized": {
+                "en": "Alfheim's faith"
+            },
+            "artist": "影虎。",
+            "search_title": {
+                "ja": [
+                    "Alfheim's faith",
+                    "alfheim",
+                    "Alfheims faith"
+                ],
+                "ko": [
+                    "Alfheim's faith",
+                    "alfheim",
+                    "Alfheims faith"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "影虎。"
+                ],
+                "ko": [
+                    "影虎。"
+                ]
+            },
+            "bpm": "200",
+            "bpm_base": 200.0,
+            "set": "single",
+            "category": "original",
+            "purchase": "alfheim",
+            "audioPreview": 57600,
+            "audioPreviewEnd": 81600,
+            "side": 0,
+            "bg": "alfheim",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "霜月",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "霜月",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Re:incrnate",
+                    "jacketDesigner": "霜月",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 894,
+            "id": "kai_",
+            "title_localized": {
+                "en": "悔_"
+            },
+            "artist": "Esbee_",
+            "search_title": {
+                "ja": [
+                    "悔_",
+                    "kai_",
+                    "悔_",
+                    "kai_"
+                ],
+                "ko": [
+                    "悔_",
+                    "kai_",
+                    "悔_",
+                    "kai_"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "Esbee_"
+                ],
+                "ko": [
+                    "Esbee_"
+                ]
+            },
+            "bpm": "164",
+            "bpm_base": 193,
+            "set": "single",
+            "category": "original",
+            "purchase": "kai_",
+            "audioPreview": 47290,
+            "audioPreviewEnd": 72290,
+            "side": 1,
+            "bg": "rotaeno_conflict",
+            "date": 1715000000,
+            "version": "7.1",
+            "remote_dl": true,
+            "bg_inverse": "rotaeno_light",
+            "track": "dark_vs",
+            "world_unlock": false,
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "月裏",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "月裏",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "月裏",
+                    "rating": 0
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "-",
+                    "jacketDesigner": "月裏",
+                    "rating": 11,
+                    "date": 1715000000,
+                    "version": "7.1"
+                }
+            ]
+        }
+    ]
+}

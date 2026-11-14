@@ -45,11 +45,15 @@ Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
   - `base_256.jpg` (256×256)
   - `1080_base.jpg` (768×768)
   - `1080_base_256.jpg` (384×384)
-- Backgrounds: `bg` and `bg_inverse` must exist in vanilla APK (`assets/img/bg/`) or as custom files in the song folder. Watch for known typos:
-  - Use `lanota-light` and `lanota-conflict` (hyphens, not underscores).
-  - Use `chunithmnew_light` and `chunithmnew_conflict` (no underscore after chunithm).
-  - Use `base_conflict` (not `conflict`).
-  - Use `base_light` (not `pentiment_light`).
+- Backgrounds:
+  - `bg` is **MANDATORY** in [songlist](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/database/songs/songlist).
+  - `bg_inverse` is optional (used for light/conflict inversion).
+  - Quality Standard: Custom backgrounds must be $\ge 1080$p ($1920\times 1440$ or $1920\times 1080$) and file size $\ge 100\text{ KB}$ (images $< 100\text{ KB}$ are low-res 720p and auto-enhanced with Lanczos 95).
+  - Background names must exist in vanilla APK (`assets/img/bg/`) or as custom files in the song folder. Watch for known typos:
+    - Use `lanota-light` and `lanota-conflict` (hyphens, not underscores).
+    - Use `chunithmnew_light` and `chunithmnew_conflict` (no underscore after chunithm).
+    - Use `base_conflict` (not `conflict`).
+    - Use `base_light` (not `pentiment_light`).
 - Custom `.wav` sounds: Any audio trigger referenced in the chart (`sound_wav` or `arc(...,name_wav)`) must have `name.wav` in the song folder.
 
 ### Check 3: AffParser Supported Syntax (Normalized)
@@ -62,8 +66,8 @@ Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
 - **Decimal Numbers**: In `.aff`, all float tokens (`bpm`, `beats`, `p3`, `arc` coordinates) MUST contain decimal points (e.g. `120.00`, never raw integer `120`).
 
 ### Check 4: Prohibited Elements (Crash Prevention)
-- **Extreme BPM & Scientific Notation**: Reject `7E+08` or numbers exceeding float precision. Extreme BPMs ($\ge 10^8$) trigger `Scudo OOM` from millions of tick allocations. Clamp to safe range $[-10000.00, 10000.00]$.
-- **Zero BPM**: `bpm == 0.00` causes division by zero. Replace at $t = 0$ with base BPM, and at $t > 0$ with `0.01` (`timing(t, 0.01, beats);`).
+- **Extreme BPM & Scientific Notation**: Reject scientific notation (e.g. `7E+08` or `1.5e7`). Extreme BPMs ($\ge 10^8$) trigger Android `Scudo OOM` from millions of tick allocations. Clamp to safe 6-digit decimal float range $[-1000000.00, 1000000.00]$.
+- **Zero BPM**: `bpm == 0.00` causes division by zero. Replace at $t = 0$ with base BPM (initial tempo), and at $t > 0$ with `0.01` (`timing(t, 0.01, beats);` to preserve visual stop gimmick).
 - **Anomaly SceneControls**: Strip non-native commands (e.g. ArcCreate extensions: `groupalpha`, `charterswitch`, `bgshow`, `hudalpha`, etc.).
 
 ### Check 5: Hot Reload & Remote DL
@@ -72,6 +76,15 @@ Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
   - Update `"date": int(time.time())` in [songlist](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/database/songs/songlist).
   - Re-sync server cache: `from core.download import SongFileCache; SongFileCache.sync_all()`.
   - The client checks `"date"` against its local cache and automatically re-downloads the updated chart.
+
+### Check 6: Pre-Build Progression & Economic Statistics
+Before packaging, automated integrity check prints out 6 core metrics:
+1. Total Fragments required to unlock songs (positive costs only, negative assistance ignored).
+2. Total Memories required to unlock songs and packs.
+3. Total songs per difficulty class (PST, PRS, FTR, BYD, ETR).
+4. Total rated charts and level distribution (Lv.1 to Lv.12+).
+5. Theoretical maximum potential rating on B30 (legacy), B50 (modern), and server active formula with 3-digit precision and +0.2 clear bonus.
+6. Background availability & client APK bundling status (Vanilla APK vs Custom server assets vs Patched APK status).
 
 ---
 
@@ -90,10 +103,14 @@ $VENV_PY /home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/check_cha
 # 3. Test a single song
 $VENV_PY /home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/check_chart_integrity.py --fix --song <song_id>
 
-# 4. Rebuild patched APK (Pre-build integrity hook will automatically run)
+# 4. Audit background availability against client APK and server assets
+$VENV_PY /home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/check_chart_integrity.py --check-bg
+
+# 5. Rebuild patched APK (Pre-build integrity hook will automatically run)
 cd /home/luhung/Documents/project/Celestl
 $VENV_PY ArcaeaServerFork/tools/patch_arcaea.py --output arcaea_7.1.0c_patched.apk
 
-# 5. Install patched APK without incremental exception
+# 6. Install patched APK without incremental exception
 adb install -r --no-incremental arcaea_7.1.0c_patched.apk
 ```
+
