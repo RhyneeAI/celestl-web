@@ -1170,3 +1170,51 @@ antar-upload yang ada di mockup sengaja absen — sumbernya gambar Best 50, baru
 **Diverifikasi end-to-end ke server asli:** register → login by nickname → login by Player ID → logout,
 lalu profile dengan 4 play sungguhan menampilkan best play Extradimensional **13.001** dan Top 4 average
 10.8001. Akun ujinya dihapus setelahnya.
+
+
+---
+
+## Mandatory Pre-Build Chart & Asset Integrity Workflow
+
+Whenever importing charts, fixing bugs, or updating assets before rebuilding `arcaea_7.1.0c_patched.apk`, follow these mandatory rules (full details also in `AGENTS.md` and `dokumentasi_fix_chart.md`):
+
+1. **Songlist Base Difficulties [0, 1, 2]**:
+   - Every song in `songlist` must declare `ratingClass: 0`, `ratingClass: 1`, and `ratingClass: 2`.
+   - Missing base difficulties crash `libcocos2dcpp.so` (`nullptr` in `song->getDifficulty(rc)`).
+   - If a song only has FTR (`2`) or ETR (`4`), add dummy unrated entries (`rating: 0`) and create minimal 74-byte dummy `0.aff` and `1.aff` files.
+
+2. **Song Asset Structure**:
+   - Required files: `0.aff`, `1.aff`, `2.aff`, `base.ogg`, `preview.ogg`, `base.jpg` (512x512), `base_256.jpg` (256x256), `1080_base.jpg` (768x768), `1080_base_256.jpg` (384x384). All jackets must be JPEG RGB.
+   - Backgrounds: `bg` and `bg_inverse` must exist in vanilla APK or song directory. Avoid typos (`lanota-light`, `chunithmnew_conflict`, `base_conflict`).
+   - Referenced custom `.wav` hitsounds must exist in the song folder.
+
+3. **AffParser Safety (Supported & Normalized)**:
+   - Negative BPMs are supported natively. Format as decimal `%.2f` (e.g. `-120.00`). No negative timestamps before $t=0$.
+   - Native SceneControls only (9 official commands). Use `1`/`0` for booleans; normalize `trackdisplay` to scale 255.
+   - Camera events: 9 arguments, float coordinates `%.2f`, valid easing, non-negative duration.
+   - Mandatory decimal values: All float parameters (`bpm`, `beats`, `p3`, `arc` coordinates) must contain decimal points (`%.2f`).
+
+4. **Prohibited Elements (Crash Prevention)**:
+   - Extreme BPM & scientific notation (`7E+08`): clamp to safe range $[-10000.00, 10000.00]$ to prevent `Scudo OOM`.
+   - Zero BPM: replace with base BPM at $t=0$ or `0.01` at $t>0$ to prevent divide-by-zero crashes.
+   - Strip non-native ArcCreate SceneControls (`groupalpha`, `charterswitch`, `bgshow`, etc.).
+
+5. **Hot Reload & Remote DL**:
+   - All server songs (except `infinityheaven`) must have `"remote_dl": true`.
+   - Bump `"date": int(time.time())` in `songlist` when editing `.aff` files so the client detects the change and re-downloads.
+   - Re-sync server cache: `from core.download import SongFileCache; SongFileCache.sync_all()`.
+
+6. **Automated Verification CLI**:
+   ```bash
+   VENV_PY="/home/luhung/.venvs/arcaea-server/bin/python"
+
+   # Run automated test & auto-repair:
+   $VENV_PY /home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/check_chart_integrity.py --fix
+
+   # Rebuild APK:
+   cd /home/luhung/Documents/project/Celestl
+   $VENV_PY ArcaeaServerFork/tools/patch_arcaea.py --output arcaea_7.1.0c_patched.apk
+
+   # Install without incremental error:
+   adb install -r --no-incremental arcaea_7.1.0c_patched.apk
+   ```
