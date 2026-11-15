@@ -1,0 +1,1 @@
+ArcaeaServerFork/CUSTOM_PARTNER_DOCUMENTATION.md
