@@ -83,7 +83,7 @@ Before packaging, automated integrity check prints out 6 core metrics:
 2. Total Memories required to unlock songs and packs.
 3. Total songs per difficulty class (PST, PRS, FTR, BYD, ETR).
 4. Total rated charts and level distribution (Lv.1 to Lv.12+).
-5. Theoretical maximum potential rating on B30 (legacy), B50 (modern), and server active formula with 3-digit precision and +0.2 clear bonus.
+5. Theoretical maximum potential rating on B50 (modern) and server active formula with 3-digit precision and +0.2 clear bonus.
 6. Background availability & client APK bundling status (Vanilla APK vs Custom server assets vs Patched APK status).
 
 ---
