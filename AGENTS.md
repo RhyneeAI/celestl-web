@@ -113,7 +113,12 @@ cd /home/luhung/Documents/project/Celestl
 /home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/patch_arcaea.py --output arcaea_7.1.0c_patched.apk
 
 # 7. Connect ADB to Waydroid and install patched APK
-adb connect 192.168.240.112:5555
-adb install -r --no-incremental /home/luhung/Documents/project/Celestl/arcaea_7.1.0c_patched.apk
+celest-apk-update
+
+# 8. Start Arcaea private server daemon
+celest-server-start
+
+# 9. Stop Arcaea private server daemon and release all ports
+celest-server-stop
 ```
 
