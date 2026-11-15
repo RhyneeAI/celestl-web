@@ -69,6 +69,7 @@ Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
 - **Extreme BPM & Scientific Notation**: Reject scientific notation (e.g. `7E+08` or `1.5e7`). Extreme BPMs ($\ge 10^8$) trigger Android `Scudo OOM` from millions of tick allocations. Clamp to safe 6-digit decimal float range $[-1000000.00, 1000000.00]$.
 - **Zero BPM**: `bpm == 0.00` causes division by zero. Replace at $t = 0$ with base BPM (initial tempo), and at $t > 0$ with `0.01` (`timing(t, 0.01, beats);` to preserve visual stop gimmick).
 - **Anomaly SceneControls**: Strip non-native commands (e.g. ArcCreate extensions: `groupalpha`, `charterswitch`, `bgshow`, `hudalpha`, etc.).
+- **Timinggroup Attributes**: Strip non-native timinggroup arguments (e.g. `name="..."`, `light`, `noclip`). Only native parameters (`noinput`, `fadingholds`, `anglex<deg>`, `angley<deg>`) are permitted. Normalize composite typo `noinput_fadingholds` to `noinput,fadingholds`.
 
 ### Check 5: Hot Reload & Remote DL
 - All server charts (except offline `infinityheaven`) must have `"remote_dl": true` in [songlist](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/database/songs/songlist).
