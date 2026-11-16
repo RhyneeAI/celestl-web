@@ -48,3 +48,39 @@ adb install -r --no-incremental arcaea_7.1.0c_patched.apk
 - **`AGENTS.md`**: AI agent and developer mandatory integrity workflow and rules.
 - **`CHART_FIX_DOCUMENTATION.md`**: Complete documentation on chart sanitization, native engine syntax, and progression statistics.
 
+---
+
+## Arcaea Scoring Mechanics & Grade Boundaries
+
+All scores simulated or saved in the database follow official Arcaea mathematical rules:
+
+$$\text{Base Score} = \left\lfloor \frac{10\,000\,000}{\text{Total Notes}} \times \left(\text{Pure} + \frac{\text{Far}}{2}\right) \right\rfloor$$
+$$\text{Total Score} = \text{Base Score} + \text{Shiny Pure Bonus} \quad (\text{Shiny Pure} \le \text{Pure})$$
+
+### Official Score Grade Ranges
+| Grade | Score Range | Description | Lamp Invariant |
+|:---:|:---:|---|---|
+| **D** | $< 8\,800\,000$ | Fail / Poor performance | Track Lost / Clear |
+| **C** | $8\,800\,000 - 8\,999\,999$ | Minimum clear threshold | Track Lost / Clear |
+| **B** | $9\,000\,000 - 9\,199\,999$ | Intermediate grade | Track Lost / Clear |
+| **A** | $9\,200\,000 - 9\,499\,999$ | Upper-intermediate grade | Track Lost / Clear |
+| **AA** | $9\,500\,000 - 9\,799\,999$ | Advanced clear grade | Clear / FR |
+| **EX** | $9\,800\,000 - 9\,899\,999$ | Expert grade | Clear / FR |
+| **EX+** | $9\,900\,000 - 9\,999\,999$ | Master grade | Clear / FR |
+| **PM** | $\ge 10\,000\,000$ | **Pure Memory** ($10\,000\,000 + \text{Shiny}$) | **Strictly Far = 0, Lost = 0 (`clear_type = 3`)** |
+
+---
+
+## Automated Integrity Verification Suites (`celest-audit --check`)
+
+The integrity audit verifies 8 comprehensive suites before packaging or pushing updates:
+1. **Poin 1**: Songlist & Difficulty Completeness (Mandatory 0.aff, 1.aff, 2.aff base diffs).
+2. **Poin 2**: Mandatory Song Asset Structure (`base.ogg`, `preview.ogg`, 4 JPEG RGB jackets, valid `bg`).
+3. **Poin 3**: AffParser Supported Syntax & Extended Lanes (-3..6, decimal floats, negative BPM).
+4. **Poin 4**: AffParser Prohibited Elements (Zero BPM division-by-zero, extreme BPM Scudo OOM).
+5. **Poin 5**: Arc & Hold Minimum Duration Normalization (0ms Arcs & $\le$1ms Holds).
+6. **Poin 6**: Hot Reload Server & Remote Download Sync (`date` timestamps and cache sync).
+7. **Poin 7**: Unlocks Integrity & Beyond (`ratingClass: 3`) Prohibition & History Tracking.
+8. **Poin 8**: Economic Statistics & Progression Tracking (Fragments, Memories, B50 Potential).
+
+

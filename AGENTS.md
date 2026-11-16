@@ -79,7 +79,15 @@ Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
   - Re-sync server cache: `from core.download import SongFileCache; SongFileCache.sync_all()`.
   - The client checks `"date"` against its local cache and automatically re-downloads the updated chart.
 
-### Check 6: Pre-Build Progression & Economic Statistics
+### Check 6: Arc & Hold Minimum Duration Normalization
+- Arcs with duration $0\text{ ms}$ (`t_start == t_end`) trigger native renderer divide-by-zero or crash. Auto-normalize to tap note or minimum $1\text{ ms}$.
+- Holds with duration $\le 1\text{ ms}$ trigger timing glitches; auto-extend to valid threshold or convert to tap.
+
+### Check 7: Unlocks Integrity & Beyond (ratingClass 3) Prohibition
+- **Strict Prohibition on ratingClass 3 in `unlocks`**: Beyond difficulty has no fragment purchase UI in native Arcaea client. Declaring it in `database/songs/unlocks` locks the 4th difficulty diamond, forces label to `"?"`, and hides unplayed charts from the BEYOND tab in Song Select.
+- Any unlock requiring chaining (such as Wanderlust Eternal) must maintain valid progression conditions and diagram records.
+
+### Check 8: Pre-Build Progression & Economic Statistics
 Before packaging, automated integrity check prints out 6 core metrics:
 1. Total Fragments required to unlock songs (positive costs only, negative assistance ignored).
 2. Total Memories required to unlock songs and packs.
@@ -87,6 +95,32 @@ Before packaging, automated integrity check prints out 6 core metrics:
 4. Total rated charts and level distribution (Lv.1 to Lv.12+).
 5. Theoretical maximum potential rating on B50 (modern) and server active formula with 3-digit precision and +0.2 clear bonus.
 6. Background availability & client APK bundling status (Vanilla APK vs Custom server assets vs Patched APK status).
+
+### Check 9: Arcaea Scoring, Grade Ranges & Lamp Invariants
+Scores in `best_score`, `recent30`, and `user` tables MUST strictly adhere to official Arcaea mathematical rules and judge boundaries:
+
+#### 1. Official Grade Score Ranges
+| Grade | Score Range | Description |
+|:---:|:---:|---|
+| **D** | $< 8\,800\,000$ | Fail / Poor performance |
+| **C** | $8\,800\,000 - 8\,999\,999$ | Minimum clear threshold |
+| **B** | $9\,000\,000 - 9\,199\,999$ | Intermediate grade |
+| **A** | $9\,200\,000 - 9\,499\,999$ | Upper-intermediate grade |
+| **AA** | $9\,500\,000 - 9\,799\,999$ | Advanced clear grade |
+| **EX** | $9\,800\,000 - 9\,899\,999$ | Expert grade |
+| **EX+** | $9\,900\,000 - 9\,999\,999$ | Master grade |
+| **PM** | $\ge 10\,000\,000$ | **Pure Memory** ($10\,000\,000 + \text{Shiny Pure Count}$) |
+
+#### 2. Exact Score Formula
+$$\text{Base Score} = \left\lfloor \frac{10\,000\,000}{\text{Total Notes}} \times \left(\text{Pure} + \frac{\text{Far}}{2}\right) \right\rfloor$$
+$$\text{Total Score} = \text{Base Score} + \text{Shiny Pure Bonus} \quad (\text{Shiny Pure} \le \text{Pure})$$
+
+#### 3. Strict Lamp (Clear Type) & Judge Consistency
+- **Pure Memory (`clear_type = 3`)**: Strictly requires $\text{Score} \ge 10\,000\,000$, $\text{Near/Far} = 0$, and $\text{Miss/Lost} = 0$. Never set `clear_type = 3` if score $< 10\,000\,000$ or if there are any Near/Miss notes.
+- **Full Recall (`clear_type = 2`)**: Strictly requires $\text{Miss/Lost} = 0$, $\text{Near/Far} > 0$, and $\text{Score} < 10\,000\,000$.
+- **Normal Clear (`clear_type = 1`)**: Strictly requires $\text{Miss/Lost} > 0$, and gauge maintained $\ge 70\%$ at track completion.
+- **Easy / Hard Clear (`clear_type = 4 / 5`)**: Easy / Hard gauge clears.
+- **Track Lost (`clear_type = 0`)**: Final gauge $< 70\%$ (or $0\%$ on Hard gauge).
 
 ---
 

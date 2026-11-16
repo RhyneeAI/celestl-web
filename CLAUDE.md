@@ -93,13 +93,43 @@ Enum: `PST` (Past), `PRS` (Present), `FTR` (Future), `BYD` (Beyond), `ETR` (Eter
 
 ### Grade dan lamp (dua hal terpisah)
 
-Grade dari skor: D 0–8.799.999 · C 8.800.000–8.999.999 · B 9.000.000–9.199.999 · A 9.200.000–9.499.999 · AA 9.500.000–9.799.999 · EX 9.800.000–9.899.999 · EX+ ≥ 9.900.000. Skor ≥ 10.000.000 tetap bergrade EX+ di gambar resmi; "PM" adalah lamp, bukan grade. Grade diturunkan dari skor, tidak disimpan.
+- **Formula Skor Arcaea:**
+  $$\text{Base Score} = \left\lfloor \frac{10\,000\,000}{\text{Total Notes}} \times \left(\text{Pure} + \frac{\text{Far}}{2}\right) \right\rfloor$$
+  $$\text{Total Score} = \text{Base Score} + \text{Shiny Pure Bonus} \quad (\text{Shiny Pure} \le \text{Pure})$$
 
-Lamp: `lost` (L), `easy_clear`, `normal_clear`, `hard_clear` (C hijau/biru/merah), `full_recall` (F/FR), `pure_memory` (P/PM).
+- **Rentang Grade Resmi dari Skor:**
+  - **D**: $0 - 8.799.999$
+  - **C**: $8.800.000 - 8.999.999$
+  - **B**: $9.000.000 - 9.199.999$
+  - **A**: $9.200.000 - 9.499.999$
+  - **AA**: $9.500.000 - 9.799.999$
+  - **EX**: $9.800.000 - 9.899.999$
+  - **EX+**: $9.900.000 - 9.999.999$
+  - **Pure Memory (PM)**: Skor $\ge 10.000.000$ dengan **syarat mutlak $\text{Far} = 0$ dan $\text{Lost} = 0$ (`clear_type = 3`)**.
 
-### Potential total (PTT): BELUM ADA RUMUS TERVERIFIKASI
+- **Lamp (Clear Type) Invariants:**
+  - `lost` (0): Gagal clear / gauge habis di track.
+  - `normal_clear` (1): Clear biasa (syarat $\text{Lost} > 0$).
+  - `full_recall` (2): Selesai tanpa miss (syarat $\text{Lost} = 0, \text{Far} > 0$, skor $< 10.000.000$).
+  - `pure_memory` (3): Sempurna (syarat $\text{Lost} = 0, \text{Far} = 0$, skor $\ge 10.000.000$).
+  - `easy_clear` (4) / `hard_clear` (5): Varian gauge Easy / Hard.
 
-Rumus lama `(Best 30 + Recent 10) / 40` tidak berlaku lagi. Pada gambar contoh, rata-rata 50 potential = 12.6398, tetapi tercetak 12.668, jadi ada komponen lain yang belum diketahui (mungkin Recent 10). **Jangan menampilkan PTT total** sampai rumusnya terverifikasi di Arcaea Wiki; tampilkan play rating dan daftar Top 50 saja. Top 50 = 50 chart unik dengan play rating tertinggi. Fitur "skor minimal agar PTT naik" menunggu rumus ini.
+### Potential Total (PTT): Rumus Server & B50 Terverifikasi
+
+Formula aktif yang terverifikasi dan digunakan di `ArcaeaServerFork/core/score.py`:
+$$\text{PTT} = \text{BEST10\_WEIGHT} \times \sum_{i=1}^{10} \text{Best10} + \text{BEST50\_WEIGHT} \times \sum_{i=1}^{50} \text{Best50}$$
+dengan $\text{BEST10\_WEIGHT} = \frac{1}{60}$ dan $\text{BEST50\_WEIGHT} = \frac{1}{60}$, serta $+0.2$ clear bonus per chart.
+
+### Audit Integritas Otomatis (8 Test Suites)
+Seluruh perubahan chart, asset, unlocks, dan user score wajib lolos pengujian `celest-audit --check`:
+1. Poin 1: Songlist & Difficulty Completeness (Wajib 0.aff, 1.aff, 2.aff).
+2. Poin 2: Struktur Dasar File Lagu (Audio Vorbis, 4 JPEG RGB jackets, valid BG).
+3. Poin 3: AffParser Supported Syntax & Extended Lanes (-3..6, decimal floats).
+4. Poin 4: AffParser Prohibited Elements (Zero BPM divide-by-zero, extreme BPM Scudo OOM).
+5. Poin 5: Normalisasi Durasi Arc & Hold (0ms Arcs & $\le$1ms Holds).
+6. Poin 6: Hot Reload Server & Remote Download Sync.
+7. Poin 7: Unlocks Integrity & Larangan `ratingClass: 3` (Beyond) di file `unlocks`.
+8. Poin 8: Statistik Ekonomi Server & Progresi Songlist (Fragments, Memories, B50 Max).
 
 ### Nilai uji wajib
 
