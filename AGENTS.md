@@ -32,6 +32,7 @@ Before packaging the APK or pushing server updates, verify these 5 core requirem
   timing(0,4.00,4.00);
   (1000,1);
   ```
+- **Prohibit ratingClass: 3 in `unlocks`**: Never declare entries for `ratingClass: 3` (Beyond) in `database/songs/unlocks`. Beyond difficulty has no native fragment purchase UI; declaring it in `unlocks` locks the 4th difficulty diamond, forces label to `"?"`, and hides unplayed charts from the BEYOND tab in Song Select.
 
 ### Check 2: Song Asset Structure
 Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
