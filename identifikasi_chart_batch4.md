@@ -42,7 +42,7 @@
 | 10 | **アポカリプスに反逆の焔を焚べろ** | `apocalypserebellion` | cosMo@暴走AlterEgo | `222 - 333`<br>(333.0) | FTR 12 | 12.3 | KhronoLabyrinth | `apocalypserebellion` *(Custom HD)* | `conflict (1)` | `conflictvs` | cosMo boss song, 1,148 notes BPM 333, CC `12.3`, custom BG dinormalisasi ke `apocalypserebellion.jpg` |
 | 11 | **華の集落、秋のお届け** | `hananoshuuraku` | Umiai | `165` | FTR 10 | 10.4 | KhronoLabyrinth | `omatsuri_conflict` / `omatsuri_light` | `conflict (1)` | `conflict` | 647 notes, CC `10.4`, sintaks AFF bersih, mapping dual vanilla BG festival `omatsuri_conflict` / `omatsuri_light` |
 | 12 | **Raven Emperor** | `ravenemperor` | Kobaryo | `205` | FTR 10+ | 10.7 | KhronoLabyrinth | `maimai_boss` | `conflict (1)` | `conflict` | Kobaryo speedcore, 641 notes, CC `10.7`, vanilla BG `maimai_boss` |
-| 13 | **Symphony Op.1 -CHAOS-** | `symphonyop1chaos` | Laur | `240`<br>(1-8000) | BYD 10+ | 10.8 | KhronoLabyrinth<br>-Chaotic Form- | `byd_2_conflict` / `byd_2_light` | `conflict (1)` | `conflict` | Dual vanilla BG (`byd_2_conflict` / `byd_2_light`), single-chart Beyond (`3.aff`), 404 notes, 71 Zero BPM diperbaiki |
+| 13 | **Symphony Op.1 -CHAOS-** | `symphonyop1chaos` | Laur | `240`<br>(1-8000) | BYD 10+ | 10.9 | KhronoLabyrinth<br>-Chaotic Form- | `byd_2_conflict` / `byd_2_light` | `conflict (1)` | `conflict` | Dual vanilla BG (`byd_2_conflict` / `byd_2_light`), single-chart Beyond (`3.aff`), 404 notes, 71 Zero BPM diperbaiki, CC diubah ke 10.9 |
 | 14 | **WACCA ULTRA DREAM MEGAMIX** | `waccaultradreammegamix` | USAO & Kobaryo | `130 - 245`<br>(200.0) | FTR 11 | 11.4 | ArcCreate Charting Team | `waccaultradreammegamix` *(Custom HD)* | `conflict (1)` | `default` | Megamix kolaborasi 6 menit (358s), 1,810 notes, CC `11.4`, custom BG HD dinormalisasi ke `waccaultradreammegamix.jpg` |
 | 15 | **G e n g a o z o** | `gengaozo` | -45 | `153` | PST 4<br>PRS 8<br>FTR 10<br>**BYD 11** | 4.0<br>8.1<br>10.1<br>**11.0** | _ P A S T (0)<br>_ P R E S E N T (1)<br>_ F U T U R E (2)<br>**天兔壽斯 (3)** | `prelude_conflict` / `prelude_light` | `conflict (1)` | `conflict` | Sesuai `etoile.arcproj` (folder non-arkpkg). 4 diff lengkap, BYD 11 CC `11.0`, vanilla dual BG `prelude_conflict` / `light` |
 | 16 | **Jump** | `jump` | Rasmus Faber | `133` | PST 4<br>PRS 6<br>**FTR 9** | 4.0<br>6.0<br>**9.0** | Nitroだー！ (0, 1, 2) | `alice_light` / `alice_conflict` | `light (0)` | `light` | Sesuai `etoile.arcproj` (folder non-arkpkg). 3 diff lengkap (PST 4 / PRS 6 / FTR 9 CC `9.0`), charter Nitroだー！, vanilla dual BG `alice_light` / `conflict` |
@@ -268,14 +268,14 @@
 - **Audio & Preview:** Durasi audio: 214.48s | Preview: `63094 ms - 85094 ms` (22.0s Vorbis clip)
 - **Side & Background:** Side: `conflict (1)` | Background: `byd_2_conflict` | Background Inverse: `byd_2_light` (Vanilla client Arcaea native beyond 2) | Track: `conflict`
 - **Catatan Teknis Chart:** `3.aff` (4763 baris, 404 notes, 405 scenecontrols, 71 Zero BPM diperbaiki ke `0.01`).
-- **Penyesuaian:** Dual vanilla background `byd_2_conflict` / `byd_2_light`. BYD 10+ (CC **`10.8`**, KhronoLabyrinth\n-Chaotic Form-). Dummy unrated untuk 0, 1, 2.
+- **Penyesuaian:** Dual vanilla background `byd_2_conflict` / `byd_2_light`. BYD 10+ (CC **`10.9`**, KhronoLabyrinth\n-Chaotic Form-). Dummy unrated untuk 0, 1, 2.
 
 | Chart File | Slot (ratingClass) | Difficulty | Chart Constant | Charter & Alias |
 |---|---|---|---|---|
 | `0.aff` | Past (0) | **PST 0** | `0.0` | *(Unrated Placeholder)* |
 | `1.aff` | Present (1) | **PRS 0** | `0.0` | *(Unrated Placeholder)* |
 | `2.aff` | Future (2) | **FTR 0** | `0.0` | *(Unrated Placeholder)* |
-| `3.aff` | Beyond (3) | **BYD 10+** | **`10.8`** | **`KhronoLabyrinth\n-Chaotic Form-`** |
+| `3.aff` | Beyond (3) | **BYD 10+** | **`10.9`** | **`KhronoLabyrinth\n-Chaotic Form-`** |
 
 ---
 
