@@ -1,7 +1,7 @@
-# Identifikasi Lengkap 14 Lagu Batch 4 (`1batch4`) — Versi Terkoreksi & Terverifikasi
+# Identifikasi Lengkap 16 Lagu Batch 4 (`1batch4`) — Versi Terkoreksi & Terverifikasi
 
 > [!NOTE]
-> Dokumen ini mencakup **14 lagu Batch 4** (5 lagu awal + 8 lagu sebelumnya + 1 chart baru `WACCA ULTRA DREAM MEGAMIX`).
+> Dokumen ini mencakup **16 lagu Batch 4** (5 lagu awal + 8 lagu penambahan + `WACCA ULTRA DREAM MEGAMIX` + 2 lagu baru: `gengaozo` dan `jump`).
 > Seluruh penyesuaian pengguna telah diimplementasikan:
 > 1. **HeaveИ's Rain (`heavensrain`):** Constant diubah ke **12.0** (ETR 12), side diubah ke **`lephon`** (Colorless / Side 2).
 > 2. **Normalisasi Background Custom:** Seluruh file background custom dinormalisasi langsung ke ID / nama lagunya (`noxsilva.jpg`, `seimeiseisyndrome.jpg`, `heavensrain.jpg`, `apocalypserebellion.jpg`, `waccaultradreammegamix.jpg`).
@@ -13,11 +13,15 @@
 >    - `Mantra Hujan`: `bg: nijuusei2_light`, `bg_inverse: nijuusei2_conflict`
 >    - `Raven Emperor`: `bg: maimai_boss`
 >    - `Symphony Op.1 -CHAOS-`: `bg: byd_2_conflict`, `bg_inverse: byd_2_light` *(format native client untuk beyond 2)*
-> 4. **Lagu Baru ke-14:** `WACCA ULTRA DREAM MEGAMIX` (FTR 11, CC 11.4).
+>    - `G e n g a o z o`: `bg: prelude_conflict`, `bg_inverse: prelude_light`
+>    - `Jump`: `bg: alice_light`, `bg_inverse: alice_conflict`
+> 4. **Penambahan 2 Chart Resmi/Etoile (Agar Genap 150):**
+>    - `lowiro.gengaozo`: Konfigurasi disesuaikan dari `etoile.arcproj` (PST 4 / PRS 8 / FTR 10 / BYD 11 CC 11.0).
+>    - `lowiro.jump`: Konfigurasi disesuaikan dari `etoile.arcproj` (PST 4 / PRS 6 / FTR 9 CC 9.0).
 
 ---
 
-## Ringkasan 14 Lagu Unik Batch 4 (Tabel Master)
+## Ringkasan 16 Lagu Unik Batch 4 (Tabel Master)
 
 | No | Judul Lagu | Song ID | Composer | BPM (Base) | Difficulty Slot | Chart Constant | Charter | Background (`bg` / `bg_inverse`) | Side | Track Skin | Catatan Khusus |
 |:---:|---|---|---|:---:|:---:|:---:|---|---|:---:|---|---|
@@ -27,18 +31,20 @@
 | 4 | **DANGEROOOOUS JUNGLE** | `dangeroooous` | Laur | `160` | FTR 10+ | 10.7 | beane | `tanoc_light` / `tanoc_conflict` | `light (0)` | `light` | Dual vanilla BG (`tanoc_light` / `tanoc_conflict`), perbaikan 6 titik Zero BPM ($t > 0 \rightarrow 0.01$), preview 20s |
 | 5 | **人生**<br>*(Jinsei / Our Life)* | `ourlife` | gcmstyle (アンメルツP) | `185` | FTR 10+<br>ETR 11 | 10.9<br>11.7 | CcinoWrath (FTR)<br>Yagi ft. ZydeKun (ETR) | `lamentrain` | `lephon (2)` | `default` | ID **`ourlife`**, side **`lephon`**, vanilla BG `lamentrain`, `1.aff` $\rightarrow$ `2.aff` (`10.9`), `2.aff` $\rightarrow$ `4.aff` (`11.7`) |
 | 6 | **Future Eve** | `futureeve` | sasakure.UK | `190` | FTR 10 | 10.1 | Aloney_jub | `virtualsingers_light` / `virtualsingers_conflict` | `light (0)` | `rei` | Terverifikasi dual vanilla BG Virtual Singer (`virtualsingers_light` / `conflict`), FTR 10 (`10.1`), 815 notes |
-| 7 | **Beloved Tomboyish Girl**<br>*(Mede's Frenchcore Remix)* | `cirnomede` | Mede | `200` | FTR 9+ | 9.9 | Exiony vs. James | `single2_light` / `single2_conflict` | `conflict (1)` | `mirailight` | Dual vanilla BG (`single2_light` / `conflict`), Touhou Cirno ⑨ remix, CC `9.9`, 844 notes, 42 scenecontrols native |
+| 7 | **Beloved Tomboyish Girl**<br>*(Mede's Frenchcore Remix)* | `cirnomede` | Mede | `200` | FTR 9+ | 9.9 | Exiony vs. James | `single2_light` / `single2_conflict` | `conflict (1)` | `default` | Dual vanilla BG (`single2_light` / `conflict`), Touhou Cirno ⑨ remix, CC `9.9`, 844 notes, 42 scenecontrols native |
 | 8 | **Kuru Kuru Kururin Song** | `kurukuru` | Adeline_l18 | `152` | FTR 7 | 7.0 | Twirling James | `shiawase2` | `light (0)` | `default` | Herta meme song (durasi 29.3s), 70 notes, strip 2 non-native `groupalpha`, vanilla BG `shiawase2` |
-| 9 | **Mantra Hujan**<br>*(Adyoro Remix)* | `mantrahujan` | Adyoro feat. Kobo Kanaeru | `155` | FTR 10 | 10.3 | Exiony with James | `nijuusei2_light` / `nijuusei2_conflict` | `light (0)` | `mirailight` | Dual vanilla BG (`nijuusei2_light` / `conflict`), Kobo Kanaeru remix, CC `10.3`, 562 notes, preview 20s |
+| 9 | **Mantra Hujan**<br>*(Adyoro Remix)* | `mantrahujan` | Adyoro feat. Kobo Kanaeru | `155` | FTR 10 | 10.3 | Exiony with James | `nijuusei2_light` / `nijuusei2_conflict` | `light (0)` | `default` | Dual vanilla BG (`nijuusei2_light` / `conflict`), Kobo Kanaeru remix, CC `10.3`, 562 notes, preview 20s |
 | 10 | **アポカリプスに反逆の焔を焚べろ** | `apocalypserebellion` | cosMo@暴走AlterEgo | `222 - 333`<br>(333.0) | FTR 12 | 12.3 | KhronoLabyrinth | `apocalypserebellion` *(Custom HD)* | `conflict (1)` | `conflictvs` | cosMo boss song, 1,148 notes BPM 333, CC `12.3`, custom BG dinormalisasi ke `apocalypserebellion.jpg` |
 | 11 | **華の集落、秋のお届け** | `hananoshuuraku` | Umiai | `165` | FTR 10 | 10.4 | KhronoLabyrinth | `omatsuri_conflict` / `omatsuri_light` | `conflict (1)` | `conflict` | 647 notes, CC `10.4`, sintaks AFF bersih, mapping dual vanilla BG festival `omatsuri_conflict` / `omatsuri_light` |
 | 12 | **Raven Emperor** | `ravenemperor` | Kobaryo | `205` | FTR 10+ | 10.7 | KhronoLabyrinth | `maimai_boss` | `conflict (1)` | `conflict` | Kobaryo speedcore, 641 notes, CC `10.7`, vanilla BG `maimai_boss` |
 | 13 | **Symphony Op.1 -CHAOS-** | `symphonyop1chaos` | Laur | `240`<br>(1-8000) | BYD 10+ | 10.8 | KhronoLabyrinth<br>-Chaotic Form- | `byd_2_conflict` / `byd_2_light` | `conflict (1)` | `conflict` | Dual vanilla BG (`byd_2_conflict` / `byd_2_light`), single-chart Beyond (`3.aff`), 404 notes, 71 Zero BPM diperbaiki |
 | 14 | **WACCA ULTRA DREAM MEGAMIX** | `waccaultradreammegamix` | USAO & Kobaryo | `130 - 245`<br>(200.0) | FTR 11 | 11.4 | ArcCreate Charting Team | `waccaultradreammegamix` *(Custom HD)* | `conflict (1)` | `default` | Megamix kolaborasi 6 menit (358s), 1,810 notes, CC `11.4`, custom BG HD dinormalisasi ke `waccaultradreammegamix.jpg` |
+| 15 | **G e n g a o z o** | `gengaozo` | -45 | `153` | PST 4<br>PRS 8<br>FTR 10<br>**BYD 11** | 4.0<br>8.1<br>10.1<br>**11.0** | _ P A S T (0)<br>_ P R E S E N T (1)<br>_ F U T U R E (2)<br>**天兔壽斯 (3)** | `prelude_conflict` / `prelude_light` | `conflict (1)` | `conflict` | Sesuai `etoile.arcproj` (folder non-arkpkg). 4 diff lengkap, BYD 11 CC `11.0`, vanilla dual BG `prelude_conflict` / `light` |
+| 16 | **Jump** | `jump` | Rasmus Faber | `133` | PST 4<br>PRS 6<br>**FTR 9** | 4.0<br>6.0<br>**9.0** | Nitroだー！ (0, 1, 2) | `alice_light` / `alice_conflict` | `light (0)` | `light` | Sesuai `etoile.arcproj` (folder non-arkpkg). 3 diff lengkap (PST 4 / PRS 6 / FTR 9 CC `9.0`), charter Nitroだー！, vanilla dual BG `alice_light` / `conflict` |
 
 ---
 
-## Rincian Identifikasi Lengkap (1 – 14)
+## Rincian Identifikasi Lengkap (1 – 16)
 
 ### 1. Nox Silva (`noxsilva`)
 - **File Sumber:** `ArcCreate.NoxSilva.arcpkg`
@@ -280,3 +286,48 @@
 | `0.aff` | Past (0) | **PST 0** | `0.0` | *(Unrated Placeholder)* |
 | `1.aff` | Present (1) | **PRS 0** | `0.0` | *(Unrated Placeholder)* |
 | `2.aff` | Future (2) | **FTR 11** | **`11.4`** | **`ArcCreate Charting Team`** |
+
+
+---
+
+### 15. G e n g a o z o (`gengaozo`)
+- **File Sumber:** Direktori `/home/luhung/Documents/Chart/1batch4/lowiro.gengaozo` (Metadata diekstrak langsung dari `etoile.arcproj` folder non-arkpkg)
+- **Composer:** -45 | **Illustrator:** -45 (BYD) / -
+- **BPM:** `153` (Base BPM: 153.0)
+- **Audio & Preview:** Durasi audio: 160.51s (`base.ogg`) | Preview: `50196 ms - 70196 ms` (20.0s Vorbis clip, bar 33 main drop)
+- **Side & Background:** Side: `conflict (1)` | Background: `prelude_conflict` | Background Inverse: `prelude_light` (Vanilla client Arcaea) | Track: `conflict`
+- **Catatan Teknis Chart:** 
+  - `0.aff` (351 baris, 431 notes, Past 4, CC `4.0`, charter: `© lowiro`, alias: `_ P A S T`)
+  - `1.aff` (674 baris, 750 notes, Present 8, CC `8.1`, charter: `© lowiro`, alias: `_ P R E S E N T`)
+  - `2.aff` (1064 baris, 1,237 notes, Future 10, CC `10.1`, charter: `© lowiro`, alias: `_ F U T U R E`)
+  - `3.aff` (1165 baris, 1,322 notes, Beyond 11, CC `11.0`, charter: `天兔壽斯 -_B E Y O N D-`, illustrator: `-45`)
+  - Seluruh file `.aff` memiliki sintaks native bersih, tanpa Zero BPM, tanpa extreme BPM, format float desimal valid.
+- **Penyesuaian:** Dilengkapi 4 set difficulty lengkap (PST, PRS, FTR, BYD) sesuai konfigurasi `etoile.arcproj`. BYD 11 dengan chart constant **`11.0`** oleh 天兔壽斯. Menggunakan dual background vanilla `prelude_conflict` / `prelude_light`.
+
+| Chart File | Slot (ratingClass) | Difficulty | Chart Constant | Charter & Alias |
+|---|---|---|---|---|
+| `0.aff` | Past (0) | **PST 4** | **`4.0`** | **`© lowiro (_ P A S T)`** |
+| `1.aff` | Present (1) | **PRS 8** | **`8.1`** | **`© lowiro (_ P R E S E N T)`** |
+| `2.aff` | Future (2) | **FTR 10** | **`10.1`** | **`© lowiro (_ F U T U R E)`** |
+| `3.aff` | Beyond (3) | **BYD 11** | **`11.0`** | **`天兔壽斯 -_B E Y O N D-`** |
+
+---
+
+### 16. Jump (`jump`)
+- **File Sumber:** Direktori `/home/luhung/Documents/Chart/1batch4/lowiro.jump` (Metadata diekstrak langsung dari `etoile.arcproj` folder non-arkpkg)
+- **Composer:** Rasmus Faber | **Illustrator:** あるみっく
+- **BPM:** `133` (Base BPM: 133.0)
+- **Audio & Preview:** Durasi audio: 149.77s (`base.ogg`) | Preview: `57744 ms - 77744 ms` (20.0s Vorbis clip, bar 33 chorus)
+- **Side & Background:** Side: `light (0)` | Background: `alice_light` | Background Inverse: `alice_conflict` (Vanilla client Arcaea) | Track: `light`
+- **Catatan Teknis Chart:** 
+  - `0.aff` (365 baris, 300 notes, Past 4, CC `4.0`, charter: `Nitroだー！`)
+  - `1.aff` (373 baris, 303 notes, Present 6, CC `6.0`, charter: `Nitroだー！`)
+  - `2.aff` (755 baris, 458 notes, Future 9, CC `9.0`, charter: `Nitroだー！`)
+  - Seluruh file `.aff` memiliki sintaks native bersih, tanpa Zero BPM, tanpa extreme BPM, format float desimal valid.
+- **Penyesuaian:** Dilengkapi 3 set difficulty lengkap (PST, PRS, FTR) sesuai konfigurasi `etoile.arcproj`. Future 9 dengan chart constant **`9.0`** oleh Nitroだー！. Menggunakan dual background vanilla `alice_light` / `alice_conflict`.
+
+| Chart File | Slot (ratingClass) | Difficulty | Chart Constant | Charter & Alias |
+|---|---|---|---|---|
+| `0.aff` | Past (0) | **PST 4** | **`4.0`** | **`© lowiro (Nitroだー！)`** |
+| `1.aff` | Present (1) | **PRS 6** | **`6.0`** | **`© lowiro (Nitroだー！)`** |
+| `2.aff` | Future (2) | **FTR 9** | **`9.0`** | **`© lowiro (Nitroだー！)`** |
