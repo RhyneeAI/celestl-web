@@ -260,3 +260,30 @@ python3 ArcaeaServerFork/tools/generate_user_saves.py --all
 sshsefeo "docker restart celest-arcaea-server"
 ```
 
+---
+
+## 9. Dynamic Pricing Architecture (Packs & Songs)
+
+Untuk mendukung ekonomi *in-game memories* yang adil dan sebanding dengan kompleksitas chart, server menerapkan aturan harga dinamis (*dynamic pricing*):
+
+### 1. Harga Pack Dinamis Berdasarkan Jumlah Lagu
+Harga pack dihitung secara proporsional sesuai jumlah lagu yang dimilikinya (100 Memories per lagu):
+* **Pack `yue`**: 17 lagu $\implies \mathbf{1700\text{ Memories}}$
+* **Pack `kurumi`**: 11 lagu $\implies \mathbf{1100\text{ Memories}}$
+
+### 2. Harga Lagu Dinamis Berdasarkan Chart Constant
+Harga individual lagu ditentukan oleh chart constant tertinggi ($C$):
+* **Lagu Level 12** ($\text{rating} = 12$ atau $C \ge 12.0$):
+  $$\text{Harga} = \operatorname{round}(C \times 100)\text{ Memories}$$
+  *(Contoh: Rinka $12.2 \rightarrow 1220\text{ M}$, Lost Requiem BYD $12.9 \rightarrow 1290\text{ M}$, Mixxion $12.0 \rightarrow 1200\text{ M}$)*.
+* **Lagu Non-12** ($\text{level} < 12$):
+  $$\text{Harga} = \operatorname{round}(C \times 10)\text{ Memories}$$
+  *(Contoh: Op.1 $11.2 \rightarrow 112\text{ M}$, Opfer $10.8 \rightarrow 108\text{ M}$, Jedag Jedug Epilepsi $9.6 \rightarrow 96\text{ M}$, Suisei Hathaway $7.6 \rightarrow 76\text{ M}$)*.
+
+### 3. Implementasi Programatik
+Logika kalkulasi harga diimplementasikan secara otomatis di:
+1. `core/download.py` (`SonglistParser.get_song_price` & `SonglistParser.get_pack_price`).
+2. `core/purchase.py` (`Purchase.select()` dan `Purchase.buy()`).
+3. Database SQLite `purchase` melalui script `ArcaeaServerFork/tools/update_purchase_prices.py`.
+
+
