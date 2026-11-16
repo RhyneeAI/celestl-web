@@ -1,10 +1,10 @@
-# Identifikasi Lengkap 16 Lagu Batch 4 (`1batch4`) — Versi Terkoreksi & Terverifikasi
+# Identifikasi Lengkap 18 Lagu Batch 4 (`1batch4`) — Versi Terkoreksi & Terverifikasi
 
 > [!NOTE]
-> Dokumen ini mencakup **16 lagu Batch 4** (5 lagu awal + 8 lagu penambahan + `WACCA ULTRA DREAM MEGAMIX` + 2 lagu baru: `gengaozo` dan `jump`).
+> Dokumen ini mencakup **18 lagu Batch 4** (5 lagu awal + 8 lagu penambahan + `WACCA ULTRA DREAM MEGAMIX` + 2 lagu Etoile: `gengaozo` & `jump` + 2 lagu `James_BottomoftheBin2Packs`: `jedagjedugepilepsy` & `suisei_hathaway`).
 > Seluruh penyesuaian pengguna telah diimplementasikan:
 > 1. **HeaveИ's Rain (`heavensrain`):** Constant diubah ke **12.0** (ETR 12), side diubah ke **`lephon`** (Colorless / Side 2).
-> 2. **Normalisasi Background Custom:** Seluruh file background custom dinormalisasi langsung ke ID / nama lagunya (`noxsilva.jpg`, `seimeiseisyndrome.jpg`, `heavensrain.jpg`, `apocalypserebellion.jpg`, `waccaultradreammegamix.jpg`).
+> 2. **Normalisasi Background Custom:** Seluruh file background custom dinormalisasi langsung ke ID / nama lagunya (`noxsilva.jpg`, `seimeiseisyndrome.jpg`, `heavensrain.jpg`, `apocalypserebellion.jpg`, `waccaultradreammegamix.jpg`, `suisei_hathaway.jpg`).
 > 3. **Background Vanilla Arcaea Client:**
 >    - `DANGEROOOOUS JUNGLE`: `bg: tanoc_light`, `bg_inverse: tanoc_conflict`
 >    - `人生` (`ourlife`): `bg: lamentrain`, `side: lephon`
@@ -15,13 +15,18 @@
 >    - `Symphony Op.1 -CHAOS-`: `bg: byd_2_conflict`, `bg_inverse: byd_2_light` *(format native client untuk beyond 2)*
 >    - `G e n g a o z o`: `bg: prelude_conflict`, `bg_inverse: prelude_light`
 >    - `Jump`: `bg: alice_light`, `bg_inverse: alice_conflict`
-> 4. **Penambahan 2 Chart Resmi/Etoile (Agar Genap 150):**
+>    - `Jedag Jedug Epilepsi`: `bg: byd_conflict`, `bg_inverse: byd_light`
+>    - `Suisei Hathaway Talalala`: `bg: nijuusei2_light`, `bg_inverse: nijuusei2_conflict`
+> 4. **Penambahan 2 Chart Resmi/Etoile (Genap 150):**
 >    - `lowiro.gengaozo`: Konfigurasi disesuaikan dari `etoile.arcproj` (PST 4 / PRS 8 / FTR 10 / BYD 11 CC 11.0).
 >    - `lowiro.jump`: Konfigurasi disesuaikan dari `etoile.arcproj` (PST 4 / PRS 6 / FTR 9 CC 9.0).
+> 5. **Penambahan 2 Chart James Bottom of the Bin 2 Packs:**
+>    - `jedagjedugepilepsy`: Ditempatkan di Beyond (`ratingClass: 3`) dengan `rating: 0` agar diff di game menjadi `"?"`, namun di database SQLite ber-constant `9.6`. Base diff 0, 1, 2 dilengkapi placeholder unrated. Tidak didaftarkan pada `unlocks` (mencegah diamond lock & crash).
+>    - `suisei_hathaway`: Future 7 (CC `7.6`). Perbaikan 4 titik Zero BPM ($t > 0 \rightarrow 0.01$), clamp extreme BPM $2.08 \times 10^7 \rightarrow 1,000,000$, custom BG upscaled ke 1920×1440 HD.
 
 ---
 
-## Ringkasan 16 Lagu Unik Batch 4 (Tabel Master)
+## Ringkasan 18 Lagu Unik Batch 4 (Tabel Master)
 
 | No | Judul Lagu | Song ID | Composer | BPM (Base) | Difficulty Slot | Chart Constant | Charter | Background (`bg` / `bg_inverse`) | Side | Track Skin | Catatan Khusus |
 |:---:|---|---|---|:---:|:---:|:---:|---|---|:---:|---|---|
@@ -41,6 +46,8 @@
 | 14 | **WACCA ULTRA DREAM MEGAMIX** | `waccaultradreammegamix` | USAO & Kobaryo | `130 - 245`<br>(200.0) | FTR 11 | 11.4 | ArcCreate Charting Team | `waccaultradreammegamix` *(Custom HD)* | `conflict (1)` | `default` | Megamix kolaborasi 6 menit (358s), 1,810 notes, CC `11.4`, custom BG HD dinormalisasi ke `waccaultradreammegamix.jpg` |
 | 15 | **G e n g a o z o** | `gengaozo` | -45 | `153` | PST 4<br>PRS 8<br>FTR 10<br>**BYD 11** | 4.0<br>8.1<br>10.1<br>**11.0** | _ P A S T (0)<br>_ P R E S E N T (1)<br>_ F U T U R E (2)<br>**天兔壽斯 (3)** | `prelude_conflict` / `prelude_light` | `conflict (1)` | `conflict` | Sesuai `etoile.arcproj` (folder non-arkpkg). 4 diff lengkap, BYD 11 CC `11.0`, vanilla dual BG `prelude_conflict` / `light` |
 | 16 | **Jump** | `jump` | Rasmus Faber | `133` | PST 4<br>PRS 6<br>**FTR 9** | 4.0<br>6.0<br>**9.0** | Nitroだー！ (0, 1, 2) | `alice_light` / `alice_conflict` | `light (0)` | `light` | Sesuai `etoile.arcproj` (folder non-arkpkg). 3 diff lengkap (PST 4 / PRS 6 / FTR 9 CC `9.0`), charter Nitroだー！, vanilla dual BG `alice_light` / `conflict` |
+| 17 | **Jedag Jedug Epilepsi** | `jedagjedugepilepsy` | VKar MeMe | `148.84` | **BYD ?**<br>(rating: 0) | **9.6** | Charter Berkelas - James | `byd_conflict` / `byd_light` | `conflict (1)` | `conflictvs` | Slot Beyond (`rating: 0` $\rightarrow$ "?"), CC `9.6` di database SQLite (`rating_byn: 96`), strip `name="..."` di timinggroup, dilarang di `unlocks` |
+| 18 | **Suisei Hathaway Talalala** | `suisei_hathaway` | Ceka Éclair feat. Hoshimachi Suisei | `208` | **FTR 7** | **7.6** | James<br>(Blue-CMT) | `nijuusei2_light` / `nijuusei2_conflict` | `light (0)` | `default` | Dual vanilla BG, perbaikan 4 Zero BPM ($t > 0 \rightarrow 0.01$), clamp extreme BPM $2.08 \times 10^7 \rightarrow 1,000,000$, custom BG upscaled ke 1920×1440 HD |
 
 ---
 
@@ -331,3 +338,54 @@
 | `0.aff` | Past (0) | **PST 4** | **`4.0`** | **`© lowiro (Nitroだー！)`** |
 | `1.aff` | Present (1) | **PRS 6** | **`6.0`** | **`© lowiro (Nitroだー！)`** |
 | `2.aff` | Future (2) | **FTR 9** | **`9.0`** | **`© lowiro (Nitroだー！)`** |
+
+---
+
+### 17. Jedag Jedug Epilepsi (`jedagjedugepilepsy`)
+- **File Sumber:** Direktori `/home/luhung/Documents/Chart/1batch4/James_BottomoftheBin2Packs/jedagjedugepilepsy` (`ow my eyes.arcproj`)
+- **Composer:** VKar MeMe (tag Vorbis) / N/A | **Illustrator:** N/A
+- **BPM:** `148.84` (Base BPM: 148.84)
+- **Audio & Preview:** Durasi audio: 27.82s (`base.ogg`) | Preview: `938 ms - 20938 ms` (20.0s Vorbis clip)
+- **Side & Background:** Side: `conflict (1)` | Background: `byd_conflict` | Background Inverse: `byd_light` (Vanilla client Arcaea Beyond BG) | Track: `conflictvs`
+- **Catatan Teknis Chart:**
+  - `3.aff` (334 baris, 70+ notes, Beyond, dipindahkan dari `2.aff`).
+  - Baris 319: `timinggroup(name="camerax"){` $\rightarrow$ dinormalisasi ke `timinggroup(){` (menghapus atribut `name="..."` yang memicu fatal error di native C++ Arcaea).
+  - Event `camera`: 11 event kamera terverifikasi valid, parameter float dan easing (`qo`, `qi`, `reset`) valid.
+  - Base difficulties [0, 1, 2] dilengkapi placeholder dummy aff unrated.
+- **Penyesuaian Khusus:** 
+  - Disimpan pada slot Beyond (`ratingClass: 3`) dengan **`rating: 0`** agar pada game client kesulitan ditampilkan sebagai **`"?"`**.
+  - Pada database SQLite (`arcaea_database.db`), rating constant diisi **`9.6`** (`rating_byn: 96`) sehingga kalkulasi rating dan potensi tetap akurat.
+  - **Larangan Unlocks**: Sesuai aturan arsitektur engine Arcaea, chart Beyond ini **TIDAK didaftarkan pada `unlocks`** untuk mencegah diamond terkunci, label force `?`, dan crash pada tab BEYOND.
+  - Jacket `base.png` (Mode P, 447×447) dikonversi menjadi 4 file JPG RGB standar Arcaea (`base.jpg`, `base_256.jpg`, `1080_base.jpg`, `1080_base_256.jpg`).
+
+| Chart File | Slot (ratingClass) | Difficulty | Chart Constant | Charter & Alias |
+|---|---|---|---|---|
+| `0.aff` | Past (0) | **PST 0** | `0.0` | *(Unrated Placeholder)* |
+| `1.aff` | Present (1) | **PRS 0** | `0.0` | *(Unrated Placeholder)* |
+| `2.aff` | Future (2) | **FTR 0** | `0.0` | *(Unrated Placeholder)* |
+| `3.aff` | Beyond (3) | **BYD ?** (`rating: 0`) | **`9.6`** | **`Charter Berkelas - James`**<br>*(《EPILEPSY AND TONS OF FLASHING LIGHTS WARNING》)* |
+
+---
+
+### 18. Suisei Hathaway Talalala (`suisei_hathaway`)
+- **File Sumber:** Direktori `/home/luhung/Documents/Chart/1batch4/James_BottomoftheBin2Packs/suisei_hathaway` (`project.arcproj`)
+- **Composer:** Ceka Éclair feat. Hoshimachi Suisei | **Illustrator:** Reiruka れいるか
+- **BPM:** `208` (Base BPM: 208.0)
+- **Audio & Preview:** Durasi audio: 31.08s (`base.ogg`) | Preview: `1344 ms - 21344 ms` (20.0s Vorbis clip)
+- **Side & Background:** Side: `light (0)` | Background: `nijuusei2_light` | Background Inverse: `nijuusei2_conflict` (Dual vanilla client Arcaea) | Custom BG: `suisei_hathaway.jpg` (1920×1440 HD upscaled dari `arccreate_nijuusei_light.jpg`) | Track: `default`
+- **Catatan Teknis Chart:**
+  - `2.aff` (289 baris, Future 7, CC `7.6`).
+  - **Perbaikan Fatal Zero BPM**: 4 titik `timing(..., 0.00, 4.00);` pada baris 241, 248, 251, 255 otomatis diperbaiki menjadi `0.01` (`timing(..., 0.01, 4.00);`) untuk mencegah pembagian dengan nol pada native engine.
+  - **Perbaikan Fatal Extreme BPM**: Baris 277 `timing(23651,20800000.00,4.00);` (BPM $2.08 \times 10^7$) otomatis di-clamp ke `timing(23651,1000000.00,4.00);` untuk mencegah Android Scudo OOM (jutaan tick allocation).
+  - Timinggroup baris 275: `timinggroup(){` sintaks native valid.
+  - Base difficulties [0, 1] dilengkapi placeholder dummy aff unrated.
+- **Penyesuaian:** 
+  - Future 7 (CC **`7.6`**), charter: **`James`** (alias: `Blue-CMT`), illustrator: **`Reiruka れいるか`**.
+  - Didaftarkan ke `unlocks` untuk FTR (ratingClass 2) dengan biaya 150 Fragment.
+  - Jacket `base.jpg` dikonversi dan di-crop square menjadi 4 file JPG RGB standar Arcaea (`base.jpg`, `base_256.jpg`, `1080_base.jpg`, `1080_base_256.jpg`).
+
+| Chart File | Slot (ratingClass) | Difficulty | Chart Constant | Charter & Alias |
+|---|---|---|---|---|
+| `0.aff` | Past (0) | **PST 0** | `0.0` | *(Unrated Placeholder)* |
+| `1.aff` | Present (1) | **PRS 0** | `0.0` | *(Unrated Placeholder)* |
+| `2.aff` | Future (2) | **FTR 7** | **`7.6`** | **`James (Blue-CMT)`** |
