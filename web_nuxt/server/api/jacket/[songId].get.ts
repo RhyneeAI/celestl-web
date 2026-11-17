@@ -44,3 +44,4 @@ export default defineEventHandler((event) => {
         <text x="50%" y="60%" text-anchor="middle" fill="#fffafa" font-family="sans-serif" font-size="11" opacity="0.8">${songId.slice(0, 18)}</text>
     </svg>`;
 });
+

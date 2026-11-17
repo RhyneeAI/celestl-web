@@ -45,3 +45,4 @@ export interface PlayerProfile {
     ratingPtt: number;
     totalScores: number;
 }
+
