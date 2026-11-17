@@ -115,7 +115,7 @@
           :class="[
             'px-3.5 py-1.5 rounded-xl text-xs font-bold font-mono transition-all shadow-sm border',
             selectedDiff === null
-              ? 'bg-[#79287a] text-white border-[#f768dd]/50 scale-105 shadow-lg'
+              ? 'bg-[#16133e] text-ftr border-ftr/50 scale-105 shadow-lg'
               : 'bg-[#1a1d32] text-[#9a99a8] border-[#16133e] hover:bg-[#1e203a] hover:text-white'
           ]"
         >
@@ -130,10 +130,9 @@
           :class="[
             'diamond-btn relative flex items-center justify-center w-11 h-11 text-xs font-black font-mono transition-all transform shadow-md',
             selectedDiff === d.rc
-              ? 'scale-110 shadow-xl text-white'
-              : 'bg-[#1a1d32] text-[#9a99a8] hover:scale-105 border border-[#16133e] hover:text-white'
+              ? ['scale-110 shadow-xl', d.bgClass, d.rc === 1 ? 'text-[#0c0c22]' : 'text-white']
+              : ['bg-[#1a1d32] hover:scale-105 border border-[#16133e]', d.textClass]
           ]"
-          :style="selectedDiff === d.rc ? { backgroundColor: d.color, borderColor: d.color } : {}"
         >
           <span class="z-10">{{ d.code }}</span>
         </button>
@@ -185,8 +184,8 @@
 
               <!-- Difficulty Pill underneath jacket -->
               <div
-                class="mt-1.5 -mb-1 px-2.5 py-0.5 rounded-full text-[10px] font-black font-mono text-white shadow-sm z-10"
-                :style="{ backgroundColor: getDifficultyColor(item.ratingClass) }"
+                class="mt-1.5 -mb-1 px-2.5 py-0.5 rounded-full text-[10px] font-black font-mono shadow-sm z-10 border border-white/10"
+                :class="getDifficultyPillClass(item.ratingClass)"
               >
                 {{ item.difficulty }} {{ Number(item.constant).toFixed(1) }}
               </div>
@@ -290,7 +289,7 @@
                     <div class="flex items-center gap-2 text-xs text-[#9a99a8] font-medium">
                       <span>{{ item.dateObtained }}</span>
                       <span class="text-[#3f3c68]">·</span>
-                      <span class="font-mono font-bold text-[#03a8e6] bg-[#03a8e6]/10 px-1.5 py-0.5 rounded text-[11px] border border-[#03a8e6]/25">
+                      <span class="font-mono font-bold text-pst bg-pst/10 px-1.5 py-0.5 rounded text-[11px] border border-pst/25">
                         + {{ item.recalculatedRating.toFixed(3) }}
                       </span>
                     </div>
@@ -413,16 +412,23 @@ function toggleAllCards() {
 }
 
 const difficultyOptions = [
-  { rc: 0, code: 'PST', color: '#03a8e6' },
-  { rc: 1, code: 'PRS', color: '#5bc446' },
-  { rc: 2, code: 'FTR', color: '#79287a' },
-  { rc: 4, code: 'ETR', color: '#4caed1' },
-  { rc: 3, code: 'BYD', color: '#921a32' },
+  { rc: 0, code: 'PST', textClass: 'text-pst', bgClass: 'bg-pst' },
+  { rc: 1, code: 'PRS', textClass: 'text-prs', bgClass: 'bg-prs' },
+  { rc: 2, code: 'FTR', textClass: 'text-ftr', bgClass: 'bg-ftr' },
+  { rc: 4, code: 'ETR', textClass: 'text-etr', bgClass: 'bg-etr' },
+  { rc: 3, code: 'BYD', textClass: 'text-byd', bgClass: 'bg-byd' },
 ];
 
-function getDifficultyColor(rc: number) {
-  const match = difficultyOptions.find(d => d.rc === rc);
-  return match ? match.color : '#79287a';
+function getDifficultyPillClass(rc: number): string {
+  switch (rc) {
+    case 0: return 'bg-pst text-[#0c0c22]';
+    case 1: return 'bg-prs text-[#0c0c22]';
+    case 2: return 'bg-ftr text-white';
+    case 3: return 'bg-byd text-white';
+    case 4: return 'bg-etr text-white';
+    case 5: return 'bg-ins text-white';
+    default: return 'bg-ftr text-white';
+  }
 }
 
 const { data, pending } = await useFetch('/api/admin/server/player-scores', {

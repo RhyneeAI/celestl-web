@@ -38,8 +38,8 @@
             <button
               type="button"
               @click="diffDropdownOpen = !diffDropdownOpen"
-              class="relative flex flex-col items-center justify-center px-6 py-2 rounded-xl text-white font-brand font-bold text-xs shadow-lg transition-transform active:scale-95 border border-white/20"
-              :style="{ backgroundColor: currentDiffConfig.color }"
+              class="relative flex flex-col items-center justify-center px-6 py-2 rounded-xl font-brand font-bold text-xs shadow-lg transition-transform active:scale-95 border border-white/20"
+              :class="[currentDiffConfig.bgClass, currentDiffConfig.rc === 1 ? 'text-[#0c0c22]' : 'text-white']"
             >
               <span class="text-[10px] uppercase tracking-wider opacity-90">Difficulty</span>
               <span class="text-sm tracking-widest font-extrabold">{{ currentDiffConfig.label }}</span>
@@ -75,7 +75,7 @@
                   selectedDiff === d.rc ? 'bg-white/20 text-white' : 'text-[#9a99a8] hover:bg-white/10 hover:text-white'
                 ]"
               >
-                <span :style="{ color: d.color }">{{ d.code }}</span>
+                <span :class="d.textClass">{{ d.code }}</span>
                 <span class="text-[10px] text-[#6f6e80]">{{ d.name }}</span>
               </button>
             </div>
@@ -246,19 +246,19 @@ const selectedDiff = ref<number | null>(null);
 const diffDropdownOpen = ref(false);
 
 const difficultyOptions = [
-  { rc: 0, code: 'PST', name: 'Past', color: '#03a8e6' },
-  { rc: 1, code: 'PRS', name: 'Present', color: '#5bc446' },
-  { rc: 2, code: 'FTR', name: 'Future', color: '#79287a' },
-  { rc: 4, code: 'ETR', name: 'Eternal', color: '#4caed1' },
-  { rc: 3, code: 'BYD', name: 'Beyond', color: '#921a32' },
+  { rc: 0, code: 'PST', name: 'Past', textClass: 'text-pst', bgClass: 'bg-pst' },
+  { rc: 1, code: 'PRS', name: 'Present', textClass: 'text-prs', bgClass: 'bg-prs' },
+  { rc: 2, code: 'FTR', name: 'Future', textClass: 'text-ftr', bgClass: 'bg-ftr' },
+  { rc: 4, code: 'ETR', name: 'Eternal', textClass: 'text-etr', bgClass: 'bg-etr' },
+  { rc: 3, code: 'BYD', name: 'Beyond', textClass: 'text-byd', bgClass: 'bg-byd' },
 ];
 
 const currentDiffConfig = computed(() => {
   if (selectedDiff.value === null) {
-    return { code: 'ALL', label: 'ALL', color: '#79287a' };
+    return { rc: null, code: 'ALL', label: 'ALL', textClass: 'text-ftr', bgClass: 'bg-ftr' };
   }
   const match = difficultyOptions.find(d => d.rc === selectedDiff.value);
-  return match ? { code: match.code, label: match.code, color: match.color } : { code: 'ALL', label: 'ALL', color: '#79287a' };
+  return match ? { ...match, label: match.code } : { rc: null, code: 'ALL', label: 'ALL', textClass: 'text-ftr', bgClass: 'bg-ftr' };
 });
 
 function setDifficulty(rc: number | null) {
