@@ -33,3 +33,14 @@ export function getServerSongsDir(): string | null {
     }
     return null;
 }
+
+export function getRecalculateScriptPath(): string | null {
+    const candidates = [
+        path.resolve(process.cwd(), 'ArcaeaServerFork/tools/recalculate_ratings.py'),
+        path.resolve(process.cwd(), '../ArcaeaServerFork/tools/recalculate_ratings.py'),
+    ];
+    for (const c of candidates) {
+        if (fs.existsSync(c)) return c;
+    }
+    return null;
+}

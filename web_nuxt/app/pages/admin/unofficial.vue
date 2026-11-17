@@ -11,6 +11,28 @@
             {{ filtered.length }} / {{ songs.length }} songs
           </span>
           <span class="ml-auto flex items-center gap-2">
+            <!-- Recalculate Ratings Button (Modern B50) -->
+            <button
+              type="button"
+              :disabled="recalculating"
+              @click="recalculateAllRatings"
+              class="flex items-center gap-1.5 rounded-lg bg-[#272a48] hover:bg-[#34375e] text-[#ffd76a] hover:text-[#fffafa] border border-[#ffd76a]/30 px-2.5 py-1.5 text-xs font-semibold transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Recalculate all chart constants, score ratings, and player PTT using modern B50 formula"
+            >
+              <svg
+                v-if="recalculating"
+                class="h-3.5 w-3.5 animate-spin text-[#ffd76a]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              <span v-else>⚡</span>
+              <span>{{ recalculating ? 'Recalculating…' : 'Recalculate PTT (B50)' }}</span>
+            </button>
+
             <!-- Sort By Select -->
             <select
               v-model="sortBy"
@@ -24,6 +46,38 @@
             </select>
           </span>
         </div>
+
+        <!-- Recalculate Notification Banner -->
+        <transition
+          enter-active-class="transition duration-200 ease-out"
+          enter-from-class="opacity-0 -translate-y-1"
+          enter-to-class="opacity-100 translate-y-0"
+          leave-active-class="transition duration-150 ease-in"
+          leave-from-class="opacity-100 translate-y-0"
+          leave-to-class="opacity-0 -translate-y-1"
+        >
+          <div
+            v-if="recalcNotification"
+            :class="[
+              'mx-4 mt-2.5 flex items-center justify-between rounded-xl px-3.5 py-2 text-xs font-semibold border shadow-sm',
+              recalcNotification.type === 'success'
+                ? 'bg-[#acff82]/10 text-[#acff82] border-[#acff82]/30'
+                : 'bg-[#e14763]/10 text-[#e14763] border-[#e14763]/30'
+            ]"
+          >
+            <div class="flex items-center gap-2">
+              <span>{{ recalcNotification.type === 'success' ? '✓' : '⚠' }}</span>
+              <span>{{ recalcNotification.text }}</span>
+            </div>
+            <button
+              type="button"
+              @click="recalcNotification = null"
+              class="ml-3 text-sm opacity-70 hover:opacity-100 cursor-pointer"
+            >
+              ×
+            </button>
+          </div>
+        </transition>
 
         <!-- Filter Row -->
         <div class="flex flex-wrap items-center gap-1.5 px-4 pt-3 pb-3">
@@ -757,6 +811,48 @@ async function saveChartConstant() {
     saveError.value = err?.data?.statusMessage || err.message || 'Failed to update constant';
   } finally {
     saving.value = false;
+  }
+}
+
+// Global Recalculate Ratings (Modern B50)
+const recalculating = ref(false);
+const recalcNotification = ref<{ type: 'success' | 'error'; text: string } | null>(null);
+let recalcTimer: ReturnType<typeof setTimeout> | null = null;
+
+function showRecalcNotification(type: 'success' | 'error', text: string) {
+  recalcNotification.value = { type, text };
+  if (recalcTimer) clearTimeout(recalcTimer);
+  recalcTimer = setTimeout(() => {
+    recalcNotification.value = null;
+  }, 6000);
+}
+
+async function recalculateAllRatings() {
+  if (recalculating.value) return;
+  recalculating.value = true;
+
+  try {
+    const res = await $fetch<{
+      success: boolean;
+      message: string;
+      elapsed_ms: number;
+      vps_synced?: boolean;
+    }>('/api/admin/server/charts/recalculate', {
+      method: 'POST',
+    });
+
+    showRecalcNotification(
+      'success',
+      `Berhasil menghitung ulang seluruh rating & player PTT (B50) dalam ${res.elapsed_ms}ms${res.vps_synced ? ' & tersinkron ke VPS' : ''}.`
+    );
+    await refresh();
+  } catch (err: any) {
+    showRecalcNotification(
+      'error',
+      err?.data?.statusMessage || err.message || 'Gagal menghitung ulang rating'
+    );
+  } finally {
+    recalculating.value = false;
   }
 }
 

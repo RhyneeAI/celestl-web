@@ -2,7 +2,7 @@ import { execFile } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs';
 import path from 'path';
-import { getServerSonglistPath, getServerSongsDir } from './server-paths.ts';
+import { getServerSonglistPath, getServerSongsDir, getRecalculateScriptPath } from './server-paths.ts';
 
 const execFileAsync = promisify(execFile);
 
@@ -235,6 +235,77 @@ export async function syncStoreUpdateToVps(
             success: true,
             synced_vps: false,
             error: err.message || 'Failed to sync store item to VPS',
+        };
+    }
+}
+
+/**
+ * Execute recalculate_ratings.py locally on ArcaeaServerFork database.
+ */
+export async function recalculateRatingsLocal(): Promise<{ success: boolean; output: string; error?: string }> {
+    const scriptPath = getRecalculateScriptPath();
+    if (!scriptPath) {
+        return {
+            success: false,
+            output: '',
+            error: 'recalculate_ratings.py script not found',
+        };
+    }
+
+    const pyBin = fs.existsSync('/home/luhung/.venvs/arcaea-server/bin/python')
+        ? '/home/luhung/.venvs/arcaea-server/bin/python'
+        : 'python3';
+
+    try {
+        const { stdout } = await execFileAsync(pyBin, [scriptPath]);
+        return {
+            success: true,
+            output: stdout.trim(),
+        };
+    } catch (err: any) {
+        console.error('[Local Recalculate Error]:', err);
+        return {
+            success: false,
+            output: '',
+            error: err.message || 'Failed to recalculate ratings locally',
+        };
+    }
+}
+
+/**
+ * Trigger recalculate_ratings.py inside container celest-arcaea-server on VPS.
+ */
+export async function recalculateRatingsOnVps(): Promise<VpsSyncResult> {
+    if (!fs.existsSync(VPS_PEM_KEY)) {
+        return {
+            success: true,
+            synced_vps: false,
+            message: 'VPS SSH key not found, skipped VPS recalculation.',
+        };
+    }
+
+    try {
+        const remoteCmd = 'docker exec celest-arcaea-server python3 /app/tools/recalculate_ratings.py';
+        const { stdout } = await execFileAsync('ssh', [
+            '-i', VPS_PEM_KEY,
+            '-o', 'BatchMode=yes',
+            '-o', 'StrictHostKeyChecking=no',
+            '-o', 'ConnectTimeout=10',
+            `${VPS_USER}@${VPS_HOST}`,
+            remoteCmd,
+        ]);
+
+        return {
+            success: true,
+            synced_vps: true,
+            message: stdout.trim() || 'Ratings & PTT successfully recalculated on VPS.',
+        };
+    } catch (err: any) {
+        console.error('[VPS Recalculate Error]:', err);
+        return {
+            success: true,
+            synced_vps: false,
+            error: err.message || 'Failed to recalculate ratings on VPS',
         };
     }
 }

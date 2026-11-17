@@ -1,7 +1,7 @@
 import { defineEventHandler, readBody, createError } from 'h3';
 import fs from 'fs';
 import { getServerSonglistPath } from '../../../../utils/server-paths.ts';
-import { syncSonglistToVps } from '../../../../utils/vps-sync.ts';
+import { syncSonglistToVps, recalculateRatingsLocal, recalculateRatingsOnVps } from '../../../../utils/vps-sync.ts';
 
 interface ConstantUpdateBody {
     song_id: string;
@@ -63,6 +63,12 @@ export default defineEventHandler(async (event) => {
 
         // Automatically sync updated songlist to VPS celest-server
         const vpsResult = await syncSonglistToVps(songlistPath);
+
+        // Automatically recalculate SQLite chart table, ratings, and user PTT (B50)
+        await recalculateRatingsLocal().catch((e) => console.error('[Recalculate Local Background Error]:', e));
+        if (vpsResult.synced_vps) {
+            recalculateRatingsOnVps().catch((e) => console.error('[Recalculate VPS Background Error]:', e));
+        }
 
         return {
             success: true,
