@@ -1,13 +1,33 @@
 import fs from 'fs';
 import { getServerSonglistPath } from '../../../utils/server-paths.ts';
 
+export interface ServerDifficulty {
+    ratingClass: number;
+    rating: number;
+    ratingPlus?: boolean;
+    constant: number;
+    chartDesigner: string;
+    jacketDesigner: string;
+}
+
+export interface ServerSongItem {
+    id: string;
+    title: string;
+    artist: string;
+    bpm: string | number;
+    set: string;
+    date: number;
+    remoteDl: boolean;
+    difficulties: ServerDifficulty[];
+}
+
 export default defineEventHandler(async () => {
     // Read directly from ArcaeaServerFork/database/songs/songlist
     const serverSonglistPath = getServerSonglistPath();
     
     if (!serverSonglistPath) {
         return {
-            songs: [],
+            songs: [] as ServerSongItem[],
             total: 0,
             message: 'Server songlist not found'
         };
@@ -15,7 +35,7 @@ export default defineEventHandler(async () => {
 
     try {
         const raw = JSON.parse(fs.readFileSync(serverSonglistPath, 'utf-8'));
-        const songs = (raw.songs || []).map((s: any) => ({
+        const songs: ServerSongItem[] = (raw.songs || []).map((s: any) => ({
             id: s.id,
             title: s.title_localized?.en || s.id,
             artist: s.artist,
@@ -26,6 +46,7 @@ export default defineEventHandler(async () => {
             difficulties: (s.difficulties || []).map((d: any) => ({
                 ratingClass: d.ratingClass,
                 rating: d.rating,
+                ratingPlus: d.ratingPlus || false,
                 constant: d.constant || d.rating,
                 chartDesigner: d.chartDesigner || '-',
                 jacketDesigner: d.jacketDesigner || '',
@@ -38,7 +59,7 @@ export default defineEventHandler(async () => {
         };
     } catch (e: any) {
         return {
-            songs: [],
+            songs: [] as ServerSongItem[],
             total: 0,
             error: e.message
         };

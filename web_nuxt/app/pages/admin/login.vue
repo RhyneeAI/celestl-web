@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 definePageMeta({
     layout: false,
-    middleware: ['admin'],
+    middleware: 'admin',
 });
 
 const code = ref('');
@@ -96,3 +96,4 @@ async function handleLogin() {
         </div>
     </div>
 </template>
+

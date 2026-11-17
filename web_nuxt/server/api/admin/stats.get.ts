@@ -11,8 +11,9 @@ export default defineEventHandler(async () => {
         PST: 0, PRS: 0, FTR: 0, BYD: 0, ETR: 0, INS: 0
     };
     for (const c of allCharts) {
-        if (difficultyBreakdown[c.difficulty] !== undefined) {
-            difficultyBreakdown[c.difficulty]++;
+        const count = difficultyBreakdown[c.difficulty];
+        if (count !== undefined) {
+            difficultyBreakdown[c.difficulty] = count + 1;
         }
     }
 
@@ -51,3 +52,4 @@ export default defineEventHandler(async () => {
         }
     };
 });
+

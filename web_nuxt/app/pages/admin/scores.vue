@@ -175,7 +175,7 @@ import { ref, computed } from 'vue';
 
 definePageMeta({
   layout: 'admin',
-  middleware: ['admin']
+  middleware: 'admin'
 });
 
 const { data } = await useFetch('/api/admin/server/scores');
@@ -253,3 +253,4 @@ function getLampColor(lamp: string) {
   }
 }
 </script>
+

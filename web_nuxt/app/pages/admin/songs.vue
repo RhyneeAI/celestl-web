@@ -133,7 +133,7 @@ import { DIFFICULTY_COLOR, type DifficultyCode } from '~/utils/difficulty';
 
 definePageMeta({
   layout: 'admin',
-  middleware: ['admin']
+  middleware: 'admin'
 });
 
 const { data } = await useFetch('/api/songs');

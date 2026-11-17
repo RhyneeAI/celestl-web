@@ -16,9 +16,9 @@ function getDatabasePath(): string {
         if (fs.existsSync(c)) return c;
     }
     // Default to web_nuxt location if running from root, or server location if running inside web_nuxt
-    const fallback = fs.existsSync(path.resolve(process.cwd(), 'web_nuxt')) 
+    const fallback = (fs.existsSync(path.resolve(process.cwd(), 'web_nuxt')) 
         ? candidates[0] 
-        : candidates[1];
+        : candidates[1]) || path.resolve(process.cwd(), 'web_nuxt/server/database/data/celestl.sqlite');
     fs.mkdirSync(path.dirname(fallback), { recursive: true });
     return fallback;
 }

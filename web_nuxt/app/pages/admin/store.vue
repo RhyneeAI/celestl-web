@@ -172,7 +172,7 @@ import { ref, computed, reactive } from 'vue';
 
 definePageMeta({
   layout: 'admin',
-  middleware: ['admin']
+  middleware: 'admin'
 });
 
 const { data, refresh } = await useFetch('/api/admin/server/store');

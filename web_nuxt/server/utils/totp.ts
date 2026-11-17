@@ -63,6 +63,8 @@ export function verifyAdminSessionToken(token: string | undefined): boolean {
     if (parts.length !== 3) return false;
 
     const [timestampStr, random, hmac] = parts;
+    if (!timestampStr || !random || !hmac) return false;
+
     const payload = `${timestampStr}:${random}`;
     const expectedHmac = crypto.createHmac('sha256', SECRET_KEY).update(payload).digest('hex');
 

@@ -195,7 +195,7 @@ import { ref, computed, reactive } from 'vue';
 
 definePageMeta({
   layout: 'admin',
-  middleware: ['admin']
+  middleware: 'admin'
 });
 
 const { data, refresh } = await useFetch('/api/admin/server/songs');
@@ -208,7 +208,7 @@ const perPage = 25;
 const filteredSongs = computed(() => {
   if (!search.value.trim()) return serverSongs.value;
   const q = search.value.trim().toLowerCase();
-  return serverSongs.value.filter(s =>
+  return serverSongs.value.filter((s: any) =>
     s.id.toLowerCase().includes(q) ||
     s.title.toLowerCase().includes(q) ||
     s.artist.toLowerCase().includes(q)

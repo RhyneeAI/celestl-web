@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
 
     try {
         const forwardForm = new FormData();
-        const blob = new Blob([fileItem.data], { type: fileItem.type || 'image/png' });
+        const blob = new Blob([new Uint8Array(fileItem.data)], { type: fileItem.type || 'image/png' });
         forwardForm.append('file', blob, fileItem.filename || 'screenshot.png');
 
         const response = await fetch(`${visionUrl}/ocr/best50`, {
@@ -46,3 +46,4 @@ export default defineEventHandler(async (event) => {
         });
     }
 });
+

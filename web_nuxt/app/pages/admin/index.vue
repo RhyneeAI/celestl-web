@@ -120,7 +120,7 @@ import { DIFFICULTY_COLOR, type DifficultyCode } from '~/utils/difficulty';
 
 definePageMeta({
   layout: 'admin',
-  middleware: ['admin']
+  middleware: 'admin'
 });
 
 const { data: stats } = await useFetch('/api/admin/stats');

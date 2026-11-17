@@ -128,7 +128,7 @@ import { playRating } from '~/utils/arcaea-rating';
 
 definePageMeta({
   layout: 'admin',
-  middleware: ['admin']
+  middleware: 'admin'
 });
 
 const testCases = computed(() => [

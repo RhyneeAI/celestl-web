@@ -8,7 +8,7 @@ async function main() {
     let email = '';
     for (const arg of args) {
         if (arg.startsWith('--email=')) {
-            email = arg.split('=')[1];
+            email = arg.split('=')[1] || '';
         }
     }
 

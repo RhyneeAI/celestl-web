@@ -27,12 +27,35 @@ function difficultyCode(rc: number): string {
     }
 }
 
+export interface ServerScoreItem {
+    userId: number;
+    playerName: string;
+    playerCode: string;
+    songId: string;
+    songTitle: string;
+    difficulty: string;
+    ratingClass: number;
+    score: number;
+    scoreFormatted: string;
+    grade: string;
+    shinyPure: number;
+    pure: number;
+    far: number;
+    lost: number;
+    clearType: number;
+    lamp: Lamp;
+    constant: number;
+    serverRating: number;
+    recalculatedRating: number;
+    playedAt: number;
+}
+
 export default defineEventHandler(async (event) => {
     const serverDbPath = getServerDbPath();
     if (!serverDbPath) {
         return {
             total: 0,
-            scores: [],
+            scores: [] as ServerScoreItem[],
             message: 'Arcaea server database not found',
         };
     }
@@ -46,9 +69,10 @@ export default defineEventHandler(async (event) => {
             const raw = JSON.parse(fs.readFileSync(songlistPath, 'utf-8'));
             for (const s of raw.songs || []) {
                 songTitles[s.id] = s.title_localized?.en || s.id;
-                songConstants[s.id] = {};
+                const diffMap: Record<number, number> = {};
+                songConstants[s.id] = diffMap;
                 for (const d of s.difficulties || []) {
-                    songConstants[s.id][d.ratingClass] = d.constant || d.rating || 0;
+                    diffMap[d.ratingClass] = d.constant || d.rating || 0;
                 }
             }
         } catch {}
@@ -78,7 +102,7 @@ export default defineEventHandler(async (event) => {
         `).all();
         db.close();
 
-        const scores = rows.map((r: any) => {
+        const scores: ServerScoreItem[] = rows.map((r: any) => {
             const lamp = clearTypeToLamp(r.clear_type);
             const constant = songConstants[r.song_id]?.[r.difficulty] ?? 10.0;
             // Always recalculate with Celestl official rating engine (+0.2 bonus)
@@ -109,7 +133,7 @@ export default defineEventHandler(async (event) => {
         });
 
         // Sort by recalculated rating descending
-        scores.sort((a, b) => b.recalculatedRating - a.recalculatedRating);
+        scores.sort((a: ServerScoreItem, b: ServerScoreItem) => b.recalculatedRating - a.recalculatedRating);
 
         return {
             total: scores.length,
@@ -118,7 +142,7 @@ export default defineEventHandler(async (event) => {
     } catch (e: any) {
         return {
             total: 0,
-            scores: [],
+            scores: [] as ServerScoreItem[],
             error: e.message,
         };
     }
