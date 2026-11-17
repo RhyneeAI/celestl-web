@@ -24,7 +24,7 @@
             activeTab === 'presents' ? 'bg-[#16133e] text-white shadow-inner border border-white/10' : 'text-[#9a99a8] hover:text-white'
           ]"
         >
-          <span>📨 In-game Mail (Presents)</span>
+          <span>In-game Mail (Presents)</span>
           <span class="px-1.5 py-0.2 rounded-md bg-[#f768dd]/20 text-[#f768dd] text-[10px] font-mono">
             {{ presents.length }}
           </span>
@@ -38,7 +38,7 @@
             activeTab === 'redeem' ? 'bg-[#16133e] text-white shadow-inner border border-white/10' : 'text-[#9a99a8] hover:text-white'
           ]"
         >
-          <span>🎟️ Redeem Codes</span>
+          <span>Redeem Codes</span>
           <span class="px-1.5 py-0.2 rounded-md bg-[#60a5fa]/20 text-[#60a5fa] text-[10px] font-mono">
             {{ redeemCodes.length }}
           </span>
@@ -60,13 +60,12 @@
           @click="openCreatePresentModal"
           class="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#f768dd] hover:bg-[#d946ef] text-xs font-bold text-[#0c0c22] transition-colors cursor-pointer shadow-md"
         >
-          <span>✉️ Send Mail / Present</span>
+          <span>Send Present</span>
         </button>
       </div>
 
       <!-- Presents List -->
       <div v-if="presents.length === 0" class="rounded-3xl bg-[#1a1d32] p-12 text-center border border-[#16133e]">
-        <div class="text-3xl mb-2">📭</div>
         <h3 class="text-base font-bold text-[#fffafa] font-brand">No active mail presents</h3>
         <p class="text-xs text-[#9a99a8] mt-1">Send your first in-game present or event compensation above.</p>
       </div>
@@ -119,7 +118,7 @@
                 :key="i"
                 class="px-2.5 py-1 rounded-lg bg-[#16133e] border border-white/10 text-xs font-mono font-bold text-[#ffd76a] flex items-center gap-1.5 shadow-sm"
               >
-                <span>{{ getItemIcon(it.type) }}</span>
+                <span class="px-1.5 py-0.2 rounded bg-black/40 text-[9.5px] uppercase font-mono text-[#9a99a8]">{{ it.type }}</span>
                 <span>{{ it.amount.toLocaleString() }}x {{ it.itemId }}</span>
               </span>
             </div>
@@ -128,7 +127,7 @@
           <!-- Bottom Row: Meta Info -->
           <div class="flex items-center justify-between text-xs text-[#9a99a8] pt-2 border-t border-[#16133e]">
             <span class="flex items-center gap-1.5">
-              <span>👥 Delivered:</span>
+              <span>Delivered:</span>
               <b class="text-white font-mono">{{ p.deliveredCount }} player(s)</b>
             </span>
             <span class="font-mono text-[11px]">
@@ -153,13 +152,12 @@
           @click="openCreateRedeemModal"
           class="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#60a5fa] hover:bg-[#3b82f6] text-xs font-bold text-[#0c0c22] transition-colors cursor-pointer shadow-md"
         >
-          <span>🎟️ Generate Redeem Code</span>
+          <span>Create Redeem Code</span>
         </button>
       </div>
 
       <!-- Redeem Codes List -->
       <div v-if="redeemCodes.length === 0" class="rounded-3xl bg-[#1a1d32] p-12 text-center border border-[#16133e]">
-        <div class="text-3xl mb-2">🎟️</div>
         <h3 class="text-base font-bold text-[#fffafa] font-brand">No redeem codes created</h3>
         <p class="text-xs text-[#9a99a8] mt-1">Generate your first promotional or giveaway code above.</p>
       </div>
@@ -181,7 +179,7 @@
                   title="Click to copy code"
                 >
                   <span class="text-[#f768dd]">{{ rc.code }}</span>
-                  <span class="text-xs text-[#6f6e80] group-hover:text-white transition-colors">📋</span>
+                  <span class="text-[10px] text-[#6f6e80] group-hover:text-white uppercase font-bold tracking-wider transition-colors">Copy</span>
                 </button>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#60a5fa]/20 text-[#60a5fa] border border-[#60a5fa]/40">
                   {{ rc.typeLabel }}
@@ -210,7 +208,7 @@
                 :key="i"
                 class="px-2.5 py-1 rounded-lg bg-[#16133e] border border-white/10 text-xs font-mono font-bold text-[#ffd76a] flex items-center gap-1.5 shadow-sm"
               >
-                <span>{{ getItemIcon(it.type) }}</span>
+                <span class="px-1.5 py-0.2 rounded bg-black/40 text-[9.5px] uppercase font-mono text-[#9a99a8]">{{ it.type }}</span>
                 <span>{{ it.amount.toLocaleString() }}x {{ it.itemId }}</span>
               </span>
             </div>
@@ -248,8 +246,8 @@
       >
         <div class="w-full max-w-lg rounded-3xl bg-[#1a1d32] p-6 border border-[#16133e] text-[#fffafa] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
           <div class="flex items-center justify-between">
-            <h3 class="text-base font-bold font-brand flex items-center gap-2">
-              <span>✉️ Send Mail / In-game Present</span>
+            <h3 class="text-base font-bold font-brand">
+              <span>Create In-Game Present</span>
             </h3>
             <button
               type="button"
@@ -289,7 +287,7 @@
                     : 'bg-[#0c0c22] border-[#16133e] text-[#9a99a8]'
                 ]"
               >
-                📢 All Registered Players
+                All Registered Players
               </button>
               <button
                 type="button"
@@ -301,7 +299,7 @@
                     : 'bg-[#0c0c22] border-[#16133e] text-[#9a99a8]'
                 ]"
               >
-                🎯 Specific Player
+                Specific Player
               </button>
             </div>
           </div>
@@ -445,8 +443,8 @@
       >
         <div class="w-full max-w-lg rounded-3xl bg-[#1a1d32] p-6 border border-[#16133e] text-[#fffafa] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
           <div class="flex items-center justify-between">
-            <h3 class="text-base font-bold font-brand flex items-center gap-2">
-              <span>🎟️ Generate Redeem Code</span>
+            <h3 class="text-base font-bold font-brand">
+              <span>Create Redeem Code</span>
             </h3>
             <button
               type="button"
@@ -466,7 +464,7 @@
                 @click="generateRandomCode"
                 class="text-[11px] text-[#60a5fa] hover:underline font-bold cursor-pointer"
               >
-                🎲 Random Token
+                Generate Random Code
               </button>
             </div>
             <input
@@ -702,16 +700,6 @@ const { data: playersData } = await useFetch<{
 
 const playerOptions = computed(() => playersData.value?.players || []);
 
-function getItemIcon(type: string): string {
-  switch (type) {
-    case 'ticket': return '💎';
-    case 'fragment': return '⭐';
-    case 'core': return '🔮';
-    case 'single': return '🎵';
-    case 'pack': return '📦';
-    default: return '🎁';
-  }
-}
 
 // Modal 1: Create Present
 const showCreatePresentModal = ref(false);

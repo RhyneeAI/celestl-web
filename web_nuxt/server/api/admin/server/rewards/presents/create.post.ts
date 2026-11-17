@@ -2,6 +2,7 @@ import { defineEventHandler, readBody, createError } from 'h3';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import { getServerDbPath } from '../../../../../utils/server-paths.ts';
+import { syncPresentCreateToVps } from '../../../../../utils/vps-sync.ts';
 
 interface CreatePresentBody {
     presentId?: string;
@@ -74,11 +75,22 @@ export default defineEventHandler(async (event) => {
 
         db.close();
 
+        // Sync to VPS celest-server
+        const vpsRes = await syncPresentCreateToVps({
+            presentId,
+            expireTs,
+            description: body.description.trim(),
+            target: body.target,
+            userId: body.userId,
+            items: body.items,
+        });
+
         return {
             success: true,
             presentId,
             deliveredCount,
-            message: `Present "${presentId}" created and delivered to ${deliveredCount} player(s).`,
+            synced_vps: vpsRes.synced_vps,
+            message: `Present "${presentId}" created and delivered to ${deliveredCount} player(s).${vpsRes.synced_vps ? ' (Synced to VPS)' : ''}`,
         };
     } catch (err: any) {
         if (err.statusCode) throw err;

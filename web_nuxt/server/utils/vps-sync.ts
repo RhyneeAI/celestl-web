@@ -10,6 +10,7 @@ const VPS_USER = 'sefeo-english';
 const VPS_HOST = '139.190.96.194';
 const VPS_PEM_KEY = '/home/luhung/.ssh/sefeo-biznet.pem';
 const VPS_SONGS_DIR = '/home/sefeo-english/celest-server/database/songs';
+const VPS_DB_PATH = '/home/sefeo-english/celest-server/database/arcaea_database.db';
 
 export interface VpsSyncResult {
     success: boolean;
@@ -308,6 +309,164 @@ export async function recalculateRatingsOnVps(): Promise<VpsSyncResult> {
             error: err.message || 'Failed to recalculate ratings on VPS',
         };
     }
+}
+
+/**
+ * Generic helper to execute a Python script on VPS passing JSON payload via base64.
+ */
+export async function runVpsPythonWithPayload(pyScript: string, payload: any): Promise<VpsSyncResult> {
+    if (!fs.existsSync(VPS_PEM_KEY)) {
+        return { success: true, synced_vps: false, message: 'VPS SSH key not found, skipped.' };
+    }
+    const b64Payload = Buffer.from(JSON.stringify(payload)).toString('base64');
+    const remoteCmd = `python3 -c "import base64, json, sys, sqlite3; ${pyScript}" "${b64Payload}"`;
+    try {
+        const { stdout } = await execFileAsync('ssh', [
+            '-i', VPS_PEM_KEY,
+            '-o', 'BatchMode=yes',
+            '-o', 'StrictHostKeyChecking=no',
+            '-o', 'ConnectTimeout=10',
+            `${VPS_USER}@${VPS_HOST}`,
+            remoteCmd,
+        ]);
+        return { success: true, synced_vps: true, message: stdout.trim() };
+    } catch (err: any) {
+        console.error('[VPS Sync Error]:', err);
+        return { success: true, synced_vps: false, error: err.message || 'Failed to sync to VPS' };
+    }
+}
+
+/**
+ * Sync created Present to VPS celest-server database.
+ */
+export async function syncPresentCreateToVps(present: {
+    presentId: string;
+    expireTs: number;
+    description: string;
+    target: 'all' | 'single';
+    userId?: number;
+    items: Array<{ itemId: string; type: string; amount: number }>;
+}): Promise<VpsSyncResult> {
+    const pyScript = `data = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+conn = sqlite3.connect('${VPS_DB_PATH}')
+c = conn.cursor()
+c.execute('INSERT OR REPLACE INTO present VALUES (?, ?, ?)', (data['presentId'], data['expireTs'], data['description']))
+for it in data['items']:
+    c.execute('INSERT OR REPLACE INTO present_item VALUES (?, ?, ?, ?)', (data['presentId'], it['itemId'], it['type'], it['amount']))
+if data['target'] == 'all':
+    users = [r[0] for r in c.execute('SELECT user_id FROM user').fetchall()]
+    for uid in users:
+        c.execute('INSERT OR IGNORE INTO user_present VALUES (?, ?)', (uid, data['presentId']))
+elif data.get('userId'):
+    c.execute('INSERT OR IGNORE INTO user_present VALUES (?, ?)', (data['userId'], data['presentId']))
+conn.commit()
+print('Present synced to VPS')`;
+    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), present);
+}
+
+/**
+ * Sync deleted Present to VPS celest-server database.
+ */
+export async function syncPresentDeleteToVps(presentId: string): Promise<VpsSyncResult> {
+    const pyScript = `data = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+conn = sqlite3.connect('${VPS_DB_PATH}')
+c = conn.cursor()
+c.execute('DELETE FROM present WHERE present_id = ?', (data['presentId'],))
+c.execute('DELETE FROM present_item WHERE present_id = ?', (data['presentId'],))
+c.execute('DELETE FROM user_present WHERE present_id = ?', (data['presentId'],))
+conn.commit()
+print('Present deleted on VPS')`;
+    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), { presentId });
+}
+
+/**
+ * Sync created Redeem Code to VPS celest-server database.
+ */
+export async function syncRedeemCreateToVps(redeem: {
+    code: string;
+    type: number;
+    items: Array<{ itemId: string; type: string; amount: number }>;
+}): Promise<VpsSyncResult> {
+    const pyScript = `data = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+conn = sqlite3.connect('${VPS_DB_PATH}')
+c = conn.cursor()
+c.execute('INSERT OR REPLACE INTO redeem VALUES (?, ?)', (data['code'], data['type']))
+for it in data['items']:
+    c.execute('INSERT OR REPLACE INTO redeem_item VALUES (?, ?, ?, ?)', (data['code'], it['itemId'], it['type'], it['amount']))
+conn.commit()
+print('Redeem synced to VPS')`;
+    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), redeem);
+}
+
+/**
+ * Sync deleted Redeem Code to VPS celest-server database.
+ */
+export async function syncRedeemDeleteToVps(code: string): Promise<VpsSyncResult> {
+    const pyScript = `data = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+conn = sqlite3.connect('${VPS_DB_PATH}')
+c = conn.cursor()
+c.execute('DELETE FROM redeem WHERE code = ?', (data['code'],))
+c.execute('DELETE FROM redeem_item WHERE code = ?', (data['code'],))
+c.execute('DELETE FROM user_redeem WHERE code = ?', (data['code'],))
+conn.commit()
+print('Redeem deleted on VPS')`;
+    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), { code });
+}
+
+/**
+ * Sync Player Memories update to VPS celest-server database.
+ */
+export async function syncPlayerMemoriesToVps(userId: number, memories: number): Promise<VpsSyncResult> {
+    const pyScript = `data = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+conn = sqlite3.connect('${VPS_DB_PATH}')
+c = conn.cursor()
+c.execute('UPDATE user SET ticket = ? WHERE user_id = ?', (data['memories'], data['userId']))
+conn.commit()
+print('Player memories updated on VPS')`;
+    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), { userId, memories });
+}
+
+/**
+ * Sync Player Ban update to VPS celest-server database.
+ */
+export async function syncPlayerBanToVps(userId: number, isBanned: boolean, banReason: string | null): Promise<VpsSyncResult> {
+    const pyScript = `data = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+conn = sqlite3.connect('${VPS_DB_PATH}')
+c = conn.cursor()
+c.execute('UPDATE user SET ban_flag = ? WHERE user_id = ?', (1 if data['isBanned'] else 0, data['userId']))
+conn.commit()
+print('Player ban status updated on VPS')`;
+    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), { userId, isBanned, banReason });
+}
+
+/**
+ * Sync Player Password update to VPS celest-server database.
+ */
+export async function syncPlayerPasswordToVps(userId: number, passwordHash: string): Promise<VpsSyncResult> {
+    const pyScript = `data = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+conn = sqlite3.connect('${VPS_DB_PATH}')
+c = conn.cursor()
+c.execute('UPDATE user SET password = ? WHERE user_id = ?', (data['passwordHash'], data['userId']))
+conn.commit()
+print('Player password updated on VPS')`;
+    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), { userId, passwordHash });
+}
+
+/**
+ * Sync Player Wipe Scores to VPS celest-server database.
+ */
+export async function syncPlayerWipeScoresToVps(userId: number): Promise<VpsSyncResult> {
+    const pyScript = `data = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+conn = sqlite3.connect('${VPS_DB_PATH}')
+c = conn.cursor()
+c.execute('DELETE FROM best_score WHERE user_id = ?', (data['userId'],))
+c.execute('DELETE FROM recent30 WHERE user_id = ?', (data['userId'],))
+c.execute('UPDATE user SET rating_ptt = 0 WHERE user_id = ?', (data['userId'],))
+conn.commit()
+print('Player scores wiped on VPS')`;
+    const res = await runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), { userId });
+    await recalculateRatingsOnVps();
+    return res;
 }
 
 

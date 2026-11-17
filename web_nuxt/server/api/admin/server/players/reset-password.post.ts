@@ -3,6 +3,7 @@ import crypto from 'crypto';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import { getServerDbPath } from '../../../../utils/server-paths.ts';
+import { syncPlayerPasswordToVps } from '../../../../utils/vps-sync.ts';
 
 interface ResetPasswordBody {
     userId: number;
@@ -40,11 +41,15 @@ export default defineEventHandler(async (event) => {
         db.prepare('DELETE FROM login WHERE user_id = ?').run(body.userId);
         db.close();
 
+        // Sync password reset to VPS
+        const vpsRes = await syncPlayerPasswordToVps(body.userId, hashed);
+
         return {
             success: true,
             userId: body.userId,
             name: current.name,
-            message: `Password reset successfully for player ${current.name} (UID ${body.userId})`,
+            synced_vps: vpsRes.synced_vps,
+            message: `Password reset successfully for player ${current.name} (UID ${body.userId})${vpsRes.synced_vps ? ' (Synced to VPS)' : ''}`,
         };
     } catch (err: any) {
         if (err.statusCode) throw err;

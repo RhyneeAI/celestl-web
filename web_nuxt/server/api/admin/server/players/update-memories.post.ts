@@ -2,6 +2,7 @@ import { defineEventHandler, readBody, createError } from 'h3';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import { getServerDbPath } from '../../../../utils/server-paths.ts';
+import { syncPlayerMemoriesToVps } from '../../../../utils/vps-sync.ts';
 
 interface UpdateMemoriesBody {
     userId: number;
@@ -39,12 +40,16 @@ export default defineEventHandler(async (event) => {
         db.prepare('UPDATE user SET ticket = ? WHERE user_id = ?').run(newBalance, body.userId);
         db.close();
 
+        // Sync memories update to VPS
+        const vpsRes = await syncPlayerMemoriesToVps(body.userId, newBalance);
+
         return {
             success: true,
             userId: body.userId,
             oldBalance: current.ticket || 0,
             newBalance,
-            message: `Memories updated to ${newBalance} for User ID ${body.userId}`,
+            synced_vps: vpsRes.synced_vps,
+            message: `Memories updated to ${newBalance} for User ID ${body.userId}${vpsRes.synced_vps ? ' (Synced to VPS)' : ''}`,
         };
     } catch (err: any) {
         if (err.statusCode) throw err;

@@ -2,6 +2,7 @@ import { defineEventHandler, readBody, createError } from 'h3';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import { getServerDbPath } from '../../../../../utils/server-paths.ts';
+import { syncPresentDeleteToVps } from '../../../../../utils/vps-sync.ts';
 
 interface DeletePresentBody {
     presentId: string;
@@ -27,10 +28,14 @@ export default defineEventHandler(async (event) => {
 
         db.close();
 
+        // Sync deletion to VPS
+        const vpsRes = await syncPresentDeleteToVps(body.presentId);
+
         return {
             success: true,
             presentId: body.presentId,
-            message: `Present "${body.presentId}" deleted successfully.`,
+            synced_vps: vpsRes.synced_vps,
+            message: `Present "${body.presentId}" deleted successfully.${vpsRes.synced_vps ? ' (Synced to VPS)' : ''}`,
         };
     } catch (err: any) {
         if (err.statusCode) throw err;

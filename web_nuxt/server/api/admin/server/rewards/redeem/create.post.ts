@@ -2,6 +2,7 @@ import { defineEventHandler, readBody, createError } from 'h3';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import { getServerDbPath } from '../../../../../utils/server-paths.ts';
+import { syncRedeemCreateToVps } from '../../../../../utils/vps-sync.ts';
 
 interface CreateRedeemBody {
     code?: string;
@@ -49,11 +50,19 @@ export default defineEventHandler(async (event) => {
 
         db.close();
 
+        // Sync created redeem code to VPS
+        const vpsRes = await syncRedeemCreateToVps({
+            code,
+            type: redeemType,
+            items: body.items,
+        });
+
         return {
             success: true,
             code,
             type: redeemType,
-            message: `Redeem code "${code}" successfully created!`,
+            synced_vps: vpsRes.synced_vps,
+            message: `Redeem code "${code}" successfully created!${vpsRes.synced_vps ? ' (Synced to VPS)' : ''}`,
         };
     } catch (err: any) {
         if (err.statusCode) throw err;

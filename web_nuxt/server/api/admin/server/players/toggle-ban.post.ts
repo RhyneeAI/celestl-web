@@ -3,6 +3,7 @@ import crypto from 'crypto';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import { getServerDbPath } from '../../../../utils/server-paths.ts';
+import { syncPlayerBanToVps, syncPlayerPasswordToVps } from '../../../../utils/vps-sync.ts';
 
 interface ToggleBanBody {
     userId: number;
@@ -37,11 +38,15 @@ export default defineEventHandler(async (event) => {
             db.prepare('DELETE FROM login WHERE user_id = ?').run(body.userId);
             db.close();
 
+            // Sync ban to VPS
+            const vpsRes = await syncPlayerBanToVps(body.userId, true, body.reason || 'Banned by Administrator');
+
             return {
                 success: true,
                 userId: body.userId,
                 isBanned: true,
-                message: `Player ${current.name} (UID ${body.userId}) has been banned.`,
+                synced_vps: vpsRes.synced_vps,
+                message: `Player ${current.name} (UID ${body.userId}) has been banned.${vpsRes.synced_vps ? ' (Synced to VPS)' : ''}`,
             };
         } else {
             // Unban player: assign password (either provided or default 'Arcaea123!') and clear ban_flag
@@ -51,12 +56,17 @@ export default defineEventHandler(async (event) => {
             db.prepare("UPDATE user SET password = ?, ban_flag = NULL WHERE user_id = ?").run(hashed, body.userId);
             db.close();
 
+            // Sync unban & password to VPS
+            await syncPlayerBanToVps(body.userId, false, null);
+            const vpsRes = await syncPlayerPasswordToVps(body.userId, hashed);
+
             return {
                 success: true,
                 userId: body.userId,
                 isBanned: false,
                 tempPassword: pwd,
-                message: `Player ${current.name} (UID ${body.userId}) has been unbanned. Password set to: ${pwd}`,
+                synced_vps: vpsRes.synced_vps,
+                message: `Player ${current.name} (UID ${body.userId}) has been unbanned. Password set to: ${pwd}${vpsRes.synced_vps ? ' (Synced to VPS)' : ''}`,
             };
         }
     } catch (err: any) {

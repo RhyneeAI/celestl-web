@@ -2,6 +2,7 @@ import { defineEventHandler, readBody, createError } from 'h3';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import { getServerDbPath } from '../../../../utils/server-paths.ts';
+import { syncPlayerWipeScoresToVps } from '../../../../utils/vps-sync.ts';
 
 interface WipeScoresBody {
     userId: number;
@@ -52,12 +53,16 @@ export default defineEventHandler(async (event) => {
 
         db.close();
 
+        // Sync score wipe to VPS and trigger recalculate
+        const vpsRes = await syncPlayerWipeScoresToVps(body.userId);
+
         return {
             success: true,
             userId: body.userId,
             deletedBestCount: deletedBest.changes,
             deletedRecentCount: deletedRecent.changes,
-            message: `Successfully wiped ${deletedBest.changes} scores and reset PTT to 0 for ${current.name} (UID ${body.userId})`,
+            synced_vps: vpsRes.synced_vps,
+            message: `Successfully wiped ${deletedBest.changes} scores and reset PTT to 0 for ${current.name} (UID ${body.userId})${vpsRes.synced_vps ? ' (Synced to VPS)' : ''}`,
         };
     } catch (err: any) {
         if (err.statusCode) throw err;

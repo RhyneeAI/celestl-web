@@ -117,7 +117,11 @@
 
     <!-- Players Cards / Table -->
     <div v-if="filteredPlayers.length === 0" class="rounded-3xl bg-[#1a1d32] p-12 text-center border border-[#16133e]">
-      <div class="text-3xl mb-2">👤</div>
+      <div class="h-10 w-10 mx-auto mb-3 rounded-2xl bg-[#0c0c22] border border-[#16133e] flex items-center justify-center text-[#6f6e80]">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      </div>
       <h3 class="text-base font-bold text-[#fffafa] font-brand">No players found</h3>
       <p class="text-xs text-[#9a99a8] mt-1">Try adjusting your search query or filter status.</p>
     </div>
@@ -133,7 +137,7 @@
           <div class="flex items-start gap-3 min-w-0">
             <!-- Avatar / Partner Diamond Frame -->
             <div class="relative size-12 shrink-0 rounded-2xl bg-[#0c0c22] border border-white/10 overflow-hidden flex items-center justify-center shadow-md">
-              <span class="text-lg">🌸</span>
+              <span class="text-base font-black font-brand text-[#f768dd]">{{ p.name ? p.name.charAt(0).toUpperCase() : 'U' }}</span>
             </div>
 
             <!-- Name, User Code & UID -->
@@ -173,7 +177,7 @@
           <div>
             <span class="text-[10px] uppercase font-bold text-[#6f6e80]">Memories</span>
             <div class="text-[13px] font-mono font-black text-[#60a5fa] mt-0.5">
-              💎 {{ p.memories.toLocaleString() }}
+              {{ p.memories.toLocaleString() }}
             </div>
           </div>
           <div>
@@ -207,22 +211,20 @@
             <button
               type="button"
               @click="openMemoriesModal(p)"
-              class="px-2.5 py-1 rounded-lg bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#60a5fa] border border-[#3f3c68]/40 transition-colors cursor-pointer flex items-center gap-1"
+              class="px-2.5 py-1 rounded-lg bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#60a5fa] border border-[#3f3c68]/40 transition-colors cursor-pointer"
               title="Adjust memories balance"
             >
-              <span>💎</span>
-              <span>Memories</span>
+              Memories
             </button>
 
             <!-- Reset Password Trigger -->
             <button
               type="button"
               @click="openPasswordModal(p)"
-              class="px-2.5 py-1 rounded-lg bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#fffafa] border border-[#3f3c68]/40 transition-colors cursor-pointer flex items-center gap-1"
+              class="px-2.5 py-1 rounded-lg bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#fffafa] border border-[#3f3c68]/40 transition-colors cursor-pointer"
               title="Reset player password"
             >
-              <span>🔑</span>
-              <span>Password</span>
+              Password
             </button>
 
             <!-- Ban / Unban Toggle -->
@@ -230,13 +232,13 @@
               type="button"
               @click="toggleBan(p)"
               :class="[
-                'px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors cursor-pointer flex items-center gap-1',
+                'px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors cursor-pointer',
                 p.isBanned
                   ? 'bg-[#acff82]/15 text-[#acff82] border-[#acff82]/30 hover:bg-[#acff82]/25'
                   : 'bg-[#e14763]/15 text-[#e14763] border-[#e14763]/30 hover:bg-[#e14763]/25'
               ]"
             >
-              <span>{{ p.isBanned ? '✓ Unban' : '🚫 Ban' }}</span>
+              {{ p.isBanned ? 'Unban' : 'Ban' }}
             </button>
           </div>
 
@@ -275,8 +277,8 @@
       >
         <div class="w-full max-w-sm rounded-3xl bg-[#1a1d32] p-6 border border-[#16133e] text-[#fffafa] shadow-2xl space-y-4">
           <div class="flex items-center justify-between">
-            <h3 class="text-base font-bold font-brand flex items-center gap-2">
-              <span>💎 Adjust Memories</span>
+            <h3 class="text-base font-bold font-brand">
+              Adjust Memories
             </h3>
             <button
               type="button"
@@ -293,7 +295,7 @@
 
           <div class="p-3 rounded-2xl bg-[#0c0c22] border border-[#16133e] flex items-center justify-between text-xs">
             <span class="text-[#6f6e80]">Current Balance:</span>
-            <span class="font-mono font-bold text-[#60a5fa]">💎 {{ editingMemoriesPlayer.memories.toLocaleString() }}</span>
+            <span class="font-mono font-bold text-[#60a5fa]">{{ editingMemoriesPlayer.memories.toLocaleString() }} MEM</span>
           </div>
 
           <!-- Mode Selector -->
@@ -374,8 +376,8 @@
       >
         <div class="w-full max-w-sm rounded-3xl bg-[#1a1d32] p-6 border border-[#16133e] text-[#fffafa] shadow-2xl space-y-4">
           <div class="flex items-center justify-between">
-            <h3 class="text-base font-bold font-brand flex items-center gap-2">
-              <span>🔑 Reset Password</span>
+            <h3 class="text-base font-bold font-brand">
+              Reset Password
             </h3>
             <button
               type="button"
@@ -430,8 +432,8 @@
       >
         <div class="w-full max-w-sm rounded-3xl bg-[#1a1d32] p-6 border border-[#e14763]/40 text-[#fffafa] shadow-2xl space-y-4">
           <div class="flex items-center justify-between text-[#e14763]">
-            <h3 class="text-base font-bold font-brand flex items-center gap-2">
-              <span>⚠️ Wipe All Scores</span>
+            <h3 class="text-base font-bold font-brand">
+              Wipe All Scores
             </h3>
             <button
               type="button"
