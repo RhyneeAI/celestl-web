@@ -23,6 +23,7 @@ export interface StoreItemPayload {
     discount_percent: number;
     jacket_url?: string;
     items: PurchaseDetailItem[];
+    pack_songs?: string[];
 }
 
 export default defineEventHandler(async () => {
@@ -49,17 +50,27 @@ export default defineEventHandler(async () => {
             charMap.set(c.name.toLowerCase(), c.name);
         }
 
-        // 2. Build songs lookup from songlist
-        const songMap = new Map<string, { title: string; artist: string }>();
+        // 2. Build songs lookup from songlist and map songs to their pack
+        const songMap = new Map<string, { title: string; artist: string; set: string }>();
+        const packSongsMap = new Map<string, string[]>();
+
         const songlistPath = getServerSonglistPath();
         if (songlistPath && fs.existsSync(songlistPath)) {
             try {
                 const sdata = JSON.parse(fs.readFileSync(songlistPath, 'utf8'));
                 for (const s of sdata.songs || []) {
+                    const title = s.title_localized?.en || s.id;
+                    const set = s.set || 'single';
                     songMap.set(s.id, {
-                        title: s.title_localized?.en || s.id,
+                        title,
                         artist: s.artist || '',
+                        set,
                     });
+
+                    if (!packSongsMap.has(set.toLowerCase())) {
+                        packSongsMap.set(set.toLowerCase(), []);
+                    }
+                    packSongsMap.get(set.toLowerCase())!.push(title);
                 }
             } catch (err) {
                 console.error('[Store API] Failed to parse songlist:', err);
@@ -122,7 +133,7 @@ export default defineEventHandler(async () => {
             });
         }
 
-        // 6. Build enriched store items (omitting official vanilla packs)
+        // 6. Build enriched store items (omitting official vanilla packs AND songs that belong to packs)
         const enriched: StoreItemPayload[] = [];
         let packCount = 0;
         let singleCount = 0;
@@ -134,11 +145,22 @@ export default defineEventHandler(async () => {
             const isPack = types.includes('pack');
             const isSingle = types.includes('single');
 
-            // Filter out official packs: only custom packs (yue, kurumi, wanderlust) and custom songs
+            // Filter 1: Official packs - only show custom packs (yue, kurumi, wanderlust)
             if (isPack) {
                 const isCustomPack = Boolean(CUSTOM_PACK_METAS[p.purchase_name.toLowerCase()]);
                 if (!isCustomPack) {
-                    continue; // Skip official pack
+                    continue; // Skip official vanilla pack
+                }
+            }
+
+            // Filter 2: Single songs - if this song belongs to a pack (set !== 'single'), hide it from singles!
+            if (isSingle && !isPack) {
+                const songItem = items.find((it) => it.type === 'single');
+                const sid = songItem ? songItem.item_id : p.purchase_name;
+                const sMeta = songMap.get(sid);
+                // If song belongs to a pack or base, it is unlocked via pack or free - hide from single purchases!
+                if (sMeta && sMeta.set !== 'single') {
+                    continue;
                 }
             }
 
@@ -158,10 +180,11 @@ export default defineEventHandler(async () => {
                 ? Math.round((1 - p.price / p.orig_price) * 100)
                 : 0;
 
-            // Determine display title & artist
+            // Determine display title, artist, jacketUrl, and included pack songs
             let displayTitle = p.purchase_name;
             let artist: string | undefined;
             let jacketUrl: string | undefined;
+            let packSongs: string[] | undefined;
 
             if (category === 'single') {
                 const songItem = items.find((it) => it.type === 'single');
@@ -175,6 +198,7 @@ export default defineEventHandler(async () => {
                 displayTitle = customMeta?.title || packMap.get(p.purchase_name) || p.purchase_name;
                 artist = 'Arcaea Custom Pack';
                 jacketUrl = customMeta?.image || `/storage/packs/${p.purchase_name}.png`;
+                packSongs = packSongsMap.get(p.purchase_name.toLowerCase()) || [];
             }
 
             enriched.push({
@@ -191,6 +215,7 @@ export default defineEventHandler(async () => {
                 discount_percent: discountPercent,
                 jacket_url: jacketUrl,
                 items,
+                pack_songs: packSongs,
             });
         }
 

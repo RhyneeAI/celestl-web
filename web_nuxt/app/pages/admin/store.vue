@@ -202,6 +202,26 @@
                 </span>
               </div>
             </div>
+
+            <!-- If Pack, show included song titles preview -->
+            <div
+              v-if="item.category === 'pack' && item.pack_songs && item.pack_songs.length > 0"
+              class="pt-2 mt-1 border-t border-[#16133e]/80 space-y-1"
+            >
+              <div class="flex items-center justify-between text-[10px] font-bold text-[#a575ff]">
+                <span>🎵 {{ item.pack_songs.length }} Songs in Pack:</span>
+              </div>
+              <div class="flex flex-wrap gap-1 max-h-24 overflow-y-auto pr-0.5">
+                <span
+                  v-for="sname in item.pack_songs"
+                  :key="sname"
+                  class="rounded bg-[#16133e] px-1.5 py-0.5 text-[10px] text-[#fffafa]/90 font-medium truncate max-w-full border border-[#3f3c68]/30"
+                  :title="sname"
+                >
+                  {{ sname }}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -288,16 +308,37 @@
         </div>
 
         <!-- Included Items Summary in Modal -->
-        <div class="rounded-xl bg-[#0c0c22] p-3 border border-[#16133e] space-y-1 text-xs">
-          <span class="block text-[10.5px] uppercase font-bold text-[#6f6e80]">Included Items (purchase_item):</span>
-          <div class="flex flex-wrap gap-1.5 pt-0.5">
-            <span
-              v-for="sub in editingItem.items"
-              :key="sub.item_id + sub.type"
-              class="rounded-lg bg-[#16133e] px-2 py-0.5 text-[11px] font-medium text-[#fffafa] border border-[#3f3c68]/40"
-            >
-              {{ sub.name }} ({{ sub.type }})
+        <div class="rounded-xl bg-[#0c0c22] p-3 border border-[#16133e] space-y-2 text-xs">
+          <div>
+            <span class="block text-[10.5px] uppercase font-bold text-[#6f6e80]">Included Items (purchase_item):</span>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span
+                v-for="sub in editingItem.items"
+                :key="sub.item_id + sub.type"
+                class="rounded-lg bg-[#16133e] px-2 py-0.5 text-[11px] font-medium text-[#fffafa] border border-[#3f3c68]/40"
+              >
+                {{ sub.name }} ({{ sub.type }})
+              </span>
+            </div>
+          </div>
+
+          <!-- Included Pack Songs if pack -->
+          <div
+            v-if="editingItem.category === 'pack' && editingItem.pack_songs && editingItem.pack_songs.length > 0"
+            class="pt-2 border-t border-[#16133e] space-y-1"
+          >
+            <span class="block text-[10.5px] uppercase font-bold text-[#a575ff]">
+              🎵 {{ editingItem.pack_songs.length }} Songs Included in Pack:
             </span>
+            <div class="flex flex-wrap gap-1 max-h-32 overflow-y-auto pr-1">
+              <span
+                v-for="sname in editingItem.pack_songs"
+                :key="sname"
+                class="rounded bg-[#16133e] px-1.5 py-0.5 text-[10.5px] text-[#fffafa] border border-[#3f3c68]/30"
+              >
+                {{ sname }}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -395,6 +436,7 @@ interface StoreItemPayload {
   discount_percent: number;
   jacket_url?: string;
   items: PurchaseDetailItem[];
+  pack_songs?: string[];
 }
 
 const { data, refresh } = await useFetch<{
@@ -442,7 +484,8 @@ const filteredItems = computed(() => {
       const matchSub = i.items.some((sub) =>
         sub.name.toLowerCase().includes(q) || sub.item_id.toLowerCase().includes(q)
       );
-      return matchTitle || matchSku || matchArtist || matchSub;
+      const matchPackSong = i.pack_songs?.some((ps) => ps.toLowerCase().includes(q));
+      return matchTitle || matchSku || matchArtist || matchSub || matchPackSong;
     });
   }
 
