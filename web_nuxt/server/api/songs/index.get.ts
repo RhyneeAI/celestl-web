@@ -48,13 +48,32 @@ export default defineEventHandler(async (event) => {
         chartsBySongId.get(c.songId)!.push(c);
     }
 
-    const results = songList.map(song => ({
-        ...song,
-        charts: (chartsBySongId.get(song.id) || []).sort((a, b) => {
-            const order = ['PST', 'PRS', 'FTR', 'BYD', 'ETR', 'INS'];
-            return order.indexOf(a.difficulty) - order.indexOf(b.difficulty);
-        })
-    }));
+    const order = ['PST', 'PRS', 'FTR', 'BYD', 'ETR', 'INS'];
+
+    const results = songList.map(song => {
+        const rawCharts = (chartsBySongId.get(song.id) || []).sort((a, b) => 
+            order.indexOf(a.difficulty) - order.indexOf(b.difficulty)
+        );
+
+        const diffs = rawCharts.map(c => ({
+            difficulty: c.difficulty,
+            level: c.level,
+            constant: c.constant ? String(c.constant) : null,
+            chart_designer: c.chartDesigner,
+            jacket_designer: c.jacketDesigner,
+            note_count: c.noteCount,
+        }));
+
+        return {
+            ...song,
+            jacket: `/storage/jackets/${song.slug}.jpg`,
+            jacket_full: `/storage/jackets/${song.slug}.jpg`,
+            pack: song.packName,
+            released_at: song.releasedAt,
+            diffs,
+            charts: rawCharts,
+        };
+    });
 
     return {
         total: results.length,
