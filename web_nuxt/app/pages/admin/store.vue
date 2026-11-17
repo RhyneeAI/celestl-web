@@ -119,7 +119,10 @@
             :src="item.jacket_url"
             :alt="item.title"
             loading="lazy"
-            class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            :class="[
+              'h-full w-full transition-transform duration-300 group-hover:scale-105',
+              item.category === 'pack' ? 'object-cover object-top' : 'object-cover object-center'
+            ]"
             @error="onImageError($event, item)"
           />
           <!-- Fallback Gradient Tile if Image Missing -->

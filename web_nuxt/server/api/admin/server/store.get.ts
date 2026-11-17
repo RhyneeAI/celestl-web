@@ -80,7 +80,23 @@ export default defineEventHandler(async () => {
             }
         }
 
-        // 4. Group purchase items by purchase_name
+        // 4. Custom packs metadata mapping
+        const CUSTOM_PACK_METAS: Record<string, { title: string; image: string }> = {
+            yue: {
+                title: "Yue's Collection",
+                image: '/storage/packs/yue.png',
+            },
+            kurumi: {
+                title: 'Kurumi',
+                image: '/storage/packs/kurumi.png',
+            },
+            wanderlust: {
+                title: 'Wanderlust Eternal',
+                image: '/storage/packs/wanderlust.png',
+            },
+        };
+
+        // 5. Group purchase items by purchase_name
         const itemGroups = new Map<string, PurchaseDetailItem[]>();
         for (const pi of purchaseItems) {
             let itemName = pi.item_id;
@@ -88,7 +104,7 @@ export default defineEventHandler(async () => {
                 const song = songMap.get(pi.item_id);
                 itemName = song ? song.title : pi.item_id;
             } else if (pi.type === 'pack') {
-                itemName = packMap.get(pi.item_id) || pi.item_id;
+                itemName = CUSTOM_PACK_METAS[pi.item_id.toLowerCase()]?.title || packMap.get(pi.item_id) || pi.item_id;
             } else if (pi.type === 'character') {
                 itemName = charMap.get(pi.item_id.toLowerCase()) || pi.item_id;
             } else if (pi.type === 'core') {
@@ -106,17 +122,29 @@ export default defineEventHandler(async () => {
             });
         }
 
-        // 5. Build enriched store items
+        // 6. Build enriched store items (omitting official vanilla packs)
+        const enriched: StoreItemPayload[] = [];
         let packCount = 0;
         let singleCount = 0;
         let onSaleCount = 0;
 
-        const enriched: StoreItemPayload[] = purchases.map((p) => {
+        for (const p of purchases) {
             const items = itemGroups.get(p.purchase_name) || [];
             const types = items.map((it) => it.type);
-            const category: 'pack' | 'single' | 'other' = types.includes('pack')
+            const isPack = types.includes('pack');
+            const isSingle = types.includes('single');
+
+            // Filter out official packs: only custom packs (yue, kurumi, wanderlust) and custom songs
+            if (isPack) {
+                const isCustomPack = Boolean(CUSTOM_PACK_METAS[p.purchase_name.toLowerCase()]);
+                if (!isCustomPack) {
+                    continue; // Skip official pack
+                }
+            }
+
+            const category: 'pack' | 'single' | 'other' = isPack
                 ? 'pack'
-                : types.includes('single')
+                : isSingle
                 ? 'single'
                 : 'other';
 
@@ -143,13 +171,13 @@ export default defineEventHandler(async () => {
                 artist = sMeta?.artist;
                 jacketUrl = `/api/jacket/${sid}`;
             } else if (category === 'pack') {
-                const packItem = items.find((it) => it.type === 'pack');
-                const pid = packItem ? packItem.item_id : p.purchase_name;
-                displayTitle = packMap.get(pid) || p.purchase_name;
-                jacketUrl = `/storage/packs/${pid}.png`;
+                const customMeta = CUSTOM_PACK_METAS[p.purchase_name.toLowerCase()];
+                displayTitle = customMeta?.title || packMap.get(p.purchase_name) || p.purchase_name;
+                artist = 'Arcaea Custom Pack';
+                jacketUrl = customMeta?.image || `/storage/packs/${p.purchase_name}.png`;
             }
 
-            return {
+            enriched.push({
                 purchase_name: p.purchase_name,
                 title: displayTitle,
                 artist,
@@ -163,8 +191,8 @@ export default defineEventHandler(async () => {
                 discount_percent: discountPercent,
                 jacket_url: jacketUrl,
                 items,
-            };
-        });
+            });
+        }
 
         return {
             total: enriched.length,
