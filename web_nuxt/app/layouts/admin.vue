@@ -107,7 +107,7 @@ async function logout() {
   try {
     await $fetch('/api/admin/auth/logout', { method: 'POST' });
   } catch {}
-  await navigateTo('/admin/login');
+  await navigateTo('/admin/login', { external: true });
 }
 
 const createSvgIcon = (d: string) => ({

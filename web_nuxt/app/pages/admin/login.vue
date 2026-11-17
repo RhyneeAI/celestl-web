@@ -25,8 +25,8 @@ async function handleLogin() {
             body: { code: code.value },
         });
 
-        // Navigate to admin home
-        await navigateTo('/admin');
+        // Navigate to admin home (external: true ensures a fresh navigation cycle)
+        await navigateTo('/admin', { external: true });
     } catch (err: any) {
         error.value = err?.data?.statusMessage || 'That code is not valid right now.';
         code.value = '';

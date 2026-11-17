@@ -1,12 +1,15 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-    // Skip if SSR check is already handled or on non-admin routes
+    // Only guard admin routes
     if (!to.path.startsWith('/admin')) {
         return;
     }
 
     try {
-        const { data } = await useFetch('/api/admin/auth/status');
-        const auth = data.value;
+        // Use $fetch with request headers to prevent stale cache in Nuxt useFetch payload
+        const headers = useRequestHeaders(['cookie']);
+        const auth = await $fetch<{ enrolled: boolean; authenticated: boolean }>('/api/admin/auth/status', {
+            headers,
+        });
 
         if (to.path === '/admin/login') {
             if (auth?.authenticated) {
