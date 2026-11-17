@@ -1,3 +1,4 @@
+// @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import fs from 'fs';
 import { getServerDbPath, getServerSonglistPath, getPacklistPath } from '../../../utils/server-paths.ts';

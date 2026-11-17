@@ -15,10 +15,12 @@ export default defineEventHandler((event) => {
 
     // Check if songId has a difficulty suffix, e.g. aegleseeker_3 or antithese_byd
     const suffixMatch = songId.match(/^(.+?)_(byd|etr|ftr|prs|pst|ins|[0-5])$/i);
-    if (suffixMatch) {
-        songId = suffixMatch[1];
-        if (diffParam === undefined || diffParam === null || diffParam === '') {
-            diffParam = suffixMatch[2];
+    const matchedBase = suffixMatch?.[1];
+    const matchedDiff = suffixMatch?.[2];
+    if (matchedBase) {
+        songId = matchedBase;
+        if ((diffParam === undefined || diffParam === null || diffParam === '') && matchedDiff) {
+            diffParam = matchedDiff;
         }
     }
 

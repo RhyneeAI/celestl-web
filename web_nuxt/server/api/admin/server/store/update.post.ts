@@ -1,4 +1,5 @@
 import { defineEventHandler, readBody, createError } from 'h3';
+// @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import { getServerDbPath } from '../../../../utils/server-paths.ts';
 import { syncStoreUpdateToVps } from '../../../../utils/vps-sync.ts';
