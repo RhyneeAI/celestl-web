@@ -1,170 +1,234 @@
 <template>
-  <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div>
-        <h1 class="text-2xl font-bold tracking-tight text-[#fffafa] font-brand">Private Server Scores & Leaderboard</h1>
-        <p class="text-sm text-[#9a99a8]">
-          Live player records from ArcaeaServerFork with ratings recalculated using Celestl engine (+0.2 clear bonus).
-        </p>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <span class="text-xs text-[#9a99a8]">Total Records:</span>
-        <span class="rounded-full bg-[#1a1d32] px-3 py-1 font-mono text-xs font-bold text-[#acff82] border border-[#16133e]">
-          {{ allScores.length }}
-        </span>
-      </div>
-    </div>
-
-    <!-- Quick Stats -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div class="rounded-3xl bg-[#1a1d32] p-5 border border-[#16133e] shadow-xl">
-        <div class="text-xs text-[#9a99a8] uppercase tracking-wider font-semibold">Highest Recalculated Rating</div>
-        <div class="mt-2 font-mono text-2xl font-black text-[#ffd76a]">
-          {{ topScore ? Number(topScore.recalculatedRating).toFixed(3) : '0.000' }}
-        </div>
-        <div v-if="topScore" class="mt-1 text-xs text-[#6f6e80] truncate">
-          {{ topScore.playerName }} · {{ topScore.songTitle }}
-        </div>
-      </div>
-
-      <div class="rounded-3xl bg-[#1a1d32] p-5 border border-[#16133e] shadow-xl">
-        <div class="text-xs text-[#9a99a8] uppercase tracking-wider font-semibold">Total Unique Players</div>
-        <div class="mt-2 font-mono text-2xl font-black text-[#f768dd]">
-          {{ uniquePlayersCount }}
-        </div>
-        <div class="mt-1 text-xs text-[#6f6e80]">
-          Active on private server
-        </div>
-      </div>
-
-      <div class="rounded-3xl bg-[#1a1d32] p-5 border border-[#16133e] shadow-xl">
-        <div class="text-xs text-[#9a99a8] uppercase tracking-wider font-semibold">Pure Memory Plays</div>
-        <div class="mt-2 font-mono text-2xl font-black text-[#03a8e6]">
-          {{ pmCount }}
-        </div>
-        <div class="mt-1 text-xs text-[#6f6e80]">
-          Score ≥ 10,000,000 (0 Far / 0 Lost)
-        </div>
-      </div>
-    </div>
-
-    <!-- Filters -->
-    <div class="flex flex-col sm:flex-row gap-3">
-      <input
-        v-model="search"
-        type="text"
-        placeholder="Filter by player, player code, or song title..."
-        class="w-full sm:max-w-md rounded-2xl bg-[#1a1d32] px-4 py-2.5 text-sm text-[#fffafa] placeholder-[#6f6e80] border border-[#3f3c68]/40 focus:border-[#f768dd] focus:outline-none transition-colors"
+  <div class="relative min-h-[90vh] bg-gradient-to-b from-[#f8fafc] via-[#f1f5f9] to-[#e2e8f0] text-slate-900 font-sans antialiased rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
+    <!-- Top Cathedral Atmosphere Banner (Arcaea base_light.jpg) -->
+    <div class="relative h-64 sm:h-72 w-full overflow-hidden">
+      <img
+        src="/storage/backgrounds/base_light.jpg"
+        alt="Arcaea Light Cathedral"
+        class="h-full w-full object-cover object-top filter brightness-95 opacity-80"
+        @error="onBgError"
       />
-      <select
-        v-model="selectedDiff"
-        class="rounded-2xl bg-[#1a1d32] px-4 py-2.5 text-sm text-[#fffafa] border border-[#3f3c68]/40 focus:border-[#f768dd] focus:outline-none"
-      >
-        <option value="">All Difficulties</option>
-        <option value="PST">Past (PST)</option>
-        <option value="PRS">Present (PRS)</option>
-        <option value="FTR">Future (FTR)</option>
-        <option value="BYD">Beyond (BYD)</option>
-        <option value="ETR">Eternal (ETR)</option>
-      </select>
+      <!-- Gradient overlay fading smoothly into page body -->
+      <div class="absolute inset-0 bg-gradient-to-b from-white/20 via-[#f8fafc]/70 to-[#f8fafc]"></div>
+
+      <!-- Cathedral Top Architectural Accent / Vignette -->
+      <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/20 to-transparent"></div>
     </div>
 
-    <!-- Leaderboard Table -->
-    <div class="rounded-3xl border border-[#16133e] bg-[#1a1d32] overflow-hidden shadow-2xl">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-[#0c0c22] border-b border-[#16133e] text-[#6f6e80] uppercase tracking-wider font-bold">
-            <tr>
-              <th class="py-3 px-4 w-12 text-center">#</th>
-              <th class="py-3 px-4">Player</th>
-              <th class="py-3 px-4">Song & Difficulty</th>
-              <th class="py-3 px-4">Score & Grade</th>
-              <th class="py-3 px-4">Lamp</th>
-              <th class="py-3 px-4">Judges (P/F/L)</th>
-              <th class="py-3 px-4 text-right">Recalculated Rating</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-[#16133e]/60">
-            <tr
-              v-for="(row, idx) in pagedScores"
-              :key="row.userId + '-' + row.songId + '-' + row.ratingClass"
-              class="hover:bg-[#1e203a] transition-colors"
-            >
-              <td class="py-3 px-4 text-center font-mono font-bold text-[#6f6e80]">
-                {{ (page - 1) * perPage + idx + 1 }}
-              </td>
-              <td class="py-3 px-4">
-                <div class="font-bold text-sm text-[#fffafa]">{{ row.playerName }}</div>
-                <div class="font-mono text-[11px] text-[#9a99a8]">{{ row.playerCode || `ID ${row.userId}` }}</div>
-              </td>
-              <td class="py-3 px-4">
-                <div class="font-semibold text-sm text-[#fffafa]">{{ row.songTitle }}</div>
-                <div class="flex items-center gap-1.5 mt-0.5">
-                  <span :class="['px-1.5 py-0.5 rounded text-[10px] font-bold font-mono', getDiffBg(row.ratingClass)]">
-                    {{ row.difficulty }}
-                  </span>
-                  <span class="text-[11px] text-[#6f6e80] font-mono">c{{ Number(row.constant).toFixed(1) }}</span>
-                </div>
-              </td>
-              <td class="py-3 px-4">
-                <div class="font-mono font-extrabold text-sm text-[#ffd76a]">{{ row.scoreFormatted }}</div>
-                <div class="mt-0.5">
-                  <span class="px-1.5 py-0.2 rounded text-[10px] font-black bg-[#3f3c68]/40 text-[#fffafa]">
-                    {{ row.grade }}
-                  </span>
-                </div>
-              </td>
-              <td class="py-3 px-4">
-                <span
-                  :class="[
-                    'px-2 py-0.5 rounded-full text-[10px] font-bold font-mono uppercase tracking-wide',
-                    getLampColor(row.lamp)
-                  ]"
-                >
-                  {{ row.lamp.replace('_', ' ') }}
-                </span>
-              </td>
-              <td class="py-3 px-4 font-mono text-[11px] text-[#9a99a8]">
-                <span class="text-[#fffafa] font-bold">{{ row.pure }}</span> ({{ row.shinyPure }}) /
-                <span class="text-[#ffd76a]">{{ row.far }}</span> /
-                <span class="text-[#e14763]">{{ row.lost }}</span>
-              </td>
-              <td class="py-3 px-4 text-right">
-                <div class="font-mono text-sm font-black text-[#acff82]">
-                  {{ Number(row.recalculatedRating).toFixed(3) }}
-                </div>
-                <div v-if="row.lamp !== 'lost'" class="text-[10px] text-[#acff82]/80 font-mono">
-                  +0.2 clear bonus
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <!-- Main Content Container (Arcaea Center Canvas) -->
+    <div class="relative -mt-44 sm:-mt-48 mx-auto w-full max-w-[620px] px-4 pb-16 space-y-6">
+      <!-- Title Badge: Hexagon "< LEADERBOARDS" (Image 1 Header) -->
+      <div class="flex justify-center">
+        <div class="relative inline-flex items-center justify-center px-10 py-3.5 bg-white rounded-2xl shadow-xl border border-slate-200/80 header-hexagon transition-transform hover:scale-[1.01]">
+          <!-- Inner Hexagon Chevron & Title -->
+          <div class="flex items-center gap-3">
+            <svg class="h-6 w-6 text-black stroke-[3.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            <h1 class="font-brand font-black text-xl sm:text-2xl tracking-[0.18em] text-slate-900 uppercase">
+              LEADERBOARDS
+            </h1>
+          </div>
+        </div>
       </div>
 
-      <!-- Pagination -->
-      <div class="flex items-center justify-between border-t border-[#16133e] px-4 py-3 text-xs text-[#9a99a8]">
-        <span>Showing {{ pagedScores.length }} of {{ filteredScores.length }} scores</span>
-        <div class="flex gap-1">
-          <button
-            type="button"
-            :disabled="page <= 1"
-            class="rounded-lg bg-[#0c0c22] px-3 py-1 font-semibold disabled:opacity-30 hover:bg-[#1e203a] transition-colors"
-            @click="page--"
-          >
-            Previous
-          </button>
-          <span class="px-2 py-1 font-mono text-[#fffafa]">Page {{ page }} / {{ maxPage }}</span>
-          <button
-            type="button"
-            :disabled="page >= maxPage"
-            class="rounded-lg bg-[#0c0c22] px-3 py-1 font-semibold disabled:opacity-30 hover:bg-[#1e203a] transition-colors"
-            @click="page++"
-          >
-            Next
-          </button>
+      <!-- Controls Row: Difficulty Selector & Segmented Tabs -->
+      <div class="flex flex-col items-center gap-4">
+        <div class="relative flex items-center justify-between w-full max-w-[480px] px-2 z-30">
+          <!-- Difficulty Dropdown Pill (Image 1: FTR dark dropdown) -->
+          <div class="relative">
+            <button
+              type="button"
+              @click="diffDropdownOpen = !diffDropdownOpen"
+              class="relative flex flex-col items-center justify-center px-6 py-2 rounded-xl text-white font-brand font-bold text-xs shadow-lg transition-transform active:scale-95 border border-white/20"
+              :style="{ backgroundColor: currentDiffConfig.color }"
+            >
+              <span class="text-[10px] uppercase tracking-wider opacity-90">Difficulty</span>
+              <span class="text-sm tracking-widest font-extrabold">{{ currentDiffConfig.label }}</span>
+              <svg class="h-3 w-3 mt-0.5 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <!-- Vertical Dropdown Menu (PST, PRS, FTR, ETR, BYD, ALL) -->
+            <div
+              v-if="diffDropdownOpen"
+              class="absolute left-0 mt-2 w-36 rounded-2xl bg-[#1e2038] p-2 shadow-2xl border border-white/10 space-y-1 z-50 text-white animate-in fade-in zoom-in-95 duration-150"
+            >
+              <button
+                type="button"
+                @click="setDifficulty(null)"
+                :class="[
+                  'w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-xs font-bold font-mono transition-colors',
+                  selectedDiff === null ? 'bg-white/20 text-white' : 'text-slate-300 hover:bg-white/10'
+                ]"
+              >
+                <span>ALL</span>
+                <span class="text-[10px] text-slate-400">Total</span>
+              </button>
+
+              <button
+                v-for="d in difficultyOptions"
+                :key="d.code"
+                type="button"
+                @click="setDifficulty(d.rc)"
+                :class="[
+                  'w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-xs font-bold font-mono transition-colors',
+                  selectedDiff === d.rc ? 'bg-white/20 text-white' : 'text-slate-300 hover:bg-white/10'
+                ]"
+              >
+                <span :style="{ color: d.color }">{{ d.code }}</span>
+                <span class="text-[10px] text-slate-400">{{ d.name }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Segmented View Tabs: World vs Friend (Image 1) -->
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              @click="activeTab = 'world'"
+              :class="[
+                'px-6 py-2 rounded-xl font-brand font-bold text-xs uppercase tracking-wider transition shadow-md',
+                activeTab === 'world'
+                  ? 'bg-[#1e2038] text-white border border-white/10'
+                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+              ]"
+            >
+              World
+            </button>
+            <NuxtLink
+              to="/admin/records"
+              class="px-5 py-2 rounded-xl font-brand font-bold text-xs uppercase tracking-wider bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition shadow-md flex items-center gap-1.5"
+            >
+              <span>Score Data</span>
+              <svg class="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </NuxtLink>
+          </div>
         </div>
+
+        <!-- Diamond Divider: "—— ◇ ——" -->
+        <div class="flex items-center justify-center w-full max-w-[460px] py-1">
+          <div class="h-px flex-1 bg-slate-300/80"></div>
+          <div class="mx-3 text-slate-400 text-xs">◇</div>
+          <div class="h-px flex-1 bg-slate-300/80"></div>
+        </div>
+      </div>
+
+      <!-- Featured / Top User Highlight Card (Image 1 user banner) -->
+      <div v-if="featuredPlayer" class="relative">
+        <NuxtLink
+          :to="`/admin/records?userId=${featuredPlayer.userId}`"
+          class="group block relative w-full rounded-2xl bg-white border border-slate-200/90 shadow-xl p-4 sm:p-5 transition hover:shadow-2xl hover:border-slate-300 overflow-hidden"
+        >
+          <!-- Left Decorative Accent Chevron -->
+          <div class="absolute left-0 top-0 bottom-0 w-3 bg-[#1e2038]"></div>
+
+          <div class="flex items-center justify-between pl-3 pr-2">
+            <div class="min-w-0 pr-4">
+              <div class="text-[11px] font-bold tracking-widest uppercase text-slate-400 font-brand">Featured Player</div>
+              <div class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-brand truncate group-hover:text-[#79287a] transition-colors">
+                {{ featuredPlayer.name }}
+              </div>
+              <div class="mt-0.5 font-mono text-sm sm:text-base font-extrabold text-[#79287a]">
+                {{ featuredPlayer.totalScoreFormatted }}
+              </div>
+            </div>
+
+            <!-- Diamond Avatar Frame -->
+            <div class="relative shrink-0 pr-2">
+              <div class="h-16 w-16 rotate-45 overflow-hidden rounded-2xl bg-gradient-to-tr from-[#79287a] to-[#03a8e6] p-1 shadow-xl border-2 border-white">
+                <div class="h-full w-full -rotate-45 overflow-hidden rounded-xl bg-slate-900">
+                  <img
+                    :src="featuredPlayer.characterAvatar"
+                    :alt="featuredPlayer.name"
+                    class="h-full w-full object-cover scale-125"
+                    @error="onAvatarError"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </NuxtLink>
+      </div>
+
+      <!-- Ranked List of Players (Image 1 Ribbons) -->
+      <div v-if="pending" class="py-16 text-center">
+        <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-[#79287a] border-t-transparent"></div>
+        <div class="mt-3 font-brand text-xs uppercase tracking-wider text-slate-500">Loading Leaderboards…</div>
+      </div>
+
+      <div v-else-if="leaderboard.length === 0" class="rounded-2xl bg-white p-8 text-center border border-slate-200 text-slate-500">
+        <p class="font-brand font-semibold text-sm">No player scores found for this difficulty.</p>
+      </div>
+
+      <div v-else class="space-y-4">
+        <NuxtLink
+          v-for="entry in leaderboard"
+          :key="entry.userId"
+          :to="`/admin/records?userId=${entry.userId}`"
+          :class="[
+            'group relative block rounded-2xl p-4 sm:p-5 transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-2xl overflow-hidden cursor-pointer select-none',
+            getRibbonClasses(entry.rank)
+          ]"
+        >
+          <!-- Left Chevron Pointer / Rank Badge -->
+          <div class="flex items-center justify-between pr-2">
+            <!-- Rank & Info -->
+            <div class="flex items-center gap-4 sm:gap-6 min-w-0 pr-4">
+              <!-- Rank Number with Arcaea Arrow Badge -->
+              <div class="flex items-center gap-1 shrink-0 font-brand font-black text-2xl sm:text-3xl tracking-tighter" :class="getRankNumberColor(entry.rank)">
+                <span>#{{ entry.rank }}</span>
+              </div>
+
+              <!-- Player Credentials -->
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <h3 class="font-brand font-black text-lg sm:text-2xl tracking-tight truncate drop-shadow-sm" :class="getRankTextColor(entry.rank)">
+                    {{ entry.name }}
+                  </h3>
+                  <span
+                    v-if="entry.ratingPtt > 0"
+                    class="rounded-full bg-black/20 px-2 py-0.5 font-mono text-[11px] font-bold text-white/90 backdrop-blur-sm"
+                  >
+                    {{ entry.ratingPtt.toFixed(2) }}
+                  </span>
+                </div>
+
+                <!-- Total Score (Formatted e.g. 5,590,578,790) -->
+                <div class="mt-0.5 font-mono font-black text-sm sm:text-lg tracking-wide drop-shadow-sm" :class="getScoreColor(entry.rank)">
+                  {{ entry.totalScoreFormatted }}
+                </div>
+
+                <!-- Best Play Subtext -->
+                <div v-if="entry.topSongTitle" class="mt-0.5 text-[11px] truncate opacity-80" :class="getRankTextColor(entry.rank)">
+                  Top: {{ entry.topSongTitle }} · c{{ entry.topRating }} ({{ entry.topGrade }})
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Diamond Avatar Frame (overlapping 45-deg square) -->
+            <div class="relative shrink-0 pr-1">
+              <div
+                :class="[
+                  'h-14 w-14 sm:h-16 sm:w-16 rotate-45 overflow-hidden rounded-2xl p-1 shadow-2xl transition-transform group-hover:scale-105 border-2',
+                  getAvatarBorderColor(entry.rank)
+                ]"
+              >
+                <div class="h-full w-full -rotate-45 overflow-hidden rounded-xl bg-slate-900">
+                  <img
+                    :src="entry.characterAvatar"
+                    :alt="entry.name"
+                    class="h-full w-full object-cover scale-125"
+                    @error="onAvatarError"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </NuxtLink>
       </div>
     </div>
   </div>
@@ -172,85 +236,102 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import type { LeaderboardEntry } from '~/types/leaderboard';
 
 definePageMeta({
   layout: 'admin',
-  middleware: 'admin'
+  middleware: 'admin',
 });
 
-const { data } = await useFetch('/api/admin/server/scores');
-const allScores = computed(() => data.value?.scores || []);
+const activeTab = ref<'world' | 'friend'>('world');
+const selectedDiff = ref<number | null>(null);
+const diffDropdownOpen = ref(false);
 
-const search = ref('');
-const selectedDiff = ref('');
-const page = ref(1);
-const perPage = 25;
+const difficultyOptions = [
+  { rc: 0, code: 'PST', name: 'Past', color: '#03a8e6' },
+  { rc: 1, code: 'PRS', name: 'Present', color: '#5bc446' },
+  { rc: 2, code: 'FTR', name: 'Future', color: '#79287a' },
+  { rc: 4, code: 'ETR', name: 'Eternal', color: '#4caed1' },
+  { rc: 3, code: 'BYD', name: 'Beyond', color: '#921a32' },
+];
 
-const topScore = computed(() => allScores.value[0] || null);
-
-const uniquePlayersCount = computed(() => {
-  const set = new Set<number>();
-  for (const s of allScores.value) {
-    set.add(s.userId);
+const currentDiffConfig = computed(() => {
+  if (selectedDiff.value === null) {
+    return { code: 'ALL', label: 'ALL', color: '#79287a' };
   }
-  return set.size;
+  const match = difficultyOptions.find(d => d.rc === selectedDiff.value);
+  return match ? { code: match.code, label: match.code, color: match.color } : { code: 'ALL', label: 'ALL', color: '#79287a' };
 });
 
-const pmCount = computed(() => {
-  return allScores.value.filter((s: any) => s.lamp === 'pure_memory').length;
+function setDifficulty(rc: number | null) {
+  selectedDiff.value = rc;
+  diffDropdownOpen.value = false;
+}
+
+const { data, pending } = await useFetch('/api/admin/server/leaderboard', {
+  query: computed(() => ({
+    difficulty: selectedDiff.value !== null ? selectedDiff.value : undefined,
+  })),
 });
 
-const filteredScores = computed(() => {
-  let list = allScores.value;
-  if (selectedDiff.value) {
-    list = list.filter((s: any) => s.difficulty === selectedDiff.value);
-  }
-  if (search.value.trim()) {
-    const q = search.value.trim().toLowerCase();
-    list = list.filter((s: any) =>
-      s.playerName.toLowerCase().includes(q) ||
-      s.playerCode.toLowerCase().includes(q) ||
-      s.songTitle.toLowerCase().includes(q) ||
-      s.songId.toLowerCase().includes(q)
-    );
-  }
-  return list;
-});
+const leaderboard = computed<LeaderboardEntry[]>(() => data.value?.leaderboard || []);
+const featuredPlayer = computed(() => leaderboard.value[0] || null);
 
-const maxPage = computed(() => Math.max(1, Math.ceil(filteredScores.value.length / perPage)));
+function onAvatarError(e: Event) {
+  const target = e.target as HTMLImageElement;
+  target.src = '/storage/characters/0_icon.png';
+}
 
-const pagedScores = computed(() => {
-  const start = (page.value - 1) * perPage;
-  return filteredScores.value.slice(start, start + perPage);
-});
+function onBgError(e: Event) {
+  const target = e.target as HTMLImageElement;
+  target.style.display = 'none';
+}
 
-function getDiffBg(rc: number) {
-  switch (rc) {
-    case 0: return 'bg-[#03a8e6] text-[#0c0c22]';
-    case 1: return 'bg-[#acff82] text-[#0c0c22]';
-    case 2: return 'bg-[#f768dd] text-[#0c0c22]';
-    case 3: return 'bg-[#e14763] text-[#fffafa]';
-    case 4: return 'bg-[#8975a8] text-[#fffafa]';
-    case 5: return 'bg-[#7474dc] text-[#fffafa]';
-    default: return 'bg-gray-500 text-white';
+// Styling helpers matching Image 1 gold, silver, bronze ribbons
+function getRibbonClasses(rank: number) {
+  switch (rank) {
+    case 1:
+      // Gold gradient banner (#1)
+      return 'bg-gradient-to-r from-[#d99a26] via-[#eab308] to-[#fde047] text-white shadow-[#eab308]/30 border-2 border-[#fef08a]';
+    case 2:
+      // Silver gradient banner (#2)
+      return 'bg-gradient-to-r from-[#475569] via-[#64748b] to-[#94a3b8] text-white shadow-[#64748b]/30 border-2 border-[#cbd5e1]';
+    case 3:
+      // Bronze / Copper gradient banner (#3)
+      return 'bg-gradient-to-r from-[#7f1d1d] via-[#991b1b] to-[#c2410c] text-white shadow-[#c2410c]/30 border-2 border-[#ea580c]';
+    default:
+      // #4+ Clean slate ribbon
+      return 'bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 shadow-md';
   }
 }
 
-function getLampColor(lamp: string) {
-  switch (lamp) {
-    case 'pure_memory':
-      return 'bg-[#ffd76a]/20 text-[#ffd76a] border border-[#ffd76a]/40';
-    case 'full_recall':
-      return 'bg-[#03a8e6]/20 text-[#03a8e6] border border-[#03a8e6]/40';
-    case 'normal_clear':
-      return 'bg-[#acff82]/20 text-[#acff82] border border-[#acff82]/40';
-    case 'easy_clear':
-      return 'bg-[#8975a8]/20 text-[#8975a8] border border-[#8975a8]/40';
-    case 'hard_clear':
-      return 'bg-[#f768dd]/20 text-[#f768dd] border border-[#f768dd]/40';
-    default:
-      return 'bg-[#e14763]/20 text-[#e14763] border border-[#e14763]/40';
-  }
+function getRankTextColor(rank: number) {
+  if (rank <= 3) return 'text-white';
+  return 'text-slate-900';
+}
+
+function getScoreColor(rank: number) {
+  if (rank <= 3) return 'text-white/95';
+  return 'text-[#79287a]';
+}
+
+function getRankNumberColor(rank: number) {
+  if (rank === 1) return 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]';
+  if (rank === 2) return 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]';
+  if (rank === 3) return 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]';
+  return 'text-slate-400 group-hover:text-slate-600';
+}
+
+function getAvatarBorderColor(rank: number) {
+  if (rank === 1) return 'border-[#fef08a] bg-[#ca8a04]';
+  if (rank === 2) return 'border-[#cbd5e1] bg-[#475569]';
+  if (rank === 3) return 'border-[#ea580c] bg-[#7f1d1d]';
+  return 'border-white bg-[#1e2038]';
 }
 </script>
 
+<style scoped>
+.header-hexagon {
+  clip-path: polygon(14px 0%, calc(100% - 14px) 0%, 100% 50%, calc(100% - 14px) 100%, 14px 100%, 0% 50%);
+}
+</style>

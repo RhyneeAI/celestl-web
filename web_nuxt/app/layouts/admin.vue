@@ -127,6 +127,7 @@ const PacksIcon = createSvgIcon('<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z" /><pat
 const SongsIcon = createSvgIcon('<path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" />');
 const UnofficialIcon = createSvgIcon('<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>');
 const ScoresIcon = createSvgIcon('<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34M18 4H6v7a6 6 0 0 0 12 0V4z" />');
+const RecordsIcon = createSvgIcon('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/>');
 const StoreIcon = createSvgIcon('<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>');
 const LogIcon = createSvgIcon('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>');
 const TestingIcon = createSvgIcon('<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>');
@@ -144,7 +145,8 @@ const navGroups = [
     label: 'Server Client (Unofficial)',
     items: [
       { href: '/admin/unofficial', label: 'Custom Charts (.aff)', icon: UnofficialIcon },
-      { href: '/admin/scores', label: 'Server Leaderboard', icon: ScoresIcon },
+      { href: '/admin/scores', label: 'Leaderboard (World)', icon: ScoresIcon },
+      { href: '/admin/records', label: 'Score Data (Player)', icon: RecordsIcon },
       { href: '/admin/store', label: 'Constants & Store', icon: StoreIcon },
     ],
   },
