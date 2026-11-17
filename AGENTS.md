@@ -146,7 +146,7 @@ celest-audit --bg
 
 # 6. Rebuild patched APK (Pre-build integrity hook will automatically run)
 cd /home/luhung/Documents/project/Celestl
-/home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/patch_arcaea.py --output arcaea_7.1.0c_patched.apk
+/home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.4.0_release.apk
 
 # 7. Connect ADB to Waydroid and install patched APK
 celest-apk-update
