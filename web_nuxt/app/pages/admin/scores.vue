@@ -138,11 +138,11 @@
             <!-- Diamond Avatar Frame -->
             <div class="relative shrink-0 pr-2">
               <div class="h-16 w-16 rotate-45 overflow-hidden rounded-2xl bg-gradient-to-tr from-[#79287a] to-[#03a8e6] p-1 shadow-xl border-2 border-white/20">
-                <div class="h-full w-full -rotate-45 overflow-hidden rounded-xl bg-slate-900">
+                <div class="relative h-full w-full overflow-hidden rounded-xl bg-slate-900">
                   <img
                     :src="featuredPlayer.characterAvatar"
                     :alt="featuredPlayer.name"
-                    class="h-full w-full object-cover scale-125"
+                    class="absolute inset-[-25%] h-[150%] w-[150%] max-w-none -rotate-45 object-cover"
                     @error="onAvatarError"
                   />
                 </div>
@@ -215,11 +215,11 @@
                   getAvatarBorderColor(entry.rank)
                 ]"
               >
-                <div class="h-full w-full -rotate-45 overflow-hidden rounded-xl bg-slate-900">
+                <div class="relative h-full w-full overflow-hidden rounded-xl bg-slate-900">
                   <img
                     :src="entry.characterAvatar"
                     :alt="entry.name"
-                    class="h-full w-full object-cover scale-125"
+                    class="absolute inset-[-25%] h-[150%] w-[150%] max-w-none -rotate-45 object-cover"
                     @error="onAvatarError"
                   />
                 </div>

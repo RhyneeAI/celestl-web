@@ -43,11 +43,11 @@
         <div class="flex items-center gap-3">
           <!-- Active Player Avatar Diamond -->
           <div class="h-11 w-11 rotate-45 overflow-hidden rounded-xl bg-gradient-to-tr from-[#79287a] to-[#03a8e6] p-0.5 shadow-md shrink-0 border border-white/20">
-            <div class="h-full w-full -rotate-45 overflow-hidden rounded-lg bg-slate-900">
+            <div class="relative h-full w-full overflow-hidden rounded-lg bg-slate-900">
               <img
                 :src="selectedPlayer?.characterAvatar || '/storage/characters/0_icon.png'"
                 alt="Avatar"
-                class="h-full w-full object-cover scale-125"
+                class="absolute inset-[-25%] h-[150%] w-[150%] max-w-none -rotate-45 object-cover"
                 @error="onAvatarError"
               />
             </div>
