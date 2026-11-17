@@ -39,3 +39,4 @@ export default defineEventHandler(async () => {
         throw createError({ statusCode: 500, statusMessage: err.message || 'Failed to sync database' });
     }
 });
+
