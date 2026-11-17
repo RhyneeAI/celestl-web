@@ -383,7 +383,8 @@ definePageMeta({
 });
 
 const route = useRoute();
-const activeUserId = ref<number | null>(route.query.userId ? Number(route.query.userId) : null);
+const queryUser = route.query.user || route.query.userId;
+const activeUserId = ref<number | null>(queryUser ? Number(queryUser) : null);
 const selectedDiff = ref<number | null>(null);
 const sortMode = ref<'rating' | 'date' | 'score'>('rating');
 const search = ref('');
