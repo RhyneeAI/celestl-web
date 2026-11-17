@@ -291,7 +291,7 @@
                       <span>{{ item.dateObtained }}</span>
                       <span class="text-[#3f3c68]">·</span>
                       <span class="font-mono font-bold text-[#acff82] bg-[#acff82]/10 px-1.5 py-0.5 rounded text-[11px] border border-[#acff82]/20">
-                        ★ {{ item.recalculatedRating.toFixed(3) }}
+                        + {{ item.recalculatedRating.toFixed(3) }}
                       </span>
                     </div>
                   </div>

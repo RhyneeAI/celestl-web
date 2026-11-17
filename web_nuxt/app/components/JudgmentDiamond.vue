@@ -103,23 +103,21 @@
             />
           </g>
         </g>
+
+        <!-- Centered Judgement Count inside SVG at exact diamond geometric center (21.36, 16.59) -->
+        <text
+          x="21.36"
+          y="16.59"
+          text-anchor="middle"
+          dominant-baseline="central"
+          :fill="type === 'pure' && isShiny ? '#ffd76a' : '#ffffff'"
+          class="select-none font-mono font-black pointer-events-none"
+          :font-size="displayCount >= 1000 ? 10.5 : 11.5"
+          style="filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.9)); font-weight: 900;"
+        >
+          {{ displayCount }}
+        </text>
       </svg>
-
-      <!-- Center Judgement Count -->
-      <span
-        class="absolute inset-0 flex items-center justify-center font-mono font-black text-xs sm:text-[13px] tracking-tight text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] pr-1 pb-1"
-        :class="{ 'text-[#ffd76a]': type === 'pure' && isShiny }"
-      >
-        {{ displayCount }}
-      </span>
-
-      <!-- Shiny Active Indicator Dot / Sparkle -->
-      <span
-        v-if="type === 'pure' && isShiny"
-        class="absolute -top-1 -right-1 h-3.5 w-3.5 rounded-full bg-[#ffd76a] text-black text-[9px] font-black flex items-center justify-center shadow-lg animate-pulse"
-      >
-        ★
-      </span>
     </div>
 
     <!-- Small Subtext / Hint below PURE -->
@@ -214,3 +212,4 @@ const tooltipText = computed(() => {
   return `Lost (Miss): ${props.count}`;
 });
 </script>
+

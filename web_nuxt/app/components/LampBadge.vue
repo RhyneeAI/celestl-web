@@ -40,15 +40,21 @@
           />
         </g>
       </g>
-    </svg>
 
-    <!-- Centered Lamp Letter (C, F, PM, E, H, L) -->
-    <span
-      class="absolute inset-0 flex items-center justify-center font-brand font-black text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] pointer-events-none"
-      :style="{ fontSize: `${fontSize}px`, paddingLeft: '1px' }"
-    >
-      {{ letter }}
-    </span>
+      <!-- Centered Lamp Letter inside SVG at exact diamond geometric center (18.28, 14.21) -->
+      <text
+        x="18.28"
+        y="14.21"
+        text-anchor="middle"
+        dominant-baseline="central"
+        fill="#ffffff"
+        class="select-none pointer-events-none font-brand font-black"
+        :font-size="letter === 'PM' ? 9.5 : 12"
+        style="filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.85)); font-weight: 900;"
+      >
+        {{ letter }}
+      </text>
+    </svg>
   </div>
 </template>
 
