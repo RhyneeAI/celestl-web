@@ -44,3 +44,16 @@ export function getRecalculateScriptPath(): string | null {
     }
     return null;
 }
+
+export function getPacklistPath(): string | null {
+    const candidates = [
+        path.resolve(process.cwd(), 'data/packlist.json'),
+        path.resolve(process.cwd(), '../data/packlist.json'),
+        path.resolve(process.cwd(), 'ArcaeaServerFork/database/init/packs.json'),
+        path.resolve(process.cwd(), '../ArcaeaServerFork/database/init/packs.json'),
+    ];
+    for (const c of candidates) {
+        if (fs.existsSync(c)) return c;
+    }
+    return null;
+}
