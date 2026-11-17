@@ -69,6 +69,27 @@ $$\text{Total Score} = \text{Base Score} + \text{Shiny Pure Bonus} \quad (\text{
 | **EX+** | $9\,900\,000 - 9\,999\,999$ | Master grade | Clear / FR |
 | **PM** | $\ge 10\,000\,000$ | **Pure Memory** ($10\,000\,000 + \text{Shiny}$) | **Strictly Far = 0, Lost = 0 (`clear_type = 3`)** |
 
+### Potential Rating (PTT) System — Modern B50 Formula
+
+> [!IMPORTANT]
+> **Celest Server uses the modern B50 (Best 50) potential formula.** The legacy B30 (Best 30 + Recent 10) formula is deprecated and no longer relevant in this ecosystem.
+
+1. **Chart Play Rating (Single Play)**:
+   - For $\text{Score} \ge 10\,000\,000$ (PM):
+     $$\text{Rating} = \text{Chart Constant} + 2.0$$
+   - For $9\,800\,000 \le \text{Score} < 10\,000\,000$ (EX/EX+):
+     $$\text{Rating} = \text{Chart Constant} + 1.0 + \frac{\text{Score} - 9\,800\,000}{200\,000}$$
+   - For $\text{Score} < 9\,800\,000$:
+     $$\text{Rating} = \max\left(0, \text{Chart Constant} + \frac{\text{Score} - 9\,500\,000}{300\,000}\right)$$
+   *(+0.2 Clear Bonus applied when $\text{clear\_type} \neq 0$)*.
+
+2. **User Profile Potential (`rating_ptt`)**:
+   - Modern B50 calculates player potential from their **Top 50 best song play ratings**:
+     $$\text{User PTT} = \frac{\sum_{i=1}^{50} \text{Rating}_i}{50}$$
+   - In active Celest server configuration (`Config.BEST10_WEIGHT = 1/60, Config.BEST50_WEIGHT = 1/60`):
+     $$\text{Celest PTT} = \frac{\sum_{i=1}^{10} \text{Rating}_i + \sum_{i=1}^{50} \text{Rating}_i}{60}$$
+   - Stored with 3-decimal float precision in the SQLite database (`user.rating_ptt`).
+
 ---
 
 ## Automated Integrity Verification Suites (`celest-audit --check`)

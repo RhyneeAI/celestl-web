@@ -122,6 +122,15 @@ $$\text{Total Score} = \text{Base Score} + \text{Shiny Pure Bonus} \quad (\text{
 - **Easy / Hard Clear (`clear_type = 4 / 5`)**: Easy / Hard gauge clears.
 - **Track Lost (`clear_type = 0`)**: Final gauge $< 70\%$ (or $0\%$ on Hard gauge).
 
+#### 4. Potential Rating (PTT) System — Modern B50 Formula
+- **Mandatory Modern B50 Formula**: In Celest Server, player potential (`rating_ptt`) strictly follows the modern **Best 50 (B50)** formula. The legacy B30 (Best 30 + Recent 10) formula is obsolete and prohibited.
+- **Single Play Rating**:
+  - Score $\ge 10\,000\,000$ (PM): $\text{Rating} = \text{Constant} + 2.0$
+  - $9\,800\,000 \le \text{Score} < 10\,000\,000$ (EX/EX+): $\text{Rating} = \text{Constant} + 1.0 + \frac{\text{Score} - 9\,800\,000}{200\,000}$
+  - Score $< 9\,800\,000$: $\text{Rating} = \max\left(0, \text{Constant} + \frac{\text{Score} - 9\,500\,000}{300\,000}\right)$
+  - Clear bonus: $+0.2$ added for all clears ($\text{clear\_type} \neq 0$).
+- **Server Active PTT**: $\text{Celest PTT} = \frac{\sum_{i=1}^{10} \text{Rating}_i + \sum_{i=1}^{50} \text{Rating}_i}{60}$ (stored as 3-decimal float in `user.rating_ptt`).
+
 ---
 
 ## 3. Automated CLI Commands
