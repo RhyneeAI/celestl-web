@@ -165,7 +165,7 @@
       <!-- Score Cards List (Image 2 stacked cards in Dark Mode) -->
       <div v-else class="space-y-4">
         <div
-          v-for="item in sortedScores"
+          v-for="item in pagedScores"
           :key="`${item.songId}-${item.ratingClass}`"
           class="rounded-3xl bg-[#1a1d32] p-4 sm:p-5 border border-[#16133e] shadow-xl transition-all space-y-3"
         >
@@ -290,7 +290,7 @@
                     <div class="flex items-center gap-2 text-xs text-[#9a99a8] font-medium">
                       <span>{{ item.dateObtained }}</span>
                       <span class="text-[#3f3c68]">·</span>
-                      <span class="font-mono font-bold text-[#acff82] bg-[#acff82]/10 px-1.5 py-0.5 rounded text-[11px] border border-[#acff82]/20">
+                      <span class="font-mono font-bold text-[#03a8e6] bg-[#03a8e6]/10 px-1.5 py-0.5 rounded text-[11px] border border-[#03a8e6]/25">
                         + {{ item.recalculatedRating.toFixed(3) }}
                       </span>
                     </div>
@@ -334,6 +334,37 @@
             <div class="h-px flex-1 bg-[#16133e]"></div>
             <div class="mx-3 text-[#3f3c68] text-[10px]">◇</div>
             <div class="h-px flex-1 bg-[#16133e]"></div>
+          </div>
+        </div>
+
+        <!-- Pagination Controls (10 items per page) -->
+        <div
+          v-if="sortedScores.length > 0"
+          class="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl bg-[#1a1d32] border border-[#16133e] px-4 py-3 text-xs text-[#9a99a8] shadow-lg"
+        >
+          <span>
+            Showing <b class="text-[#fffafa]">{{ (page - 1) * perPage + 1 }}</b>–<b class="text-[#fffafa]">{{ Math.min(page * perPage, sortedScores.length) }}</b> of <b class="text-[#fffafa]">{{ sortedScores.length }}</b> records
+          </span>
+          <div class="flex items-center gap-1.5">
+            <button
+              type="button"
+              :disabled="page <= 1"
+              class="rounded-xl bg-[#0c0c22] px-3.5 py-1.5 font-semibold text-[#fffafa] disabled:opacity-30 hover:bg-[#1e203a] transition-colors cursor-pointer disabled:cursor-not-allowed"
+              @click="page--"
+            >
+              Previous
+            </button>
+            <span class="px-2.5 py-1 font-mono text-xs font-bold text-[#ffd76a]">
+              Page {{ page }} / {{ maxPage }}
+            </span>
+            <button
+              type="button"
+              :disabled="page >= maxPage"
+              class="rounded-xl bg-[#0c0c22] px-3.5 py-1.5 font-semibold text-[#fffafa] disabled:opacity-30 hover:bg-[#1e203a] transition-colors cursor-pointer disabled:cursor-not-allowed"
+              @click="page++"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>
@@ -438,6 +469,22 @@ const sortedScores = computed(() => {
     return list.sort((a, b) => b.score - a.score);
   }
   return list;
+});
+
+// Pagination (10 records per page)
+const page = ref(1);
+const perPage = 10;
+
+const maxPage = computed(() => Math.max(1, Math.ceil(sortedScores.value.length / perPage)));
+
+const pagedScores = computed(() => {
+  const start = (page.value - 1) * perPage;
+  return sortedScores.value.slice(start, start + perPage);
+});
+
+// Reset page when filters change
+watch([search, selectedDiff, sortMode, activeUserId], () => {
+  page.value = 1;
 });
 
 function onJacketError(e: Event) {

@@ -10,7 +10,7 @@ function clearTypeToLamp(clearType: number): { lamp: Lamp; lampShort: string } {
         case 2: return { lamp: 'full_recall', lampShort: 'F' };
         case 1: return { lamp: 'normal_clear', lampShort: 'C' };
         case 4: return { lamp: 'easy_clear', lampShort: 'E' };
-        case 5: return { lamp: 'hard_clear', lampShort: 'H' };
+        case 5: return { lamp: 'hard_clear', lampShort: 'C' };
         default: return { lamp: 'lost', lampShort: 'L' };
     }
 }

@@ -4,7 +4,7 @@
       xmlns="http://www.w3.org/2000/svg"
       width="100%"
       height="100%"
-      viewBox="0 0 50.557 42.423"
+      viewBox="0 0 36.558 28.424"
       class="select-none overflow-visible"
     >
       <defs>
@@ -14,10 +14,10 @@
           <stop offset="1" :stop-color="colors.stop1" />
         </linearGradient>
 
-        <filter :id="`filter-${uid}`" x="0" y="0" width="50.557" height="42.423" filterUnits="userSpaceOnUse">
-          <feOffset dx="3" dy="3" input="SourceAlpha" />
-          <feGaussianBlur stdDeviation="2" result="blur" />
-          <feFlood flood-opacity="0.25" />
+        <filter :id="`filter-${uid}`" x="-20%" y="-20%" width="140%" height="140%">
+          <feOffset dx="2" dy="2" input="SourceAlpha" />
+          <feGaussianBlur stdDeviation="1.5" result="blur" />
+          <feFlood flood-opacity="0.3" />
           <feComposite operator="in" in2="blur" />
           <feComposite in="SourceGraphic" />
         </filter>
@@ -71,7 +71,7 @@ const props = withDefaults(
   }
 );
 
-const width = computed(() => (props.size * 50.557) / 42.423);
+const width = computed(() => (props.size * 36.558) / 28.424);
 const height = computed(() => props.size);
 const fontSize = computed(() => Math.round(props.size * 0.38));
 
@@ -109,10 +109,12 @@ const colors = computed(() => {
         facet: '#4ade80',
       };
     case 'lost':
+    case 'track_lost':
+    case 'fail':
       return {
-        stop0: '#1f2937',
-        stop1: '#4b5563',
-        facet: '#6b7280',
+        stop0: '#1a1d32',
+        stop1: '#374151',
+        facet: '#ba0e6b',
       };
     case 'normal_clear':
     case 'clear':
@@ -145,11 +147,13 @@ const letter = computed(() => {
       return 'F';
     case 'hard_clear':
     case 'hard':
-      return 'H';
+      return 'C';
     case 'easy_clear':
     case 'easy':
       return 'E';
     case 'lost':
+    case 'track_lost':
+    case 'fail':
       return 'L';
     case 'normal_clear':
     case 'clear':

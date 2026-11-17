@@ -32,9 +32,9 @@
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
-        width="54"
-        height="45"
-        viewBox="0 0 56.715 47.172"
+        width="48"
+        height="37"
+        viewBox="0 0 42.715 33.172"
         class="overflow-visible drop-shadow-md"
       >
         <defs>
@@ -66,10 +66,10 @@
           </linearGradient>
 
           <!-- Filter Shadow -->
-          <filter :id="`shadow-${uid}`" x="0" y="0" width="56.715" height="47.172" filterUnits="userSpaceOnUse">
-            <feOffset dx="4" dy="4" input="SourceAlpha" />
-            <feGaussianBlur stdDeviation="2" result="blur" />
-            <feFlood flood-opacity="0.25" />
+          <filter :id="`shadow-${uid}`" x="-20%" y="-20%" width="140%" height="140%">
+            <feOffset dx="2" dy="2" input="SourceAlpha" />
+            <feGaussianBlur stdDeviation="1.5" result="blur" />
+            <feFlood flood-opacity="0.3" />
             <feComposite operator="in" in2="blur" />
             <feComposite in="SourceGraphic" />
           </filter>
