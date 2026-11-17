@@ -189,3 +189,54 @@ export async function saveChartAff(songId: string, ratingClass: number, content:
         size,
     };
 }
+
+/**
+ * Execute atomic store price update on VPS celest-server database via SSH.
+ */
+export async function syncStoreUpdateToVps(
+    purchaseName: string,
+    price: number,
+    origPrice: number,
+    discountFrom: number,
+    discountTo: number,
+    discountReason: string
+): Promise<VpsSyncResult> {
+    if (!fs.existsSync(VPS_PEM_KEY)) {
+        return {
+            success: true,
+            synced_vps: false,
+            message: 'VPS SSH key not found, updated locally only.',
+        };
+    }
+
+    try {
+        const pyCode = "import sqlite3, sys; conn = sqlite3.connect('/home/sefeo-english/celest-server/database/arcaea_database.db'); c = conn.cursor(); c.execute('UPDATE purchase SET price=?, orig_price=?, discount_from=?, discount_to=?, discount_reason=? WHERE purchase_name=?', (int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), sys.argv[5], sys.argv[6])); conn.commit(); print('UPDATED:', c.rowcount)";
+        const safeReason = discountReason.replace(/"/g, '\\"');
+        const safeName = purchaseName.replace(/"/g, '\\"');
+        const remoteCmd = `python3 -c "${pyCode}" "${price}" "${origPrice}" "${discountFrom}" "${discountTo}" "${safeReason}" "${safeName}"`;
+
+        await execFileAsync('ssh', [
+            '-i', VPS_PEM_KEY,
+            '-o', 'BatchMode=yes',
+            '-o', 'StrictHostKeyChecking=no',
+            '-o', 'ConnectTimeout=5',
+            `${VPS_USER}@${VPS_HOST}`,
+            remoteCmd,
+        ]);
+
+        return {
+            success: true,
+            synced_vps: true,
+            message: 'Store item price successfully synced to VPS celest-server database.',
+        };
+    } catch (err: any) {
+        console.error('[VPS Store Sync Error]:', err);
+        return {
+            success: true,
+            synced_vps: false,
+            error: err.message || 'Failed to sync store item to VPS',
+        };
+    }
+}
+
+

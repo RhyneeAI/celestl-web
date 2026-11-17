@@ -1,6 +1,7 @@
 import { defineEventHandler, readBody, createError } from 'h3';
 import Database from 'better-sqlite3';
 import { getServerDbPath } from '../../../../utils/server-paths.ts';
+import { syncStoreUpdateToVps } from '../../../../utils/vps-sync.ts';
 
 interface StoreUpdateBody {
     purchase_name: string;
@@ -51,6 +52,16 @@ export default defineEventHandler(async (event) => {
             });
         }
 
+        // Automatically sync update to VPS celest-server database
+        const vpsResult = await syncStoreUpdateToVps(
+            body.purchase_name,
+            price,
+            origPrice,
+            discountFrom,
+            discountTo,
+            discountReason
+        );
+
         return {
             success: true,
             purchase_name: body.purchase_name,
@@ -59,6 +70,9 @@ export default defineEventHandler(async (event) => {
             discount_from: discountFrom,
             discount_to: discountTo,
             discount_reason: discountReason,
+            synced_vps: vpsResult.synced_vps,
+            vps_message: vpsResult.message,
+            vps_error: vpsResult.error,
         };
     } catch (err: any) {
         throw createError({

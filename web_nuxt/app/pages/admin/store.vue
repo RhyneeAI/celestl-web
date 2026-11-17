@@ -141,6 +141,11 @@
               class="w-full rounded-xl bg-[#0c0c22] px-3 py-2 text-sm text-[#fffafa] border border-[#3f3c68]/40 focus:outline-none focus:border-[#f768dd]"
             />
           </div>
+
+          <div class="rounded-xl bg-[#101222] p-2.5 border border-[#3f3c68]/30 text-xs text-[#acff82] flex items-center gap-1.5">
+            <span>⚡</span>
+            <span>Otomatis sinkron langsung ke database server VPS (celest-server).</span>
+          </div>
         </div>
 
         <div v-if="saveError" class="text-xs text-red-400">
