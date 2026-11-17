@@ -204,13 +204,24 @@
                     {{ d.chart_designer || 'uncredited' }}
                   </td>
                   <td class="px-2.5 py-2 text-right">
-                    <button
-                      type="button"
-                      @click="openEditModal(selected, d.ratingClass)"
-                      class="rounded-lg bg-[#3f3c68]/50 hover:bg-[#f768dd] hover:text-[#0c0c22] px-2.5 py-1 text-xs font-bold text-[#fffafa] transition-colors cursor-pointer shadow-sm"
-                    >
-                      Edit Constant
-                    </button>
+                    <div class="flex items-center justify-end gap-1.5">
+                      <button
+                        type="button"
+                        @click="openAffModal(selected, d.ratingClass)"
+                        class="rounded-lg bg-[#1e203a] hover:bg-[#3f3c68] px-2.5 py-1 text-xs font-bold text-[#acff82] border border-[#3f3c68]/40 transition-colors cursor-pointer shadow-sm flex items-center gap-1"
+                        title="View & Edit chart .aff file"
+                      >
+                        <span>📝</span>
+                        <span>Chart (.aff)</span>
+                      </button>
+                      <button
+                        type="button"
+                        @click="openEditModal(selected, d.ratingClass)"
+                        class="rounded-lg bg-[#3f3c68]/50 hover:bg-[#f768dd] hover:text-[#0c0c22] px-2.5 py-1 text-xs font-bold text-[#fffafa] transition-colors cursor-pointer shadow-sm"
+                      >
+                        Edit Constant
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -323,6 +334,11 @@
                 class="w-full rounded-xl bg-[#0c0c22] px-3 py-2 text-sm text-[#ffd76a] font-mono font-bold border border-[#3f3c68]/40 focus:border-[#f768dd] focus:outline-none"
               />
             </div>
+
+            <div class="rounded-xl bg-[#101222] p-2.5 border border-[#3f3c68]/30 text-xs text-[#acff82] flex items-center gap-1.5">
+              <span>⚡</span>
+              <span>Otomatis sinkron ke server VPS (celest-server) & trigger client Hot Reload.</span>
+            </div>
           </div>
 
           <div v-if="saveError" class="mt-3 text-xs text-[#e14763] font-semibold">
@@ -346,6 +362,129 @@
             >
               {{ saving ? 'Saving…' : 'Save Constant' }}
             </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Edit Chart .aff Modal -->
+    <Teleport to="body">
+      <div
+        v-if="editingAffSong"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-[#06060f]/85 p-4 backdrop-blur-[3px] animate-in fade-in duration-150"
+        @click.self="closeAffModal"
+      >
+        <div class="flex flex-col h-[90vh] max-h-[850px] w-full max-w-[840px] rounded-[24px] bg-[#1a1d32] border border-[#16133e] text-[#fffafa] shadow-2xl overflow-hidden">
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between border-b border-[#0c0c22] px-6 py-4 bg-[#141628]">
+            <div class="flex items-center gap-3">
+              <span class="rounded-lg bg-[#0c0c22] px-2.5 py-1 text-xs font-mono font-bold text-[#f768dd] border border-[#3f3c68]/30">
+                {{ getDiffCode(selectedAffRc) }} · {{ selectedAffRc }}.aff
+              </span>
+              <div>
+                <h2 class="text-base font-bold font-brand text-[#fffafa]">
+                  {{ editingAffSong.title }}
+                </h2>
+                <div class="flex items-center gap-2 text-xs text-[#9a99a8]">
+                  <span>Song ID: <span class="font-mono text-[#ffd76a]">{{ editingAffSong.id }}</span></span>
+                  <span>•</span>
+                  <span v-if="affSource === 'vps'" class="text-[#acff82] flex items-center gap-1 font-semibold">
+                    <span class="size-1.5 rounded-full bg-[#acff82] animate-pulse"></span>
+                    Live VPS Server
+                  </span>
+                  <span v-else class="text-[#9a99a8]">Local Storage</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                @click="copyAffToClipboard"
+                class="rounded-lg bg-[#1e203a] hover:bg-[#3f3c68] px-2.5 py-1 text-xs font-semibold text-[#fffafa] transition-colors cursor-pointer border border-[#3f3c68]/40"
+                title="Copy AFF content"
+              >
+                {{ copied ? 'Copied!' : 'Copy' }}
+              </button>
+              <button
+                type="button"
+                @click="downloadAffFile"
+                class="rounded-lg bg-[#1e203a] hover:bg-[#3f3c68] px-2.5 py-1 text-xs font-semibold text-[#fffafa] transition-colors cursor-pointer border border-[#3f3c68]/40"
+                title="Download .aff file"
+              >
+                Download
+              </button>
+              <button
+                type="button"
+                aria-label="Close"
+                @click="closeAffModal"
+                class="flex size-7 items-center justify-center rounded-[8px] border border-[#3f3c68] bg-[#1e203a] text-sm hover:border-[#fffafa] text-[#9a99a8] hover:text-[#fffafa] transition-colors cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <!-- Difficulty switcher inside modal -->
+          <div class="flex items-center gap-2 px-6 py-2.5 bg-[#101222] border-b border-[#0c0c22]">
+            <span class="text-xs text-[#6f6e80] font-bold">DIFFICULTY:</span>
+            <button
+              v-for="d in editingAffSong.difficulties"
+              :key="d.ratingClass"
+              type="button"
+              @click="switchAffRc(d.ratingClass)"
+              :class="[
+                'px-2.5 py-0.5 rounded-md text-xs font-mono font-bold transition-all cursor-pointer border',
+                selectedAffRc === d.ratingClass
+                  ? 'bg-white text-slate-900 border-white shadow-sm'
+                  : 'bg-[#1e203a] text-[#9a99a8] border-[#3f3c68]/30 hover:text-white'
+              ]"
+            >
+              {{ getDiffCode(d.ratingClass) }}
+            </button>
+            <div class="ml-auto text-xs text-[#9a99a8] font-mono">
+              {{ affLineCount }} lines · {{ affNoteCount }} approx notes · {{ (affContent.length / 1024).toFixed(1) }} KB
+            </div>
+          </div>
+
+          <!-- Editor Body -->
+          <div class="flex-1 relative overflow-hidden p-4 bg-[#0a0a1a]">
+            <div v-if="loadingAff" class="absolute inset-0 flex items-center justify-center bg-[#0a0a1a]/80 backdrop-blur-sm z-10">
+              <span class="text-sm font-semibold text-[#f768dd] animate-pulse">Loading chart file from server…</span>
+            </div>
+            <textarea
+              v-model="affContent"
+              class="w-full h-full resize-none rounded-xl bg-[#080816] p-4 text-xs font-mono text-[#fffafa] border border-[#222442] focus:border-[#f768dd] focus:outline-none leading-relaxed"
+              spellcheck="false"
+              placeholder="AudioOffset:0&#10;-&#10;timing(0,180.00,4.00);&#10;..."
+            ></textarea>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="flex items-center justify-between border-t border-[#0c0c22] px-6 py-3.5 bg-[#141628]">
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-[#acff82] flex items-center gap-1 font-semibold">
+                <span>⚡</span> Auto-sync ke VPS (celest-server) & client Hot Reload
+              </span>
+              <span v-if="affSaveSuccess" class="text-[#acff82] font-bold ml-2">✓ {{ affSaveSuccess }}</span>
+              <span v-if="affSaveError" class="text-[#e14763] font-bold ml-2">✕ {{ affSaveError }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                @click="closeAffModal"
+                class="rounded-[11px] bg-[#1e203a] px-3.5 py-2 text-[12.5px] font-semibold text-[#9a99a8] hover:bg-[#0c0c22] transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                :disabled="savingAff || loadingAff"
+                @click="saveChartAffFile"
+                class="rounded-[11px] bg-[#acff82] px-4 py-2 text-[12.5px] font-bold text-[#0c0c22] hover:bg-[#acff82]/90 transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+              >
+                <span>{{ savingAff ? 'Deploying to VPS…' : 'Save & Deploy to VPS' }}</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -473,6 +612,113 @@ const selectedRatingClass = ref(2);
 const saving = ref(false);
 const saveError = ref('');
 
+// AFF Editor State
+const editingAffSong = ref<ServerSongItem | null>(null);
+const selectedAffRc = ref<number>(2);
+const affContent = ref<string>('');
+const loadingAff = ref<boolean>(false);
+const savingAff = ref<boolean>(false);
+const affSaveSuccess = ref<string>('');
+const affSaveError = ref<string>('');
+const affSource = ref<'vps' | 'local'>('local');
+const copied = ref<boolean>(false);
+
+const affLineCount = computed(() => (affContent.value ? affContent.value.split('\n').length : 0));
+const affNoteCount = computed(() => {
+  if (!affContent.value) return 0;
+  const taps = (affContent.value.match(/\(\d+,\s*[0-9-]+\);/g) || []).length;
+  const arctaps = (affContent.value.match(/arctap\(/g) || []).length;
+  const holds = (affContent.value.match(/hold\(/g) || []).length;
+  const arcs = (affContent.value.match(/arc\(/g) || []).length;
+  return taps + arctaps + holds + arcs;
+});
+
+async function openAffModal(song: ServerSongItem, rc: number) {
+  editingAffSong.value = song;
+  selectedAffRc.value = rc;
+  affSaveSuccess.value = '';
+  affSaveError.value = '';
+  copied.value = false;
+  await loadAff(song.id, rc);
+}
+
+async function switchAffRc(rc: number) {
+  if (!editingAffSong.value || selectedAffRc.value === rc) return;
+  selectedAffRc.value = rc;
+  affSaveSuccess.value = '';
+  affSaveError.value = '';
+  copied.value = false;
+  await loadAff(editingAffSong.value.id, rc);
+}
+
+async function loadAff(songId: string, rc: number) {
+  loadingAff.value = true;
+  affContent.value = '';
+  try {
+    const res: any = await $fetch(`/api/admin/server/charts/aff?song_id=${encodeURIComponent(songId)}&ratingClass=${rc}`);
+    affContent.value = res.content || '';
+    affSource.value = res.source || 'local';
+  } catch (err: any) {
+    affSaveError.value = err?.data?.statusMessage || err.message || 'Failed to load chart .aff';
+  } finally {
+    loadingAff.value = false;
+  }
+}
+
+async function saveChartAffFile() {
+  if (!editingAffSong.value) return;
+  savingAff.value = true;
+  affSaveSuccess.value = '';
+  affSaveError.value = '';
+
+  try {
+    const res: any = await $fetch('/api/admin/server/charts/aff', {
+      method: 'POST',
+      body: {
+        song_id: editingAffSong.value.id,
+        ratingClass: selectedAffRc.value,
+        content: affContent.value,
+      },
+    });
+
+    affSaveSuccess.value = res.synced_vps
+      ? 'Saved & Deployed to VPS celest-server!'
+      : 'Saved locally (VPS sync pending)';
+    await refresh();
+  } catch (err: any) {
+    affSaveError.value = err?.data?.statusMessage || err.message || 'Failed to save chart .aff';
+  } finally {
+    savingAff.value = false;
+  }
+}
+
+function copyAffToClipboard() {
+  if (!affContent.value) return;
+  navigator.clipboard.writeText(affContent.value);
+  copied.value = true;
+  setTimeout(() => {
+    copied.value = false;
+  }, 2000);
+}
+
+function downloadAffFile() {
+  if (!editingAffSong.value) return;
+  const blob = new Blob([affContent.value], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${editingAffSong.value.id}_${selectedAffRc.value}.aff`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function closeAffModal() {
+  editingAffSong.value = null;
+  affContent.value = '';
+  affSaveSuccess.value = '';
+  affSaveError.value = '';
+}
+
 const diffForm = reactive({
   rating: 0,
   constant: 0,
@@ -527,6 +773,7 @@ async function saveChartConstant() {
 function handleKeyDown(e: KeyboardEvent) {
   if (e.key === 'Escape') {
     if (lightboxBg.value) lightboxBg.value = null;
+    else if (editingAffSong.value) closeAffModal();
     else if (editingSong.value) editingSong.value = null;
   }
 }

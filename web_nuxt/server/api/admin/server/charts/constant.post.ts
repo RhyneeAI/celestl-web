@@ -1,6 +1,7 @@
 import { defineEventHandler, readBody, createError } from 'h3';
 import fs from 'fs';
 import { getServerSonglistPath } from '../../../../utils/server-paths.ts';
+import { syncSonglistToVps } from '../../../../utils/vps-sync.ts';
 
 interface ConstantUpdateBody {
     song_id: string;
@@ -60,6 +61,9 @@ export default defineEventHandler(async (event) => {
 
         fs.writeFileSync(songlistPath, JSON.stringify(raw, null, 2), 'utf-8');
 
+        // Automatically sync updated songlist to VPS celest-server
+        const vpsResult = await syncSonglistToVps(songlistPath);
+
         return {
             success: true,
             song_id: body.song_id,
@@ -68,6 +72,9 @@ export default defineEventHandler(async (event) => {
             ratingPlus: diff.ratingPlus,
             constant: diff.constant,
             updated_at: song.date,
+            synced_vps: vpsResult.synced_vps,
+            vps_message: vpsResult.message,
+            vps_error: vpsResult.error,
         };
     } catch (err: any) {
         throw createError({
