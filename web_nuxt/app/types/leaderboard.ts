@@ -34,6 +34,11 @@ export interface PlayerScoreItem {
     playedAt: number;
     dateObtained: string;
     jacketUrl: string;
+    shinyPerfectCount: number;
+    perfectCount: number;
+    nearCount: number;
+    missCount: number;
+    playsThisYear: number;
 }
 
 export interface PlayerProfile {

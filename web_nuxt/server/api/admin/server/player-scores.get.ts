@@ -192,10 +192,13 @@ export default defineEventHandler(async (event) => {
         }>;
         db.close();
 
+        const currentYear = new Date().getFullYear();
+
         const scores: PlayerScoreItem[] = rows.map(r => {
             const constant = songConstants[r.song_id]?.[r.difficulty] ?? 10.0;
             const { lamp, lampShort } = clearTypeToLamp(r.clear_type);
             const recalculatedRating = playRating(constant, r.score, lamp);
+            const playedYear = r.time_played ? new Date(r.time_played * 1000).getFullYear() : 0;
 
             return {
                 songId: r.song_id,
@@ -213,6 +216,11 @@ export default defineEventHandler(async (event) => {
                 playedAt: r.time_played,
                 dateObtained: formatDate(r.time_played),
                 jacketUrl: `/api/jacket/${r.song_id}`,
+                shinyPerfectCount: r.shiny_perfect_count ?? 0,
+                perfectCount: r.perfect_count ?? 0,
+                nearCount: r.near_count ?? 0,
+                missCount: r.miss_count ?? 0,
+                playsThisYear: playedYear === currentYear ? 1 : 0,
             };
         });
 
