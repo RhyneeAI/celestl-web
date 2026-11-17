@@ -1,14 +1,5 @@
 <template>
-  <div class="space-y-4">
-    <!-- Notices -->
-    <div class="rounded-[14px] bg-[#16133e] px-[15px] py-[11px] text-[12.5px] leading-[1.6] text-[#fffafa]/90 border border-[#3f3c68]/40 shadow-sm">
-      <b class="font-bold text-[#acff82]">Katalog terpisah total.</b> Lagu di halaman ini chart buatan sendiri/komunitas untuk private server ("Unofficial" segment) — tersimpan di <code class="font-mono text-[11px] text-[#ffd76a]">ArcaeaServerFork/database/songs/songlist</code>.
-    </div>
-
-    <div class="rounded-[14px] bg-[#16133e] px-[15px] py-[11px] text-[12.5px] leading-[1.6] text-[#fffafa]/90 border border-[#ffd76a]/30 shadow-sm">
-      <b class="font-bold text-[#ffd76a]">Integrity & Hot Reload.</b> Constant dan chart disinkronkan langsung ke server; client mendownload chart secara otomatis via <code class="font-mono text-[11px] text-[#acff82]">remote_dl</code> saat data diupdate.
-    </div>
-
+  <div>
     <!-- Split Layout: Master (Song List) & Detail (Song & Chart Info) -->
     <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(400px,1fr)]">
       <!-- Left Panel: Custom songs List -->
@@ -59,7 +50,7 @@
         </div>
 
         <!-- Scrollable Song List -->
-        <div class="flex h-[calc(100vh-270px)] flex-col overflow-y-auto">
+        <div class="flex h-[calc(100vh-175px)] flex-col overflow-y-auto">
           <!-- Empty State -->
           <div v-if="filtered.length === 0" class="p-9 text-center text-[#9a99a8]">
             <b class="mb-1 block text-[#fffafa] font-brand">No custom charts match</b>
@@ -90,7 +81,7 @@
                 {{ song.title }}
               </b>
               <span class="block overflow-hidden text-[12px] text-ellipsis whitespace-nowrap text-[#9a99a8]">
-                {{ song.artist }} · <span class="font-mono text-[#6f6e80]">{{ song.id }}</span>
+                {{ song.artist }}
               </span>
             </div>
 
@@ -137,7 +128,7 @@
                   {{ selected.title }}
                 </h1>
                 <span class="text-[13.5px] text-[#9a99a8]">
-                  {{ selected.artist }} · <span class="font-mono text-[#f768dd]">{{ selected.id }}</span>
+                  {{ selected.artist }}
                 </span>
               </div>
 
