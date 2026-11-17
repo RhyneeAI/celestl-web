@@ -1,11 +1,10 @@
-import fs from 'fs';
-import path from 'path';
 import Database from 'better-sqlite3';
+import { getServerDbPath } from '../../../utils/server-paths.ts';
 
 export default defineEventHandler(async () => {
-    const serverDbPath = path.resolve(process.cwd(), '../ArcaeaServerFork/database/arcaea_database.db');
+    const serverDbPath = getServerDbPath();
     
-    if (!fs.existsSync(serverDbPath)) {
+    if (!serverDbPath) {
         return {
             items: [],
             total: 0,

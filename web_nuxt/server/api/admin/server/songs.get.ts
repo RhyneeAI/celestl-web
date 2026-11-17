@@ -1,11 +1,11 @@
 import fs from 'fs';
-import path from 'path';
+import { getServerSonglistPath } from '../../../utils/server-paths.ts';
 
 export default defineEventHandler(async () => {
     // Read directly from ArcaeaServerFork/database/songs/songlist
-    const serverSonglistPath = path.resolve(process.cwd(), '../ArcaeaServerFork/database/songs/songlist');
+    const serverSonglistPath = getServerSonglistPath();
     
-    if (!fs.existsSync(serverSonglistPath)) {
+    if (!serverSonglistPath) {
         return {
             songs: [],
             total: 0,
