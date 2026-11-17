@@ -57,10 +57,16 @@
       </div>
 
       <!-- Footer / Back to App -->
-      <div class="border-t border-[#16133e] p-4">
+      <div class="border-t border-[#16133e] p-4 space-y-2">
+        <button
+          @click="logout"
+          class="flex w-full items-center justify-center gap-2 rounded-xl bg-red-950/30 border border-red-500/20 px-4 py-2 text-[12.5px] font-medium text-red-300 hover:bg-red-900/40 transition-colors"
+        >
+          <span>Sign Out</span>
+        </button>
         <NuxtLink
           to="/"
-          class="flex items-center justify-center gap-2 rounded-xl bg-[#1a1d32] px-4 py-2.5 text-[13px] font-medium text-[#9a99a8] hover:bg-[#1e203a] hover:text-[#fffafa] transition-colors"
+          class="flex items-center justify-center gap-2 rounded-xl bg-[#1a1d32] px-4 py-2 text-[12.5px] font-medium text-[#9a99a8] hover:bg-[#1e203a] hover:text-[#fffafa] transition-colors"
         >
           <span>← Back to Public Site</span>
         </NuxtLink>
@@ -96,6 +102,13 @@ import { h, ref } from 'vue';
 
 const route = useRoute();
 const sidebarOpen = ref(false);
+
+async function logout() {
+  try {
+    await $fetch('/api/admin/auth/logout', { method: 'POST' });
+  } catch {}
+  await navigateTo('/admin/login');
+}
 
 const createSvgIcon = (d: string) => ({
   render: () => h('svg', {

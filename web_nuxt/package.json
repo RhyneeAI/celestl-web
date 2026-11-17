@@ -8,6 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "seed": "tsx server/database/seed.ts",
+    "admin:setup": "tsx server/scripts/setup-admin-totp.ts",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {

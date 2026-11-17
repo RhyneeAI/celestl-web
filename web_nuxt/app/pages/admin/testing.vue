@@ -70,7 +70,8 @@ import { computed } from 'vue';
 import { playRating } from '~/utils/arcaea-rating';
 
 definePageMeta({
-  layout: 'admin'
+  layout: 'admin',
+  middleware: ['admin']
 });
 
 const testCases = computed(() => [
