@@ -12,7 +12,10 @@ export function jacketGradient(seed: string): string {
     return `linear-gradient(${hash % 360}deg, ${PALETTE[a]}, ${PALETTE[b]})`;
 }
 
-export function artworkBackground(url: string | null, seed: string): string {
-    const gradient = jacketGradient(seed);
-    return url ? `url("${url}") center / cover no-repeat, ${gradient}` : gradient;
+export function artworkBackground(url: string | null | undefined, seed: string): string {
+    const trimmed = (url || '').trim();
+    if (trimmed) {
+        return `url("${trimmed}") center / cover no-repeat #16133e`;
+    }
+    return jacketGradient(seed);
 }

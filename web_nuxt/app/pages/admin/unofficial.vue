@@ -125,7 +125,7 @@
           >
             <!-- Jacket Thumbnail (38px) -->
             <div
-              class="size-[38px] flex-none rounded-[10px] bg-cover bg-center shadow-sm border border-white/5"
+              class="size-[38px] flex-none rounded-[10px] bg-cover bg-center shadow-sm border border-white/5 overflow-hidden"
               :style="{ background: artworkBackground(song.jacket, song.title) }"
             />
 
@@ -169,7 +169,7 @@
           <button
             type="button"
             @click="lightboxBg = artworkBackground(selected.jacket_full, selected.title)"
-            class="mb-3.5 aspect-video w-full cursor-zoom-in rounded-2xl bg-cover bg-center shadow-lg border border-white/10 hover:brightness-105 transition-all"
+            class="mb-3.5 aspect-video w-full cursor-zoom-in rounded-2xl bg-cover bg-center shadow-lg border border-white/10 hover:brightness-105 transition-all overflow-hidden"
             :style="{ background: artworkBackground(selected.jacket_full, selected.title) }"
             title="Click to view full artwork"
           />
@@ -292,7 +292,7 @@
           ✕
         </button>
         <div
-          class="aspect-square w-[min(74vw,560px)] rounded-[22px] bg-cover bg-center shadow-[0_24px_64px_-16px_rgba(0,0,0,.6)] border border-white/10"
+          class="aspect-square w-[min(74vw,560px)] rounded-[22px] bg-cover bg-center shadow-[0_24px_64px_-16px_rgba(0,0,0,.6)] border border-white/10 overflow-hidden"
           :style="{ background: lightboxBg }"
         />
       </div>
