@@ -5,6 +5,7 @@ export interface ServerDifficulty {
   constant: number;
   chartDesigner: string;
   jacketDesigner: string;
+  jacketOverride?: boolean;
 }
 
 export interface ServerChartRow {
@@ -16,6 +17,8 @@ export interface ServerChartRow {
   ratingClass: number;
   rating: number;
   ratingPlus: boolean;
+  jacketOverride?: boolean;
+  jacket?: string;
 }
 
 export interface ServerSongItem {

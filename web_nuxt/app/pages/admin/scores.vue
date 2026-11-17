@@ -200,10 +200,6 @@
                   {{ entry.totalScoreFormatted }}
                 </div>
 
-                <!-- Best Play Subtext -->
-                <div v-if="entry.topSongTitle" class="mt-0.5 text-[11px] truncate opacity-80" :class="getRankTextColor(entry.rank)">
-                  Top: {{ entry.topSongTitle }} · c{{ entry.topRating }} ({{ entry.topGrade }})
-                </div>
               </div>
             </div>
 

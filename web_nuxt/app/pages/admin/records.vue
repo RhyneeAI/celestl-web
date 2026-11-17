@@ -64,7 +64,7 @@
               :value="p.userId"
               class="bg-[#1a1d32] text-white"
             >
-              {{ p.name }} ({{ p.userCode || `ID ${p.userId}` }}) — {{ p.totalScores }} plays
+              {{ p.name }}
             </option>
           </select>
 
@@ -166,7 +166,7 @@
         <div
           v-for="item in pagedScores"
           :key="`${item.songId}-${item.ratingClass}`"
-          class="rounded-3xl bg-[#1a1d32] p-4 sm:p-5 border border-[#16133e] shadow-xl transition-all space-y-3"
+          class="rounded-3xl bg-[#1a1d32] p-1 sm:p-5 border border-[#16133e] shadow-xl transition-all space-y-1"
         >
           <div class="flex items-start justify-between gap-3 sm:gap-4">
             <!-- Left: Song Jacket with Difficulty Badge & Expandable Pennant Tab -->
@@ -390,7 +390,7 @@ const search = ref('');
 
 // Expand / collapse state
 const expandedCards = ref<Record<string, boolean>>({});
-const allExpanded = ref(true);
+const allExpanded = ref(false);
 
 function itemKey(item: PlayerScoreItem): string {
   return `${item.songId}_${item.ratingClass}`;

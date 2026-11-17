@@ -62,12 +62,14 @@ export default defineEventHandler(async (event) => {
             chart_designer: c.chartDesigner,
             jacket_designer: c.jacketDesigner,
             note_count: c.noteCount,
+            jacket_override: Boolean(c.jacketPath),
+            jacket: `/api/jacket/${song.slug}?diff=${c.difficulty.toLowerCase()}`,
         }));
 
         return {
             ...song,
-            jacket: `/storage/jackets/${song.slug}.jpg`,
-            jacket_full: `/storage/jackets/${song.slug}.jpg`,
+            jacket: `/api/jacket/${song.slug}`,
+            jacket_full: `/api/jacket/${song.slug}`,
             pack: song.packName,
             released_at: song.releasedAt,
             diffs,

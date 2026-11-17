@@ -215,7 +215,7 @@ export default defineEventHandler(async (event) => {
                 recalculatedRating: Number(recalculatedRating.toFixed(3)),
                 playedAt: r.time_played,
                 dateObtained: formatDate(r.time_played),
-                jacketUrl: `/api/jacket/${r.song_id}`,
+                jacketUrl: `/api/jacket/${r.song_id}?diff=${r.difficulty}`,
                 shinyPerfectCount: r.shiny_perfect_count ?? 0,
                 perfectCount: r.perfect_count ?? 0,
                 nearCount: r.near_count ?? 0,

@@ -121,13 +121,30 @@
 
         <div v-else class="p-[18px]">
           <!-- Aspect-video banner with click-to-zoom Lightbox -->
-          <button
-            type="button"
-            @click="lightboxBg = artworkBackground(selected.jacket_full, selected.title)"
-            class="mb-3.5 aspect-video w-full cursor-zoom-in rounded-2xl bg-cover bg-center shadow-lg border border-white/10 hover:brightness-105 transition-all overflow-hidden"
-            :style="{ background: artworkBackground(selected.jacket_full, selected.title) }"
-            title="Click to view full artwork"
-          />
+          <div class="relative mb-3.5">
+            <button
+              type="button"
+              @click="lightboxBg = artworkBackground(currentBannerJacket, selected.title)"
+              class="aspect-video w-full cursor-zoom-in rounded-2xl bg-cover bg-center shadow-lg border border-white/10 hover:brightness-105 transition-all overflow-hidden"
+              :style="{ background: artworkBackground(currentBannerJacket, selected.title) }"
+              title="Click to view full artwork"
+            />
+            <!-- If diff jacket preview is active, show badge indicator with reset button -->
+            <div
+              v-if="selectedDiff !== null"
+              class="absolute top-2.5 right-2.5 flex items-center gap-1.5 rounded-lg bg-black/75 backdrop-blur-md px-2.5 py-1 text-xs font-mono font-bold text-white border border-white/20 shadow-md"
+            >
+              <span>Previewing {{ selectedDiff }} Jacket</span>
+              <button
+                type="button"
+                @click.stop="selectedDiff = null"
+                class="hover:text-[#f768dd] ml-1 text-xs cursor-pointer"
+                title="Reset to default jacket"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
 
           <!-- Title & Artist Header -->
           <div class="mb-3.5 flex flex-col gap-0.5">
@@ -173,10 +190,21 @@
                 <tr
                   v-for="d in selected.diffs"
                   :key="d.difficulty"
-                  class="border-t border-[#0c0c22] hover:bg-[#1e203a]/50 transition-colors"
+                  @click="selectedDiff = selectedDiff === d.difficulty ? null : d.difficulty"
+                  :class="[
+                    'border-t border-[#0c0c22] hover:bg-[#1e203a]/50 transition-colors cursor-pointer',
+                    selectedDiff === d.difficulty ? 'bg-[#16133e] ring-1 ring-inset ring-[#f768dd]' : ''
+                  ]"
                 >
-                  <td :class="['px-2.5 py-2 font-bold font-mono', getDiffColor(d.difficulty)]">
-                    {{ d.difficulty }}
+                  <td :class="['px-2.5 py-2 font-bold font-mono flex items-center gap-1.5', getDiffColor(d.difficulty)]">
+                    <span>{{ d.difficulty }}</span>
+                    <span
+                      v-if="d.jacket_override"
+                      class="px-1.5 py-0.5 rounded text-[10px] font-sans font-bold bg-[#f768dd]/20 text-[#f768dd] border border-[#f768dd]/40"
+                      title="Custom jacket override active"
+                    >
+                      Jacket
+                    </span>
                   </td>
                   <td class="px-2.5 py-2 tabular-nums text-[#fffafa]">
                     {{ d.level }}
@@ -366,6 +394,8 @@ export type ChartRow = {
   chart_designer: string | null;
   jacket_designer: string | null;
   note_count: number | null;
+  jacket_override?: boolean;
+  jacket?: string;
 };
 
 export type SongRow = {
@@ -391,8 +421,14 @@ const query = ref<string>(route.query.q ? String(route.query.q) : '');
 const sortBy = ref<SortBy>('title');
 const packFilter = ref<string | null>(route.query.pack ? String(route.query.pack) : null);
 const selectedId = ref<number | null>(null);
+const selectedDiff = ref<string | null>(null);
 const addSongOpen = ref(false);
 const lightboxBg = ref<string | null>(null);
+
+// Reset difficulty selection when changing selected song
+watch(selectedId, () => {
+  selectedDiff.value = null;
+});
 
 // Upload state for Add Song modal
 const newSong = ref({
@@ -495,6 +531,14 @@ const filtered = computed(() => {
 
 const selected = computed(() => {
   return songs.value.find((s) => s.id === selectedId.value) || null;
+});
+
+const currentBannerJacket = computed(() => {
+  if (!selected.value) return '';
+  if (selectedDiff.value !== null) {
+    return `/api/jacket/${selected.value.slug}?diff=${selectedDiff.value.toLowerCase()}`;
+  }
+  return selected.value.jacket_full || selected.value.jacket;
 });
 
 const metadataItems = computed(() => {

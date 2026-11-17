@@ -8,6 +8,7 @@ export interface ServerDifficulty {
     constant: number;
     chartDesigner: string;
     jacketDesigner: string;
+    jacketOverride?: boolean;
 }
 
 export interface ServerChartRow {
@@ -19,6 +20,8 @@ export interface ServerChartRow {
     ratingClass: number;
     rating: number;
     ratingPlus: boolean;
+    jacketOverride: boolean;
+    jacket: string;
 }
 
 export interface ServerSongItem {
@@ -74,6 +77,7 @@ export default defineEventHandler(async () => {
                 constant: d.constant ?? d.rating,
                 chartDesigner: d.chartDesigner || '-',
                 jacketDesigner: d.jacketDesigner || '',
+                jacketOverride: Boolean(d.jacketOverride),
             }));
 
             const diffs: ServerChartRow[] = difficulties.map(d => ({
@@ -85,6 +89,8 @@ export default defineEventHandler(async () => {
                 ratingClass: d.ratingClass,
                 rating: d.rating,
                 ratingPlus: Boolean(d.ratingPlus),
+                jacketOverride: Boolean(d.jacketOverride),
+                jacket: `/api/jacket/${s.id}?diff=${d.ratingClass}`,
             }));
 
             const sideText = s.side === 0 ? 'Light' : s.side === 1 ? 'Conflict' : s.side === 2 ? 'Colorless' : 'Other';
