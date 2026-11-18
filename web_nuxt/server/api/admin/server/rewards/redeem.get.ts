@@ -2,6 +2,7 @@ import { defineEventHandler } from 'h3';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import { getServerDbPath } from '../../../../utils/server-paths.ts';
+import { fetchRedeemCodesFromVps } from '../../../../utils/vps-sync.ts';
 
 export interface RedeemRewardItem {
     itemId: string;
@@ -22,6 +23,18 @@ export interface AdminRedeemItem {
 }
 
 export default defineEventHandler(async () => {
+    // 1. Try fetching live data directly from VPS database
+    const vpsCodes = await fetchRedeemCodesFromVps();
+    if (vpsCodes !== null) {
+        return {
+            success: true,
+            total: vpsCodes.length,
+            codes: vpsCodes,
+            source: 'vps',
+        };
+    }
+
+    // 2. Fallback to local database
     const dbPath = getServerDbPath();
     if (!dbPath) {
         return { success: false, error: 'Server database not found', codes: [] };

@@ -376,7 +376,9 @@ export async function runVpsPythonWithPayload(pyScript: string, payload: any): P
         return { success: true, synced_vps: false, message: 'VPS SSH key not found, skipped.' };
     }
     const b64Payload = Buffer.from(JSON.stringify(payload)).toString('base64');
-    const remoteCmd = `python3 -c "import base64, json, sys, sqlite3; ${pyScript}" "${b64Payload}"`;
+    const fullScript = `import base64, json, sys, sqlite3\n${pyScript}`;
+    const b64Script = Buffer.from(fullScript).toString('base64');
+    const remoteCmd = `python3 -c "import base64; exec(base64.b64decode('${b64Script}').decode('utf-8'))" "${b64Payload}"`;
     try {
         const { stdout } = await execFileAsync('ssh', [
             '-i', VPS_PEM_KEY,
@@ -418,7 +420,7 @@ elif data.get('userId'):
     c.execute('INSERT OR IGNORE INTO user_present VALUES (?, ?)', (data['userId'], data['presentId']))
 conn.commit()
 print('Present synced to VPS')`;
-    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), present);
+    return runVpsPythonWithPayload(pyScript, present);
 }
 
 /**
@@ -433,7 +435,7 @@ c.execute('DELETE FROM present_item WHERE present_id = ?', (data['presentId'],))
 c.execute('DELETE FROM user_present WHERE present_id = ?', (data['presentId'],))
 conn.commit()
 print('Present deleted on VPS')`;
-    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), { presentId });
+    return runVpsPythonWithPayload(pyScript, { presentId });
 }
 
 /**
@@ -452,7 +454,7 @@ for it in data['items']:
     c.execute('INSERT OR REPLACE INTO redeem_item VALUES (?, ?, ?, ?)', (data['code'], it['itemId'], it['type'], it['amount']))
 conn.commit()
 print('Redeem synced to VPS')`;
-    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), redeem);
+    return runVpsPythonWithPayload(pyScript, redeem);
 }
 
 /**
@@ -467,7 +469,7 @@ c.execute('DELETE FROM redeem_item WHERE code = ?', (data['code'],))
 c.execute('DELETE FROM user_redeem WHERE code = ?', (data['code'],))
 conn.commit()
 print('Redeem deleted on VPS')`;
-    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), { code });
+    return runVpsPythonWithPayload(pyScript, { code });
 }
 
 /**
@@ -480,7 +482,7 @@ c = conn.cursor()
 c.execute('UPDATE user SET ticket = ? WHERE user_id = ?', (data['memories'], data['userId']))
 conn.commit()
 print('Player memories updated on VPS')`;
-    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), { userId, memories });
+    return runVpsPythonWithPayload(pyScript, { userId, memories });
 }
 
 /**
@@ -493,7 +495,7 @@ c = conn.cursor()
 c.execute('UPDATE user SET ban_flag = ? WHERE user_id = ?', (1 if data['isBanned'] else 0, data['userId']))
 conn.commit()
 print('Player ban status updated on VPS')`;
-    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), { userId, isBanned, banReason });
+    return runVpsPythonWithPayload(pyScript, { userId, isBanned, banReason });
 }
 
 /**
@@ -506,7 +508,7 @@ c = conn.cursor()
 c.execute('UPDATE user SET password = ? WHERE user_id = ?', (data['passwordHash'], data['userId']))
 conn.commit()
 print('Player password updated on VPS')`;
-    return runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), { userId, passwordHash });
+    return runVpsPythonWithPayload(pyScript, { userId, passwordHash });
 }
 
 /**
@@ -521,9 +523,130 @@ c.execute('DELETE FROM recent30 WHERE user_id = ?', (data['userId'],))
 c.execute('UPDATE user SET rating_ptt = 0 WHERE user_id = ?', (data['userId'],))
 conn.commit()
 print('Player scores wiped on VPS')`;
-    const res = await runVpsPythonWithPayload(pyScript.replace(/\n/g, '; '), { userId });
+    const res = await runVpsPythonWithPayload(pyScript, { userId });
     await recalculateRatingsOnVps();
     return res;
+}
+
+/**
+ * Fetch all Redeem Codes directly from VPS database.
+ */
+export async function fetchRedeemCodesFromVps(): Promise<any[] | null> {
+    if (!fs.existsSync(VPS_PEM_KEY)) return null;
+
+    const pyScript = `import sqlite3, json
+conn = sqlite3.connect('${VPS_DB_PATH}')
+c = conn.cursor()
+redeems = c.execute('SELECT code, type FROM redeem').fetchall()
+items = c.execute('SELECT code, item_id, type, amount FROM redeem_item').fetchall()
+claims = c.execute('SELECT ur.code, ur.user_id, u.name FROM user_redeem ur LEFT JOIN user u ON ur.user_id = u.user_id').fetchall()
+print(json.dumps({'redeems': redeems, 'items': items, 'claims': claims}))`;
+
+    const b64Script = Buffer.from(pyScript).toString('base64');
+    const remoteCmd = `python3 -c "import base64; exec(base64.b64decode('${b64Script}').decode('utf-8'))"`;
+
+    try {
+        const { stdout } = await execFileAsync('ssh', [
+            '-i', VPS_PEM_KEY,
+            '-o', 'BatchMode=yes',
+            '-o', 'StrictHostKeyChecking=no',
+            '-o', 'ConnectTimeout=5',
+            `${VPS_USER}@${VPS_HOST}`,
+            remoteCmd,
+        ], { maxBuffer: 10 * 1024 * 1024 });
+
+        const raw = JSON.parse(stdout.trim());
+        const itemsMap = new Map<string, Array<{ itemId: string; type: string; amount: number }>>();
+        for (const it of raw.items) {
+            const [code, item_id, type, amount] = it;
+            if (!itemsMap.has(code)) itemsMap.set(code, []);
+            itemsMap.get(code)!.push({ itemId: item_id, type: type || 'single', amount: amount ?? 1 });
+        }
+
+        const claimsMap = new Map<string, Array<{ userId: number; name: string }>>();
+        for (const cl of raw.claims) {
+            const [code, user_id, name] = cl;
+            if (!claimsMap.has(code)) claimsMap.set(code, []);
+            claimsMap.get(code)!.push({ userId: user_id, name: name || `User ${user_id}` });
+        }
+
+        return raw.redeems.map((r: any[]) => {
+            const code = r[0];
+            const type = r[1] ?? 0;
+            const claims = claimsMap.get(code) ?? [];
+            return {
+                code,
+                type,
+                typeLabel: type === 1 ? '1x per Player' : 'Single Use (Global)',
+                items: itemsMap.get(code) ?? [],
+                claimedCount: claims.length,
+                claimedUsers: claims,
+            };
+        });
+    } catch (err) {
+        console.warn('[VPS Fetch Redeem Warning] Falling back to local database:', err);
+        return null;
+    }
+}
+
+/**
+ * Fetch all Presents directly from VPS database.
+ */
+export async function fetchPresentsFromVps(): Promise<any[] | null> {
+    if (!fs.existsSync(VPS_PEM_KEY)) return null;
+
+    const pyScript = `import sqlite3, json
+conn = sqlite3.connect('${VPS_DB_PATH}')
+c = conn.cursor()
+presents = c.execute('SELECT present_id, expire_ts, description FROM present ORDER BY expire_ts DESC').fetchall()
+items = c.execute('SELECT present_id, item_id, type, amount FROM present_item').fetchall()
+counts = c.execute('SELECT present_id, COUNT(DISTINCT user_id) as c FROM user_present GROUP BY present_id').fetchall()
+print(json.dumps({'presents': presents, 'items': items, 'counts': counts}))`;
+
+    const b64Script = Buffer.from(pyScript).toString('base64');
+    const remoteCmd = `python3 -c "import base64; exec(base64.b64decode('${b64Script}').decode('utf-8'))"`;
+
+    try {
+        const { stdout } = await execFileAsync('ssh', [
+            '-i', VPS_PEM_KEY,
+            '-o', 'BatchMode=yes',
+            '-o', 'StrictHostKeyChecking=no',
+            '-o', 'ConnectTimeout=5',
+            `${VPS_USER}@${VPS_HOST}`,
+            remoteCmd,
+        ], { maxBuffer: 10 * 1024 * 1024 });
+
+        const raw = JSON.parse(stdout.trim());
+        const itemsMap = new Map<string, Array<{ itemId: string; type: string; amount: number }>>();
+        for (const it of raw.items) {
+            const [pid, item_id, type, amount] = it;
+            if (!itemsMap.has(pid)) itemsMap.set(pid, []);
+            itemsMap.get(pid)!.push({ itemId: item_id, type: type || 'single', amount: amount ?? 1 });
+        }
+
+        const countMap = new Map<string, number>();
+        for (const cnt of raw.counts) {
+            countMap.set(cnt[0], cnt[1]);
+        }
+
+        const now = Date.now();
+        return raw.presents.map((p: any[]) => {
+            const [presentId, expireTs, description] = p;
+            const exp = expireTs ? Number(expireTs) : 0;
+            return {
+                presentId,
+                description: description || '',
+                expireTs: exp,
+                expireDate: exp ? new Date(exp).toISOString().replace('T', ' ').slice(0, 16) : 'Never',
+                isExpired: exp > 0 && exp < now,
+                deliveredCount: countMap.get(presentId) ?? 0,
+                items: itemsMap.get(presentId) ?? [],
+            };
+        });
+    } catch (err) {
+        console.warn('[VPS Fetch Presents Warning] Falling back to local database:', err);
+        return null;
+    }
 }
 
 
