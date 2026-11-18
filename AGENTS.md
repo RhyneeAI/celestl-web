@@ -58,6 +58,8 @@ Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
 - Custom `.wav` sounds: Any audio trigger referenced in the chart (`sound_wav` or `arc(...,name_wav)`) must have `name.wav` in the song folder.
 
 ### Check 3: AffParser Supported Syntax (Normalized)
+- **Header & Delimiter**: Must begin with `AudioOffset:<integer>` (and optional `TimingPointDensityFactor:<float>`), terminated with `-` delimiter on a line by itself before event body.
+- **Native Function Whitelist**: Body statements must strictly comply with the 8 native Cocos2d-x engine functions: `()` (tap), `hold()`, `arc()` (with optional `[arctap(t), ...]`), `camera()`, `timing()`, `scenecontrol()`, `timinggroup()`, and `flick()`. Every event statement must terminate with `;`. Unrecognized commands or missing semicolons trigger fatal `ChartLoadError`.
 - **Negative BPM**: Supported by `LogicChart`. Preserve negative BPMs, but format as decimal `%.2f` (e.g. `-120.00`). No negative timestamps ($t < 0$) before $t = 0$.
 - **Native SceneControls**: Only use the 9 native commands:
   `trackdisplay`, `trackshow`, `trackhide`, `redline`, `arcahvdistort`, `arcahvdebris`, `hidegroup`, `enwidencamera`, `enwidenlanes`.
