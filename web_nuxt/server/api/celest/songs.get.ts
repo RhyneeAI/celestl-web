@@ -33,6 +33,8 @@ export interface CelestSongItem {
     artist: string;
     bpm: string | number;
     length?: string | null;
+    category?: string | null;
+    sourceCopyright?: string | null;
     set: string;
     pack: string;
     side: string;
@@ -116,6 +118,8 @@ export default defineEventHandler(async () => {
                 artist: s.artist || 'Unknown artist',
                 bpm: s.bpm || '—',
                 length,
+                category: s.category || null,
+                sourceCopyright: s.source_copyright || null,
                 set: s.set || 'Single',
                 pack: s.set || 'Single',
                 side: sideText,

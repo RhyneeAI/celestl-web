@@ -111,6 +111,8 @@ export default defineEventHandler(async (event) => {
                     composer: s.artist || 'Unknown Artist',
                     jacketDesigner: '',
                     side: sideText,
+                    category: s.category || null,
+                    sourceCopyright: s.source_copyright || null,
                     bpm: s.bpm || '—',
                     length,
                     version: s.version || '1.0',
