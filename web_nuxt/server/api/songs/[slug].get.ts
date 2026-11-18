@@ -1,5 +1,19 @@
+import fs from 'fs';
 import { db, schema } from '../../database/index';
 import { eq } from 'drizzle-orm';
+import { getServerSonglistPath } from '../../utils/server-paths.ts';
+
+function getDiffCode(rc: number): string {
+    switch (rc) {
+        case 0: return 'PST';
+        case 1: return 'PRS';
+        case 2: return 'FTR';
+        case 3: return 'BYD';
+        case 4: return 'ETR';
+        case 5: return 'INS';
+        default: return `RC${rc}`;
+    }
+}
 
 export default defineEventHandler(async (event) => {
     const slug = getRouterParam(event, 'slug');
@@ -30,20 +44,71 @@ export default defineEventHandler(async (event) => {
     .where(eq(schema.officialSongs.slug, slug))
     .get();
 
-    if (!song) {
-        throw createError({ statusCode: 404, message: `Song '${slug}' not found` });
+    if (song) {
+        const charts = db.select().from(schema.officialCharts)
+            .where(eq(schema.officialCharts.songId, song.id))
+            .all()
+            .sort((a, b) => {
+                const order = ['PST', 'PRS', 'FTR', 'BYD', 'ETR', 'INS'];
+                return order.indexOf(a.difficulty) - order.indexOf(b.difficulty);
+            });
+
+        return {
+            song,
+            charts
+        };
     }
 
-    const charts = db.select().from(schema.officialCharts)
-        .where(eq(schema.officialCharts.songId, song.id))
-        .all()
-        .sort((a, b) => {
-            const order = ['PST', 'PRS', 'FTR', 'BYD', 'ETR', 'INS'];
-            return order.indexOf(a.difficulty) - order.indexOf(b.difficulty);
-        });
+    // Fallback: Check Celest Server songlist for custom charts
+    const songlistPath = getServerSonglistPath();
+    if (songlistPath && fs.existsSync(songlistPath)) {
+        try {
+            const raw = JSON.parse(fs.readFileSync(songlistPath, 'utf-8'));
+            const s = (raw.songs || []).find((item: any) => item.id === slug || item.id === slug.toLowerCase());
+            if (s) {
+                const order = ['PST', 'PRS', 'FTR', 'BYD', 'ETR', 'INS'];
+                const customCharts = (s.difficulties || []).map((d: any) => ({
+                    difficulty: getDiffCode(d.ratingClass),
+                    level: `${d.rating}${d.ratingPlus ? '+' : ''}`,
+                    constant: d.constant ?? d.rating,
+                    chartDesigner: d.chartDesigner || '-',
+                    jacketDesigner: d.jacketDesigner || '',
+                    noteCount: null,
+                })).sort((a: any, b: any) => order.indexOf(a.difficulty) - order.indexOf(b.difficulty));
 
-    return {
-        song,
-        charts
-    };
+                const sideText =
+                    s.side === 0 ? 'Light' :
+                    s.side === 1 ? 'Conflict' :
+                    s.side === 2 ? 'Colorless' :
+                    s.side === 3 ? 'Lephon' :
+                    s.side === 4 ? 'Catastrophe' : 'Other';
+
+                const customSong = {
+                    id: 100000 + (s.date || 0),
+                    slug: s.id,
+                    title: s.title_localized?.en || s.id,
+                    titleLocalized: JSON.stringify(s.title_localized || {}),
+                    artist: s.artist || 'Unknown Artist',
+                    composer: s.artist || 'Unknown Artist',
+                    jacketDesigner: '',
+                    side: sideText,
+                    bpm: s.bpm || '—',
+                    length: null,
+                    version: s.version || '1.0',
+                    releasedAt: s.date ? new Date(s.date * 1000).toISOString().split('T')[0] : null,
+                    jacketPath: `/api/jacket/${s.id}`,
+                    jacketThumbPath: `/api/jacket/${s.id}`,
+                    packSlug: s.set || 'single',
+                    packName: s.set ? `Celest • ${s.set}` : 'Celest Custom',
+                };
+
+                return {
+                    song: customSong,
+                    charts: customCharts,
+                };
+            }
+        } catch {}
+    }
+
+    throw createError({ statusCode: 404, message: `Song '${slug}' not found` });
 });
