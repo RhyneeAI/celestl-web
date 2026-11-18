@@ -69,7 +69,7 @@ Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
 - **Decimal Numbers**: In `.aff`, all float tokens (`bpm`, `beats`, `p3`, `arc` coordinates) MUST contain decimal points (e.g. `120.00`, never raw integer `120`).
 
 ### Check 4: Prohibited Elements (Crash Prevention)
-- **Extreme BPM & Scientific Notation**: Reject scientific notation (e.g. `7E+08` or `1.5e7`). Extreme BPMs ($\ge 10^8$) trigger Android `Scudo OOM` from millions of tick allocations. Clamp to safe 6-digit decimal float range $[-1000000.00, 1000000.00]$.
+- **Extreme BPM & Scientific Notation**: Reject scientific notation (e.g. `7E+08` or `1.5e7`). Extreme BPMs ($\ge 10^8$) trigger Android `Scudo OOM` from millions of tick allocations if active holds/playable arcs exist. For visual gimmicks, preserve BPM up to the IEEE 754 24-bit mantissa limit $[-16000000.00, 16000000.00]$. Clamped extreme BPMs must be formatted as decimal `%.2f`.
 - **Zero BPM**: `bpm == 0.00` causes division by zero. Replace at $t = 0$ with base BPM (initial tempo), and at $t > 0$ with `0.01` (`timing(t, 0.01, beats);` to preserve visual stop gimmick).
 - **Anomaly SceneControls**: Strip non-native commands (e.g. ArcCreate extensions: `groupalpha`, `charterswitch`, `bgshow`, `hudalpha`, etc.).
 - **Timinggroup Attributes**: Strip non-native timinggroup arguments (e.g. `name="..."`, `light`, `noclip`). Only native parameters (`noinput`, `fadingholds`, `anglex<deg>`, `angley<deg>`) are permitted. In native Arcaea (`libcocos2dcpp.so` 0x145b5b8), multiple attributes are concatenated with `'_'` (e.g. `noinput_fadingholds`); commas trigger fatal parser exceptions (`expected RPAREN, got RPAREN instead`). Always normalize comma-separated timinggroup parameters to underscore (e.g. `noinput,fadingholds` -> `noinput_fadingholds`).
@@ -81,9 +81,12 @@ Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
   - Re-sync server cache: `from core.download import SongFileCache; SongFileCache.sync_all()`.
   - The client checks `"date"` against its local cache and automatically re-downloads the updated chart.
 
-### Check 6: Arc & Hold Minimum Duration Normalization
-- Arcs with duration $0\text{ ms}$ (`t_start == t_end`) trigger native renderer divide-by-zero or crash. Auto-normalize to tap note or minimum $1\text{ ms}$.
-- Holds with duration $\le 1\text{ ms}$ trigger timing glitches; auto-extend to valid threshold or convert to tap.
+### Check 6: Arc & Hold Duration Normalization (ArcTap Hazards & Short Holds)
+- **Pure 0ms Arcs Native Support**: Pure 0ms trace arcs (`is_trace = true`, $t_1 == t_2$) and pure 0ms active arcs (`is_trace = false`, $t_1 == t_2$) are 100% natively supported by Arcaea. DO NOT extend them to 1ms. Extending pure 0ms trace arcs causes 3D ribbon mesh extrusion, GPU buffer saturation, and Z-fighting; extending 0ms active arcs turns them into nearly impossible-to-tap 1ms active notes.
+- **0ms Arc with ArcTap Hazard**: Arcs with duration $0\text{ ms}$ (`t_start == t_end`) that contain ArcTaps (`[arctap(t)]`) trigger native divide-by-zero ($s = \frac{0}{0} = \text{NaN}$). Automatically extend parent arc to $1\text{ ms}$ (`t_end = t_start + 1`).
+- **Out-of-Bounds ArcTaps**: Clamp ArcTap timestamps strictly to the parent arc's interval $[\min(t_1, t_2), \max(t_1, t_2)]$.
+- **Holds with duration $\le 1\text{ ms}$**: Short holds cannot generate hold ticks and trigger combo breaks; auto-convert to tap note `(t, lane);`.
+- **Chronologically Inverted Notes**: Swap timestamps and coordinates ($t_1 \leftrightarrow t_2$, $x_1 \leftrightarrow x_2$, $y_1 \leftrightarrow y_2$).
 
 ### Check 7: Unlocks Integrity & Beyond (ratingClass 3) Prohibition
 - **Strict Prohibition on ratingClass 3 in `unlocks`**: Beyond difficulty has no fragment purchase UI in native Arcaea client. Declaring it in `database/songs/unlocks` locks the 4th difficulty diamond, forces label to `"?"`, and hides unplayed charts from the BEYOND tab in Song Select.
