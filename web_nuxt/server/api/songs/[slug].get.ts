@@ -1,7 +1,8 @@
 import fs from 'fs';
+import path from 'path';
 import { db, schema } from '../../database/index';
 import { eq } from 'drizzle-orm';
-import { getServerSonglistPath, getSongDir } from '../../utils/server-paths.ts';
+import { getServerSonglistPath, getSongDir, getOggDurationFormatted } from '../../utils/server-paths.ts';
 
 function getDiffCode(rc: number): string {
     switch (rc) {
@@ -48,6 +49,11 @@ export default defineEventHandler(async (event) => {
     .get();
 
     if (song) {
+        let length = song.length;
+        if (!length && songDir) {
+            length = getOggDurationFormatted(path.join(songDir, 'base.ogg'));
+        }
+
         const charts = db.select().from(schema.officialCharts)
             .where(eq(schema.officialCharts.songId, song.id))
             .all()
@@ -59,6 +65,7 @@ export default defineEventHandler(async (event) => {
         return {
             song: {
                 ...song,
+                length,
                 hasServerPackage,
             },
             charts
@@ -72,6 +79,12 @@ export default defineEventHandler(async (event) => {
             const raw = JSON.parse(fs.readFileSync(songlistPath, 'utf-8'));
             const s = (raw.songs || []).find((item: any) => item.id === slug || item.id === slug.toLowerCase());
             if (s) {
+                const targetDir = getSongDir(s.id);
+                let length = null;
+                if (targetDir) {
+                    length = getOggDurationFormatted(path.join(targetDir, 'base.ogg'));
+                }
+
                 const order = ['PST', 'PRS', 'FTR', 'BYD', 'ETR', 'INS'];
                 const customCharts = (s.difficulties || []).map((d: any) => ({
                     difficulty: getDiffCode(d.ratingClass),
@@ -99,14 +112,14 @@ export default defineEventHandler(async (event) => {
                     jacketDesigner: '',
                     side: sideText,
                     bpm: s.bpm || '—',
-                    length: null,
+                    length,
                     version: s.version || '1.0',
                     releasedAt: s.date ? new Date(s.date * 1000).toISOString().split('T')[0] : null,
                     jacketPath: `/api/jacket/${s.id}`,
                     jacketThumbPath: `/api/jacket/${s.id}`,
                     packSlug: s.set || 'single',
                     packName: s.set ? `Celest • ${s.set}` : 'Celest Custom',
-                    hasServerPackage: true,
+                    hasServerPackage: Boolean(targetDir),
                 };
 
                 return {

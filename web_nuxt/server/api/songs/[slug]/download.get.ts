@@ -26,3 +26,4 @@ export default defineEventHandler((event) => {
 
     return zipProc.stdout;
 });
+

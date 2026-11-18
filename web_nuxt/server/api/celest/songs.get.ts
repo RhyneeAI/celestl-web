@@ -1,6 +1,7 @@
 import fs from 'fs';
+import path from 'path';
 import { defineEventHandler } from 'h3';
-import { getServerSonglistPath } from '../../utils/server-paths.ts';
+import { getServerSonglistPath, getServerSongsDir, getOggDurationFormatted } from '../../utils/server-paths.ts';
 
 export interface ServerDifficulty {
     ratingClass: number;
@@ -31,6 +32,7 @@ export interface CelestSongItem {
     title: string;
     artist: string;
     bpm: string | number;
+    length?: string | null;
     set: string;
     pack: string;
     side: string;
@@ -58,6 +60,8 @@ function getDiffCode(rc: number): string {
 
 export default defineEventHandler(async () => {
     const serverSonglistPath = getServerSonglistPath();
+    const songsDir = getServerSongsDir();
+
     if (!serverSonglistPath || !fs.existsSync(serverSonglistPath)) {
         return {
             total: 0,
@@ -99,12 +103,19 @@ export default defineEventHandler(async () => {
                 s.side === 3 ? 'Lephon' :
                 s.side === 4 ? 'Catastrophe' : 'Other';
 
+            let length: string | null = null;
+            if (songsDir) {
+                const oggPath = path.join(songsDir, s.id, 'base.ogg');
+                length = getOggDurationFormatted(oggPath);
+            }
+
             return {
                 id: s.id,
                 slug: s.id,
                 title: s.title_localized?.en || s.id,
                 artist: s.artist || 'Unknown artist',
                 bpm: s.bpm || '—',
+                length,
                 set: s.set || 'Single',
                 pack: s.set || 'Single',
                 side: sideText,
@@ -131,4 +142,3 @@ export default defineEventHandler(async () => {
         };
     }
 });
-

@@ -58,16 +58,14 @@
       <!-- Info Meta -->
       <div class="flex-1 text-center sm:text-left space-y-3 min-w-0">
         <div>
-          <span v-if="song.side" class="inline-block rounded-lg bg-[#0c0c22] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-[#9a99a8] border border-[#3f3c68]/30">
-            {{ song.side }} Side
-          </span>
-          <h1 class="mt-2 text-2xl sm:text-3xl font-extrabold font-brand text-[#fffafa] tracking-tight leading-snug break-words">
+          <h1 class="text-2xl sm:text-3xl font-extrabold font-brand text-[#fffafa] tracking-tight leading-snug break-words">
             {{ song.title }}
           </h1>
-          <p class="text-base text-[#f768dd] font-medium">{{ song.artist }}</p>
+          <p class="text-base text-[#f768dd] font-medium mt-1">{{ song.artist }}</p>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-2 text-xs border-t border-[#3f3c68]/30">
+        <!-- Metadata Information Row -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 text-xs border-t border-[#3f3c68]/30">
           <div>
             <span class="text-[#6f6e80] block text-[11px]">Pack</span>
             <span class="font-semibold text-[#fffafa] truncate block">{{ song.packName || 'Memory Archive (Single)' }}</span>
@@ -81,6 +79,10 @@
             <span class="font-semibold text-[#fffafa]">{{ formatLength(song.length) }}</span>
           </div>
           <div>
+            <span class="text-[#6f6e80] block text-[11px]">Side</span>
+            <span class="font-semibold text-[#fffafa]">{{ formatSide(song.side) }}</span>
+          </div>
+          <div>
             <span class="text-[#6f6e80] block text-[11px]">Released</span>
             <span class="font-semibold text-[#fffafa]">{{ song.releasedAt || '—' }}</span>
           </div>
@@ -88,28 +90,10 @@
             <span class="text-[#6f6e80] block text-[11px]">Version</span>
             <span class="font-semibold text-[#fffafa]">{{ song.version || '—' }}</span>
           </div>
-          <div>
+          <div class="col-span-2 sm:col-span-2">
             <span class="text-[#6f6e80] block text-[11px]">Composer</span>
             <span class="font-semibold text-[#fffafa] truncate block">{{ song.composer || song.artist || '—' }}</span>
           </div>
-        </div>
-
-        <!-- Server Package Download Banner (if hosted on server) -->
-        <div v-if="song.hasServerPackage" class="pt-3 border-t border-[#3f3c68]/30 flex flex-wrap items-center justify-between gap-3">
-          <div class="text-xs text-[#9a99a8] flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-[#acff82] shadow-[0_0_6px_#acff82]"></span>
-            <span>Server Asset Package (.aff charts, .ogg audio, jackets, background)</span>
-          </div>
-          <a
-            :href="`/api/songs/${song.slug}/download`"
-            download
-            class="rounded-xl bg-[#acff82] text-[#0c0c22] hover:bg-[#acff82]/90 px-3.5 py-1.5 text-xs font-extrabold font-brand transition-all flex items-center gap-1.5 shadow-md hover:scale-[1.02]"
-          >
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            <span>Download Package (.zip)</span>
-          </a>
         </div>
       </div>
     </div>
@@ -174,6 +158,11 @@ const fandomWikiUrl = computed(() => {
 
 function getDiffColor(diff: string) {
   return DIFFICULTY_COLOR[diff as DifficultyCode] || ['text-gray-400', 'bg-gray-400'];
+}
+
+function formatSide(val: string | null | undefined) {
+  if (!val) return '—';
+  return val.toLowerCase().endsWith('side') ? val : `${val} Side`;
 }
 
 function formatLength(val: string | number | null | undefined) {
