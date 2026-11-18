@@ -45,6 +45,17 @@ export function getRecalculateScriptPath(): string | null {
     return null;
 }
 
+export function getValidateAffScriptPath(): string | null {
+    const candidates = [
+        path.resolve(process.cwd(), 'ArcaeaServerFork/tools/validate_single_aff.py'),
+        path.resolve(process.cwd(), '../ArcaeaServerFork/tools/validate_single_aff.py'),
+    ];
+    for (const c of candidates) {
+        if (fs.existsSync(c)) return c;
+    }
+    return null;
+}
+
 export function getPacklistPath(): string | null {
     const candidates = [
         path.resolve(process.cwd(), 'data/packlist.json'),

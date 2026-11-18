@@ -2,7 +2,7 @@ import { execFile } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs';
 import path from 'path';
-import { getServerSonglistPath, getServerSongsDir, getRecalculateScriptPath } from './server-paths.ts';
+import { getServerSonglistPath, getServerSongsDir, getRecalculateScriptPath, getValidateAffScriptPath } from './server-paths.ts';
 
 const execFileAsync = promisify(execFile);
 
@@ -102,9 +102,14 @@ export async function fetchChartAff(songId: string, ratingClass: number): Promis
 }
 
 /**
- * Save .aff chart content locally and push to VPS, bumping song.date for hot reload.
+ * Save .aff chart content locally and optionally push to VPS, bumping song.date for hot reload.
  */
-export async function saveChartAff(songId: string, ratingClass: number, content: string): Promise<VpsSyncResult & { updated_at: number; size: number }> {
+export async function saveChartAff(
+    songId: string,
+    ratingClass: number,
+    content: string,
+    deployVps: boolean = true
+): Promise<VpsSyncResult & { updated_at: number; size: number }> {
     const filename = `${ratingClass}.aff`;
     const songsDir = getServerSongsDir();
     const songlistPath = getServerSonglistPath();
@@ -133,6 +138,17 @@ export async function saveChartAff(songId: string, ratingClass: number, content:
         }
     } catch (e) {
         console.warn('Could not update song.date in songlist:', e);
+    }
+
+    // If VPS deploy is disabled, save locally only
+    if (!deployVps) {
+        return {
+            success: true,
+            synced_vps: false,
+            message: 'Saved locally on server (VPS deployment skipped).',
+            updated_at: now,
+            size,
+        };
     }
 
     // Push .aff and songlist to VPS if SSH available
@@ -189,6 +205,47 @@ export async function saveChartAff(songId: string, ratingClass: number, content:
         updated_at: now,
         size,
     };
+}
+
+/**
+ * Validate .aff chart content against Points 3, 4, and 5 integrity rules.
+ */
+export async function validateChartAff(songId: string, ratingClass: number, content: string): Promise<any> {
+    const scriptPath = getValidateAffScriptPath();
+    if (!scriptPath) {
+        throw new Error('validate_single_aff.py script not found.');
+    }
+    const pyBin = fs.existsSync('/home/luhung/.venvs/arcaea-server/bin/python')
+        ? '/home/luhung/.venvs/arcaea-server/bin/python'
+        : 'python3';
+
+    return new Promise((resolve, reject) => {
+        const proc = execFile(
+            pyBin,
+            [scriptPath, '--song-id', songId, '--rating-class', String(ratingClass)],
+            { maxBuffer: 10 * 1024 * 1024 },
+            (error, stdout, stderr) => {
+                if (stdout) {
+                    try {
+                        const parsed = JSON.parse(stdout);
+                        resolve(parsed);
+                        return;
+                    } catch (e) {
+                        // ignore parse error, continue
+                    }
+                }
+                if (error && !stdout) {
+                    reject(new Error(stderr || error.message || 'Validation process failed'));
+                } else {
+                    reject(new Error('Invalid output from validator: ' + stdout));
+                }
+            }
+        );
+        if (proc.stdin) {
+            proc.stdin.write(content);
+            proc.stdin.end();
+        }
+    });
 }
 
 /**

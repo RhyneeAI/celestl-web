@@ -5,6 +5,7 @@ interface AffUpdateBody {
     song_id: string;
     ratingClass: number;
     content: string;
+    deploy_vps?: boolean;
 }
 
 export default defineEventHandler(async (event) => {
@@ -25,7 +26,8 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
-        const result = await saveChartAff(body.song_id, body.ratingClass, body.content);
+        const deployVps = body.deploy_vps !== false;
+        const result = await saveChartAff(body.song_id, body.ratingClass, body.content, deployVps);
         return {
             success: true,
             song_id: body.song_id,

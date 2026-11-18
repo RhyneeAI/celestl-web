@@ -551,11 +551,238 @@
               </button>
               <button
                 type="button"
-                :disabled="savingAff || loadingAff"
-                @click="saveChartAffFile"
+                :disabled="savingAff || validatingAff || loadingAff"
+                @click="runChartAudit()"
+                class="rounded-[11px] bg-[#1e203a] hover:bg-[#282a4d] border border-[#3f3c68]/50 px-3.5 py-2 text-[12.5px] font-semibold text-[#fffafa] transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                title="Cek integritas chart terhadap Poin 3, 4, dan 5"
+              >
+                <span v-if="validatingAff" class="animate-spin text-xs">⟳</span>
+                <span v-else>🔍</span>
+                <span>{{ validatingAff ? 'Memeriksa Poin 3, 4, 5…' : 'Preview Test (Poin 3, 4, 5)' }}</span>
+              </button>
+              <button
+                type="button"
+                :disabled="savingAff || validatingAff || loadingAff"
+                @click="handleSaveAndDeploy"
                 class="rounded-[11px] bg-[#acff82] px-4 py-2 text-[12.5px] font-bold text-[#0c0c22] hover:bg-[#acff82]/90 transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
               >
+                <span v-if="savingAff" class="animate-spin text-xs">⟳</span>
                 <span>{{ savingAff ? 'Deploying to VPS…' : 'Save & Deploy to VPS' }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Audit Result Popup (Poin 3, 4, 5) -->
+    <Teleport to="body">
+      <div
+        v-if="showAuditModal && auditResult"
+        class="fixed inset-0 z-[70] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-150"
+      >
+        <div class="w-full max-w-2xl rounded-2xl border border-[#222442] bg-[#101222] shadow-2xl flex flex-col max-h-[88vh] overflow-hidden">
+          <!-- Header -->
+          <div class="flex items-center justify-between border-b border-[#0c0c22] px-6 py-4 bg-[#141628]">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-lg">🛡️</span>
+                <h3 class="text-base font-bold text-[#fffafa]">
+                  Audit Integritas Chart (Poin 3, 4, 5)
+                </h3>
+              </div>
+              <p class="text-xs text-[#9a99a8] mt-0.5">
+                {{ editingAffSong?.title_localized?.en }} · <span class="font-mono font-bold">{{ getDiffCode(selectedAffRc) }}</span>
+              </p>
+            </div>
+            <button
+              type="button"
+              @click="showAuditModal = false"
+              class="flex size-7 items-center justify-center rounded-[8px] border border-[#3f3c68] bg-[#1e203a] text-sm text-[#9a99a8] hover:text-[#fffafa] hover:border-[#fffafa] transition-colors cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+
+          <!-- Overall Status Banner -->
+          <div :class="[
+            'px-6 py-3 border-b text-xs font-semibold flex items-center justify-between',
+            auditResult.valid
+              ? 'bg-[#152e20] text-[#acff82] border-[#224430]'
+              : 'bg-[#381622] text-[#ff6880] border-[#552030]'
+          ]">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-bold">{{ auditResult.valid ? '✓' : '⚠️' }}</span>
+              <span>
+                {{ auditResult.valid
+                    ? (auditResult.has_warnings ? 'Lolos Audit dengan Catatan / Warnings' : 'Lolos Audit Poin 3, 4, 5 — Bersih dari Potensi Crash Native Engine')
+                    : `Ditemukan ${auditResult.total_errors} Masalah Fatal yang Memicu Crash Native Engine!` }}
+              </span>
+            </div>
+            <span class="font-mono text-[11px] opacity-80">
+              {{ auditResult.total_errors }} error(s) · {{ auditResult.total_warnings }} warning(s)
+            </span>
+          </div>
+
+          <!-- Body: Point Breakdown Cards -->
+          <div class="p-6 overflow-y-auto space-y-4 flex-1">
+            <!-- 3 Suite Status Cards -->
+            <div class="grid grid-cols-3 gap-3">
+              <!-- Point 3 -->
+              <div class="rounded-xl border border-[#222442] bg-[#0c0d18] p-3 flex flex-col justify-between">
+                <div class="text-[11px] font-bold text-[#9a99a8]">Poin 3: Aff Syntax</div>
+                <div class="mt-2 text-xs font-mono font-bold" :class="{
+                  'text-[#acff82]': auditResult.point3.status === 'PASSED',
+                  'text-[#e14763]': auditResult.point3.status === 'FAILED',
+                  'text-[#ffc83b]': auditResult.point3.status === 'WARNING',
+                }">
+                  [{{ auditResult.point3.status }}]
+                </div>
+                <div class="text-[10.5px] text-[#6f6e80] mt-1 leading-tight">
+                  Lanes (-6..10), camera & floats
+                </div>
+              </div>
+
+              <!-- Point 4 -->
+              <div class="rounded-xl border border-[#222442] bg-[#0c0d18] p-3 flex flex-col justify-between">
+                <div class="text-[11px] font-bold text-[#9a99a8]">Poin 4: Anti-Crash</div>
+                <div class="mt-2 text-xs font-mono font-bold" :class="{
+                  'text-[#acff82]': auditResult.point4.status === 'PASSED',
+                  'text-[#e14763]': auditResult.point4.status === 'FAILED',
+                  'text-[#ffc83b]': auditResult.point4.status === 'WARNING',
+                }">
+                  [{{ auditResult.point4.status }}]
+                </div>
+                <div class="text-[10.5px] text-[#6f6e80] mt-1 leading-tight">
+                  Zero BPM, Extreme BPM, TG
+                </div>
+              </div>
+
+              <!-- Point 5 -->
+              <div class="rounded-xl border border-[#222442] bg-[#0c0d18] p-3 flex flex-col justify-between">
+                <div class="text-[11px] font-bold text-[#9a99a8]">Poin 5: Duration</div>
+                <div class="mt-2 text-xs font-mono font-bold" :class="{
+                  'text-[#acff82]': auditResult.point5.status === 'PASSED',
+                  'text-[#e14763]': auditResult.point5.status === 'FAILED',
+                  'text-[#ffc83b]': auditResult.point5.status === 'WARNING',
+                }">
+                  [{{ auditResult.point5.status }}]
+                </div>
+                <div class="text-[10.5px] text-[#6f6e80] mt-1 leading-tight">
+                  0ms Arcs & Holds (div by zero)
+                </div>
+              </div>
+            </div>
+
+            <!-- List of Errors -->
+            <div v-if="auditResult.has_errors" class="space-y-2">
+              <div class="text-xs font-bold text-[#ff6880] flex items-center gap-1.5 uppercase tracking-wider">
+                <span>✕</span> Rincian Kesalahan Fatal (Penyebab Crash Native Arcaea):
+              </div>
+              <div class="rounded-xl border border-[#552030] bg-[#1a0a10] p-3 space-y-2 text-xs font-mono">
+                <div
+                  v-for="(err, i) in [
+                    ...auditResult.point3.errors,
+                    ...auditResult.point4.errors,
+                    ...auditResult.point5.errors,
+                  ]"
+                  :key="i"
+                  class="flex items-start gap-2 text-[#ff98aa]"
+                >
+                  <span class="rounded bg-[#552030] px-1.5 py-0.5 text-[10.5px] font-bold text-[#ff6880] shrink-0">
+                    Line {{ err.line }}
+                  </span>
+                  <div>
+                    <span class="font-bold text-white">{{ err.rule }}:</span> {{ err.message }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- List of Warnings -->
+            <div v-if="auditResult.has_warnings" class="space-y-2">
+              <div class="text-xs font-bold text-[#ffc83b] flex items-center gap-1.5 uppercase tracking-wider">
+                <span>⚠️</span> Peringatan Format & Standar Lintasan:
+              </div>
+              <div class="rounded-xl border border-[#443818] bg-[#161408] p-3 space-y-2 text-xs font-mono">
+                <div
+                  v-for="(warn, i) in [
+                    ...auditResult.point3.warnings,
+                    ...auditResult.point4.warnings,
+                    ...auditResult.point5.warnings,
+                  ]"
+                  :key="i"
+                  class="flex items-start gap-2 text-[#ffe394]"
+                >
+                  <span class="rounded bg-[#443818] px-1.5 py-0.5 text-[10.5px] font-bold text-[#ffc83b] shrink-0">
+                    Line {{ warn.line }}
+                  </span>
+                  <div>
+                    <span class="font-bold text-white">{{ warn.rule }}:</span> {{ warn.message }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Auto-fix Available Box -->
+            <div v-if="auditResult.is_fixable" class="rounded-xl border border-[#224430] bg-[#0c1f14] p-3.5 flex items-center justify-between">
+              <div>
+                <div class="text-xs font-bold text-[#acff82] flex items-center gap-1.5">
+                  <span>⚡</span> Perbaikan Otomatis Tersedia ({{ auditResult.total_fixes }} fixes)
+                </div>
+                <div class="text-[11.5px] text-[#9a99a8] mt-0.5">
+                  Dapat memperbaiki otomatis 0ms arc (+1ms), zero BPM, pembersihan scenecontrol anomali, & normalisasi koma timinggroup.
+                </div>
+              </div>
+              <button
+                type="button"
+                @click="applyAutoFix"
+                class="rounded-lg bg-[#acff82] px-3 py-1.5 text-xs font-bold text-[#0c0c22] hover:bg-[#acff82]/90 transition-colors cursor-pointer shrink-0 ml-3"
+              >
+                Terapkan Auto-Fix
+              </button>
+            </div>
+          </div>
+
+          <!-- Footer Actions -->
+          <div class="flex items-center justify-between border-t border-[#0c0c22] px-6 py-3.5 bg-[#141628]">
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                @click="showAuditModal = false"
+                class="rounded-[11px] bg-[#1e203a] px-3.5 py-2 text-[12.5px] font-semibold text-[#9a99a8] hover:bg-[#0c0c22] transition-colors cursor-pointer"
+              >
+                Kembali ke Editor (Fix Manual)
+              </button>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                :disabled="savingAff"
+                @click="executeSaveChart({ deployVps: false })"
+                class="rounded-[11px] bg-[#3b4172] hover:bg-[#49518c] text-white px-3.5 py-2 text-[12.5px] font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
+                title="Simpan file .aff di server lokal saja tanpa deploy ke VPS"
+              >
+                <span>💾 Simpan Lokal Saja (Fix Sendiri)</span>
+              </button>
+              <button
+                v-if="auditResult.valid"
+                type="button"
+                :disabled="savingAff"
+                @click="executeSaveChart({ deployVps: true })"
+                class="rounded-[11px] bg-[#acff82] hover:bg-[#acff82]/90 text-[#0c0c22] px-4 py-2 text-[12.5px] font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <span>🚀 Lanjutkan Deploy ke VPS</span>
+              </button>
+              <button
+                v-else
+                type="button"
+                :disabled="savingAff"
+                @click="executeSaveChart({ deployVps: true })"
+                class="rounded-[11px] border border-[#e14763]/60 bg-[#2a1018] hover:bg-[#3d1522] text-[#ff8095] px-3.5 py-2 text-[12px] font-semibold transition-colors cursor-pointer"
+                title="Abaikan peringatan dan paksa deploy ke VPS"
+              >
+                <span>Paksa Deploy VPS (Risiko Crash)</span>
               </button>
             </div>
           </div>
@@ -752,7 +979,53 @@ async function loadAff(songId: string, rc: number) {
   }
 }
 
-async function saveChartAffFile() {
+// Validation & Audit State (Poin 3, 4, 5)
+const validatingAff = ref<boolean>(false);
+const showAuditModal = ref<boolean>(false);
+const auditResult = ref<any>(null);
+
+async function runChartAudit(options: { autoDeployIfClean?: boolean } = {}) {
+  if (!editingAffSong.value) return;
+  validatingAff.value = true;
+  affSaveError.value = '';
+  affSaveSuccess.value = '';
+
+  try {
+    const res: any = await $fetch('/api/admin/server/charts/validate', {
+      method: 'POST',
+      body: {
+        song_id: editingAffSong.value.id,
+        ratingClass: selectedAffRc.value,
+        content: affContent.value,
+      },
+    });
+
+    auditResult.value = res;
+
+    if (res.valid && !res.has_warnings) {
+      if (options.autoDeployIfClean) {
+        await executeSaveChart({ deployVps: true });
+        return;
+      } else {
+        affSaveSuccess.value = '✓ Lolos Audit Poin 3, 4, 5 — Bersih (0 potensi crash)';
+      }
+    } else {
+      // Show audit modal popup with errors/warnings
+      showAuditModal.value = true;
+    }
+  } catch (err: any) {
+    affSaveError.value = err?.data?.statusMessage || err.message || 'Gagal memvalidasi chart .aff';
+  } finally {
+    validatingAff.value = false;
+  }
+}
+
+async function handleSaveAndDeploy() {
+  // Test Poin 3, 4, 5 first before deploying to VPS
+  await runChartAudit({ autoDeployIfClean: true });
+}
+
+async function executeSaveChart(options: { deployVps: boolean }) {
   if (!editingAffSong.value) return;
   savingAff.value = true;
   affSaveSuccess.value = '';
@@ -765,18 +1038,36 @@ async function saveChartAffFile() {
         song_id: editingAffSong.value.id,
         ratingClass: selectedAffRc.value,
         content: affContent.value,
+        deploy_vps: options.deployVps,
       },
     });
 
-    affSaveSuccess.value = res.synced_vps
-      ? 'Saved & Deployed to VPS celest-server!'
-      : 'Saved locally (VPS sync pending)';
+    if (options.deployVps) {
+      affSaveSuccess.value = res.synced_vps
+        ? 'Saved & Deployed to VPS celest-server!'
+        : 'Saved locally (VPS sync pending)';
+    } else {
+      affSaveSuccess.value = 'Disimpan lokal saja di server (bisa di-fix sendiri). VPS belum diubah.';
+    }
+    showAuditModal.value = false;
     await refresh();
   } catch (err: any) {
     affSaveError.value = err?.data?.statusMessage || err.message || 'Failed to save chart .aff';
   } finally {
     savingAff.value = false;
   }
+}
+
+function applyAutoFix() {
+  if (auditResult.value?.fixed_content) {
+    affContent.value = auditResult.value.fixed_content;
+    // Re-run audit to reflect resolved state
+    runChartAudit();
+  }
+}
+
+async function saveChartAffFile() {
+  await handleSaveAndDeploy();
 }
 
 function copyAffToClipboard() {
@@ -901,7 +1192,8 @@ async function recalculateAllRatings() {
 // Global Keyboard listener for Lightbox & Modal
 function handleKeyDown(e: KeyboardEvent) {
   if (e.key === 'Escape') {
-    if (lightboxBg.value) lightboxBg.value = null;
+    if (showAuditModal.value) showAuditModal.value = false;
+    else if (lightboxBg.value) lightboxBg.value = null;
     else if (editingAffSong.value) closeAffModal();
     else if (editingSong.value) editingSong.value = null;
   }
