@@ -59,9 +59,11 @@ export default defineEventHandler((event) => {
 
     const storageDirs = [
         path.resolve(process.cwd(), 'public/storage/jackets'),
+        path.resolve(process.cwd(), 'web_nuxt/public/storage/jackets'),
         path.resolve(process.cwd(), '../web/storage/app/public/jackets'),
         path.resolve(process.cwd(), 'data/jackets'),
         path.resolve(process.cwd(), '../data/jackets'),
+        path.resolve(process.cwd(), 'web_nuxt/data/jackets'),
         path.resolve(process.cwd(), 'server/database/data/jackets'),
     ];
 

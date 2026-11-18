@@ -48,10 +48,16 @@
           <div class="h-4 w-px bg-[#3f3c68]/40 mx-1"></div>
 
           <NuxtLink
-            to="/admin"
-            class="rounded-xl px-2.5 py-1.5 text-[12.5px] font-medium text-[#7b5d85] hover:text-[#f768dd] hover:bg-[#16133e]/60 transition-colors"
+            to="/celest"
+            :class="[
+              'rounded-xl px-3 py-1.5 text-[13.5px] font-semibold transition-colors flex items-center gap-1.5',
+              route.path.startsWith('/celest')
+                ? 'bg-[#f768dd]/20 text-[#f768dd] border border-[#f768dd]/40 font-bold'
+                : 'text-[#f768dd] hover:bg-[#1e203a] hover:text-[#fffafa]'
+            ]"
           >
-            Admin ↗
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-[#f768dd] shadow-[0_0_6px_#f768dd]"></span>
+            <span>Celest</span>
           </NuxtLink>
         </nav>
       </div>

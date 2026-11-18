@@ -33,15 +33,35 @@
         :to="`/songs/${song.slug}`"
         class="group min-w-0 rounded-2xl p-2.5 transition-colors hover:bg-[#1e203a] border border-transparent hover:border-[#3f3c68]/30 flex flex-col"
       >
-        <!-- Jacket Artwork / Gradient Placeholder -->
+        <!-- Jacket Artwork / Artwork Image with Fallback Gradient -->
         <div
-          class="aspect-square w-full rounded-xl shadow-md flex items-center justify-center text-xs font-bold font-brand tracking-wider relative overflow-hidden"
+          class="aspect-square w-full rounded-xl shadow-md flex items-center justify-center text-xs font-bold font-brand tracking-wider relative overflow-hidden bg-[#0c0c22]"
           :style="{ background: jacketGradient(song.slug) }"
         >
-          <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
-          <span class="text-white/80 drop-shadow select-none">{{ song.title.slice(0, 3).toUpperCase() }}</span>
-          <!-- Difficulty count badge -->
-          <div class="absolute bottom-1.5 right-1.5 flex gap-0.5">
+          <img
+            :src="`/api/jacket/${song.slug}`"
+            :alt="song.title"
+            loading="lazy"
+            class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            @error="(e: Event) => (e.target as HTMLElement).style.display = 'none'"
+          />
+          <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors pointer-events-none"></div>
+
+          <!-- Fallback initials (visible if image fails or before load) -->
+          <span class="text-white/40 drop-shadow select-none text-[10px] pointer-events-none">
+            {{ song.title.slice(0, 3).toUpperCase() }}
+          </span>
+
+          <!-- Length badge (Top Left) -->
+          <div
+            v-if="song.length"
+            class="absolute top-1.5 left-1.5 rounded-md bg-black/70 backdrop-blur-sm px-1.5 py-0.5 text-[9.5px] font-mono font-bold text-white/90 shadow-sm border border-white/10"
+          >
+            {{ song.length }}
+          </div>
+
+          <!-- Difficulty count dots (Bottom Right) -->
+          <div class="absolute bottom-1.5 right-1.5 flex gap-0.5 rounded-full bg-black/60 backdrop-blur-sm px-1.5 py-1 border border-white/10">
             <span
               v-for="c in song.charts"
               :key="c.difficulty"
@@ -52,12 +72,16 @@
 
         <!-- Info -->
         <div class="mt-2.5 flex-1 min-w-0">
-          <p class="line-clamp-2 break-words text-[13px] font-semibold leading-snug text-[#fffafa] group-hover:text-[#f768dd] transition-colors">
+          <p class="line-clamp-2 break-words text-[13px] font-semibold leading-snug text-[#fffafa] group-hover:text-[#f768dd] transition-colors font-brand">
             {{ song.title }}
           </p>
           <p class="mt-1 line-clamp-1 text-[11px] text-[#9a99a8]">
             {{ song.artist }}
           </p>
+          <div class="mt-1 flex items-center justify-between text-[10px] font-mono text-[#6f6e80]">
+            <span v-if="song.pack" class="truncate max-w-[100px]">{{ song.pack }}</span>
+            <span v-if="song.bpm" class="ml-auto shrink-0">{{ song.bpm }} BPM</span>
+          </div>
         </div>
       </NuxtLink>
     </div>

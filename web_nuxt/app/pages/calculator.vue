@@ -7,6 +7,86 @@
       </div>
     </div>
 
+    <!-- Active Player Profile Banner (Matching records.vue and Celest design) -->
+    <div
+      v-if="player"
+      class="rounded-3xl bg-[#1a1d32] p-4 sm:p-5 border border-[#16133e] shadow-xl flex items-center justify-between gap-4"
+    >
+      <div class="flex items-center gap-4 min-w-0">
+        <!-- Active Player Avatar Diamond (Rotated 45deg like Arcaea) -->
+        <div class="h-12 w-12 rotate-45 overflow-hidden rounded-xl bg-gradient-to-tr from-[#79287a] to-[#03a8e6] p-0.5 shadow-md shrink-0 border border-white/20">
+          <div class="relative h-full w-full overflow-hidden rounded-lg bg-slate-900">
+            <img
+              :src="player.characterAvatar || '/storage/characters/0_icon.png'"
+              alt="Avatar"
+              class="absolute inset-[-25%] h-[150%] w-[150%] max-w-none -rotate-45 object-cover"
+              @error="(e: Event) => (e.target as HTMLImageElement).src = '/storage/characters/0_icon.png'"
+            />
+          </div>
+        </div>
+
+        <!-- Username & Label -->
+        <div class="min-w-0 pl-1">
+          <div class="text-[10px] font-bold font-brand uppercase tracking-wider text-[#9a99a8]">
+            Active Player Profile
+          </div>
+          <div class="text-lg sm:text-xl font-black font-brand text-[#fffafa] truncate mt-0.5">
+            {{ player.name }}
+          </div>
+        </div>
+      </div>
+
+      <!-- PTT Potential Badge & Disconnect Button -->
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="flex flex-col items-end">
+          <span class="text-[9.5px] font-bold uppercase text-[#6f6e80] tracking-wider font-mono">Potential</span>
+          <div class="px-3 py-1 rounded-xl bg-[#0c0c22] border border-[#3f3c68]/50 shadow-inner font-mono font-black text-sm sm:text-base text-[#ffd76a]">
+            {{ player.ratingPttFormatted }}
+          </div>
+        </div>
+        <button
+          type="button"
+          @click="disconnectPlayer"
+          class="rounded-xl p-2 text-xs font-semibold text-[#9a99a8] hover:text-[#e14763] hover:bg-[#0c0c22] transition-colors cursor-pointer"
+          title="Disconnect / Switch Account"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- Connect Celest Player Account Banner (when not logged in) -->
+    <div
+      v-else
+      class="rounded-3xl bg-[#1a1d32] p-4 sm:p-5 border border-[#16133e] shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+    >
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="inline-block h-2.5 w-2.5 rounded-full bg-[#f768dd] shadow-[0_0_6px_#f768dd]"></span>
+          <span class="text-sm font-bold text-[#fffafa] font-brand">Connect Celest Account</span>
+        </div>
+        <p class="text-xs text-[#9a99a8] mt-1">
+          Enter your registered in-game Player Name (e.g. <b class="text-white/80">Lunaris</b>) to load your active character and potential rating.
+        </p>
+      </div>
+
+      <form @submit.prevent="connectPlayer" class="flex items-center gap-2 w-full sm:w-auto">
+        <input
+          v-model="loginUsername"
+          type="text"
+          placeholder="Player Name / User Code"
+          class="flex-1 sm:w-52 px-3.5 py-2 bg-[#0c0c22] border border-[#3f3c68]/40 focus:border-[#f768dd] rounded-xl text-xs sm:text-sm font-brand text-white placeholder-[#6f6e80] focus:outline-none"
+        />
+        <button
+          type="submit"
+          :disabled="connecting || !loginUsername.trim()"
+          class="px-4 py-2 rounded-xl bg-[#f768dd] hover:bg-[#d946ef] text-xs font-bold text-[#0c0c22] transition-colors cursor-pointer disabled:opacity-50 shrink-0 font-brand"
+        >
+          {{ connecting ? 'Checking…' : 'Connect' }}
+        </button>
+      </form>
+    </div>
+
     <!-- Main Grid -->
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <!-- Calculator Controls (Left 2 cols) -->
@@ -219,8 +299,72 @@ import { playRating, grade, formatScore, type Lamp } from '~/utils/arcaea-rating
 import { jacketGradient } from '~/utils/jacket';
 import { DIFFICULTY_COLOR, type DifficultyCode } from '~/utils/difficulty';
 
+interface PlayerData {
+  userId: number;
+  name: string;
+  userCode: string;
+  ratingPtt: number;
+  ratingPttFormatted: string;
+  characterId: number;
+  characterAvatar: string;
+}
+
+const route = useRoute();
+
+// 1. Celest Server Player Session
+const { data: playerData, refresh: refreshPlayer } = await useFetch<{ player: PlayerData | null }>('/api/celest/player');
+const player = computed(() => playerData.value?.player || null);
+
+const loginUsername = ref('');
+const connecting = ref(false);
+
+async function connectPlayer() {
+  const name = loginUsername.value.trim();
+  if (!name) return;
+  connecting.value = true;
+  try {
+    const res = await $fetch<{ success: boolean; player: PlayerData }>('/api/celest/player', {
+      method: 'POST',
+      body: { username: name },
+    });
+    if (res.success) {
+      await refreshPlayer();
+      loginUsername.value = '';
+    }
+  } catch (err: any) {
+    alert(err?.data?.statusMessage || err?.message || 'Player not found on Celest Server.');
+  } finally {
+    connecting.value = false;
+  }
+}
+
+async function disconnectPlayer() {
+  try {
+    await $fetch('/api/celest/logout', { method: 'POST' });
+    await refreshPlayer();
+  } catch {}
+}
+
+// 2. Songs Data (Official + Celest Custom Songs)
 const { data: songsData } = await useFetch('/api/songs');
-const songs = computed(() => songsData.value?.songs || []);
+const { data: celestData } = await useFetch('/api/celest/songs');
+
+const officialSongs = computed(() => songsData.value?.songs || []);
+const celestSongs = computed(() => {
+  return (celestData.value?.songs || []).map((s: any) => ({
+    ...s,
+    slug: s.id,
+    packName: s.set ? `Celest • ${s.set}` : 'Celest Custom',
+    charts: s.diffs.map((d: any) => ({
+      difficulty: d.difficulty,
+      level: d.level,
+      constant: Number(d.constant),
+      chartDesigner: d.chart_designer,
+    })),
+  }));
+});
+
+const allAvailableSongs = computed(() => [...officialSongs.value, ...celestSongs.value]);
 
 const searchQuery = ref('');
 const selectedSong = ref<any>(null);
@@ -248,11 +392,11 @@ const scorePresets = [
 const filteredSongs = computed(() => {
   const q = searchQuery.value.trim().toLowerCase();
   if (!q) return [];
-  return songs.value.filter(s =>
+  return allAvailableSongs.value.filter(s =>
     s.title.toLowerCase().includes(q) ||
     s.artist.toLowerCase().includes(q) ||
     s.slug.toLowerCase().includes(q)
-  ).slice(0, 20);
+  ).slice(0, 25);
 });
 
 function selectSong(s: any) {
@@ -262,10 +406,21 @@ function selectSong(s: any) {
   selectedDifficulty.value = ftr?.difficulty || 'FTR';
 }
 
-// Auto-select first song on mount
+// Auto-select song on mount (or query param)
 onMounted(() => {
-  if (songs.value.length > 0 && !selectedSong.value) {
-    selectSong(songs.value[0]);
+  const querySong = route.query.song as string | undefined;
+  const queryDiff = (route.query.diff as string | undefined)?.toUpperCase();
+
+  if (querySong) {
+    const found = allAvailableSongs.value.find(s => s.slug === querySong || s.id === querySong);
+    if (found) {
+      selectSong(found);
+      if (queryDiff) selectedDifficulty.value = queryDiff;
+    } else if (allAvailableSongs.value.length > 0) {
+      selectSong(allAvailableSongs.value[0]);
+    }
+  } else if (allAvailableSongs.value.length > 0 && !selectedSong.value) {
+    selectSong(allAvailableSongs.value[0]);
   }
   loadHistory();
 });

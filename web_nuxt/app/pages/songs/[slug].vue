@@ -1,26 +1,44 @@
 <template>
   <div v-if="song" class="space-y-6">
-    <!-- Back Button -->
+    <!-- Back Button & Actions -->
     <div class="flex items-center justify-between">
       <NuxtLink to="/" class="flex items-center gap-1.5 text-xs font-semibold text-[#9a99a8] hover:text-[#fffafa] transition-colors">
         <span>← All Songs</span>
       </NuxtLink>
-      <NuxtLink
-        :to="`/calculator`"
-        class="rounded-xl bg-[#16133e] px-3 py-1.5 text-xs font-semibold text-[#f768dd] hover:bg-[#16133e]/80 border border-[#f768dd]/20 transition-colors"
-      >
-        Open in Calculator ↗
-      </NuxtLink>
+      <div class="flex items-center gap-2">
+        <a
+          :href="fandomWikiUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="rounded-xl bg-[#1e203a] px-3 py-1.5 text-xs font-semibold text-[#03a8e6] hover:bg-[#1e203a]/80 border border-[#03a8e6]/30 transition-colors flex items-center gap-1"
+          title="Open Arcaea Fandom Wiki"
+        >
+          <span>Arcaea Wiki</span>
+          <span>↗</span>
+        </a>
+        <NuxtLink
+          :to="`/calculator`"
+          class="rounded-xl bg-[#16133e] px-3 py-1.5 text-xs font-semibold text-[#f768dd] hover:bg-[#16133e]/80 border border-[#f768dd]/20 transition-colors"
+        >
+          Open in Calculator ↗
+        </NuxtLink>
+      </div>
     </div>
 
     <!-- Song Header Banner Card -->
     <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 rounded-3xl bg-[#1a1d32] p-6 border border-[#16133e]">
       <!-- Jacket Artwork -->
       <div
-        class="h-40 w-40 sm:h-48 sm:w-48 rounded-2xl shadow-xl shrink-0 flex items-center justify-center font-bold text-2xl font-brand text-white/80 select-none relative overflow-hidden"
+        class="h-40 w-40 sm:h-48 sm:w-48 rounded-2xl shadow-xl shrink-0 flex items-center justify-center font-bold text-2xl font-brand text-white/80 select-none relative overflow-hidden bg-[#0c0c22] border border-white/10"
         :style="{ background: jacketGradient(song.slug) }"
       >
-        <span>{{ song.title.slice(0, 3).toUpperCase() }}</span>
+        <img
+          :src="`/api/jacket/${song.slug}`"
+          :alt="song.title"
+          class="absolute inset-0 h-full w-full object-cover"
+          @error="(e: Event) => (e.target as HTMLElement).style.display = 'none'"
+        />
+        <span class="text-white/30 select-none">{{ song.title.slice(0, 3).toUpperCase() }}</span>
       </div>
 
       <!-- Info Meta -->
@@ -116,14 +134,23 @@ const { data } = await useFetch(`/api/songs/${slug.value}`);
 const song = computed(() => data.value?.song);
 const charts = computed(() => data.value?.charts || []);
 
+const fandomWikiUrl = computed(() => {
+  if (!song.value?.title) return 'https://arcaea.fandom.com/wiki/Arcaea_Wiki';
+  const cleanTitle = song.value.title.replace(/ /g, '_');
+  return `https://arcaea.fandom.com/wiki/${encodeURIComponent(cleanTitle)}`;
+});
+
 function getDiffColor(diff: string) {
   return DIFFICULTY_COLOR[diff as DifficultyCode] || ['text-gray-400', 'bg-gray-400'];
 }
 
-function formatLength(secs: number | null) {
-  if (!secs) return '—';
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
+function formatLength(val: string | number | null | undefined) {
+  if (!val) return '—';
+  if (typeof val === 'string' && val.includes(':')) return val;
+  const num = Number(val);
+  if (isNaN(num) || num <= 0) return String(val);
+  const m = Math.floor(num / 60);
+  const s = Math.floor(num % 60);
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 </script>
