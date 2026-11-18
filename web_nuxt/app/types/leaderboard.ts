@@ -24,6 +24,7 @@ export interface PlayerScoreItem {
     artist: string;
     difficulty: string;
     ratingClass: number;
+    ratingDisplay?: string;
     score: number;
     scoreFormatted: string;
     grade: string;
@@ -49,5 +50,8 @@ export interface PlayerProfile {
     characterAvatar: string;
     ratingPtt: number;
     totalScores: number;
+    b50Average?: number;
+    b10Average?: number;
+    bestRating?: number;
 }
 

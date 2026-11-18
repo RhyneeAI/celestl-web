@@ -28,9 +28,9 @@ function difficultyCode(rc: number): string {
 }
 
 function formatArcaeaScore(s: number): string {
-    // 8-digit format with comma: e.g. 9972135 -> 09,972,135
+    // 8-digit format with apostrophe: e.g. 9972135 -> 09'972'135
     const padded = String(s).padStart(8, '0');
-    return `${padded.slice(0, 2)},${padded.slice(2, 5)},${padded.slice(5, 8)}`;
+    return `${padded.slice(0, 2)}'${padded.slice(2, 5)}'${padded.slice(5, 8)}`;
 }
 
 function formatDate(ts: number): string {
@@ -54,6 +54,7 @@ export interface PlayerScoreItem {
     artist: string;
     difficulty: string;
     ratingClass: number;
+    ratingDisplay: string;
     score: number;
     scoreFormatted: string;
     grade: string;
@@ -64,6 +65,11 @@ export interface PlayerScoreItem {
     playedAt: number;
     dateObtained: string;
     jacketUrl: string;
+    shinyPerfectCount?: number;
+    perfectCount?: number;
+    nearCount?: number;
+    missCount?: number;
+    playsThisYear?: number;
 }
 
 export interface PlayerProfile {
@@ -74,6 +80,9 @@ export interface PlayerProfile {
     characterAvatar: string;
     ratingPtt: number;
     totalScores: number;
+    b50Average?: number;
+    b10Average?: number;
+    bestRating?: number;
 }
 
 export default defineEventHandler(async (event) => {
@@ -95,6 +104,7 @@ export default defineEventHandler(async (event) => {
 
     const songlistPath = getServerSonglistPath();
     const songConstants: Record<string, Record<number, number>> = {};
+    const songRatings: Record<string, Record<number, string>> = {};
     const songTitles: Record<string, string> = {};
     const songArtists: Record<string, string> = {};
 
@@ -106,8 +116,12 @@ export default defineEventHandler(async (event) => {
                 songArtists[s.id] = s.artist || 'Unknown Artist';
                 const diffMap: Record<number, number> = {};
                 songConstants[s.id] = diffMap;
+                const ratingMap: Record<number, string> = {};
+                songRatings[s.id] = ratingMap;
                 for (const d of s.difficulties || []) {
                     diffMap[d.ratingClass] = d.constant || d.rating || 0;
+                    const rVal = d.rating !== undefined ? d.rating : Math.floor(d.constant || 0);
+                    ratingMap[d.ratingClass] = d.ratingPlus ? `${rVal}+` : `${rVal}`;
                 }
             }
         } catch {}
@@ -138,15 +152,19 @@ export default defineEventHandler(async (event) => {
             total_scores: number;
         }>;
 
-        const players: PlayerProfile[] = users.map(u => ({
-            userId: u.user_id,
-            name: u.name || `Player #${u.user_id}`,
-            userCode: u.user_code || `00${u.user_id}`,
-            characterId: u.character_id ?? 0,
-            characterAvatar: `/storage/characters/${u.character_id ?? 0}_icon.png`,
-            ratingPtt: Number((u.rating_ptt / 100).toFixed(2)) || 0,
-            totalScores: u.total_scores,
-        }));
+        const players: PlayerProfile[] = users.map(u => {
+            const rawPtt = Number(u.rating_ptt) || 0;
+            const ptt = rawPtt > 100 ? Number((rawPtt / 100).toFixed(3)) : Number(rawPtt.toFixed(3));
+            return {
+                userId: u.user_id,
+                name: u.name || `Player #${u.user_id}`,
+                userCode: u.user_code || `00${u.user_id}`,
+                characterId: u.character_id ?? 0,
+                characterAvatar: `/storage/characters/${u.character_id ?? 0}_icon.png`,
+                ratingPtt: ptt,
+                totalScores: u.total_scores,
+            };
+        });
 
         // Determine active player
         let activeUserId = reqUserId;
@@ -197,6 +215,7 @@ export default defineEventHandler(async (event) => {
 
         const scores: PlayerScoreItem[] = rows.map(r => {
             const constant = songConstants[r.song_id]?.[r.difficulty] ?? 10.0;
+            const ratingDisplay = songRatings[r.song_id]?.[r.difficulty] ?? `${Math.floor(constant)}`;
             const { lamp, lampShort } = clearTypeToLamp(r.clear_type);
             const recalculatedRating = playRating(constant, r.score, lamp);
             const playedYear = r.time_played ? new Date(r.time_played * 1000).getFullYear() : 0;
@@ -207,6 +226,7 @@ export default defineEventHandler(async (event) => {
                 artist: songArtists[r.song_id] || 'Arcaea',
                 difficulty: difficultyCode(r.difficulty),
                 ratingClass: r.difficulty,
+                ratingDisplay,
                 score: r.score,
                 scoreFormatted: formatArcaeaScore(r.score),
                 grade: grade(r.score),
@@ -227,6 +247,19 @@ export default defineEventHandler(async (event) => {
 
         // Default sort: highest rating to lowest rating
         scores.sort((a, b) => b.recalculatedRating - a.recalculatedRating);
+
+        // Calculate B50 & B10 stats for selected player
+        if (selectedPlayer) {
+            const top50 = scores.slice(0, 50);
+            const top10 = scores.slice(0, 10);
+            selectedPlayer.b50Average = top50.length > 0
+                ? Number((top50.reduce((acc, s) => acc + s.recalculatedRating, 0) / top50.length).toFixed(3))
+                : 0;
+            selectedPlayer.b10Average = top10.length > 0
+                ? Number((top10.reduce((acc, s) => acc + s.recalculatedRating, 0) / top10.length).toFixed(3))
+                : 0;
+            selectedPlayer.bestRating = top10.length > 0 ? top10[0]!.recalculatedRating : 0;
+        }
 
         return {
             players,

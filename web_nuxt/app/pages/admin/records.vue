@@ -68,6 +68,20 @@
             </option>
           </select>
 
+          <!-- Export Top 50 B50 Image Button -->
+          <button
+            type="button"
+            @click="showTop50Modal = true"
+            class="px-3.5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-[#9b51e0] via-[#f768dd] to-[#03a8e6] text-[#0c0c22] hover:opacity-90 shadow-lg transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
+            title="Generate & Export Top 50 (B50) Image"
+          >
+            <svg class="h-4 w-4 text-[#0c0c22]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            <span class="hidden sm:inline">Export B50 Image</span>
+            <span class="sm:hidden">B50</span>
+          </button>
+
           <!-- Back to Global Leaderboards Button -->
           <NuxtLink
             to="/admin/scores"
@@ -368,14 +382,23 @@
         </div>
       </div>
     </div>
+
+    <!-- Top 50 B50 Image Export Modal -->
+    <Top50Modal
+      :is-open="showTop50Modal"
+      :player="selectedPlayer"
+      :scores="rawScores"
+      @close="showTop50Modal = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import type { PlayerProfile, PlayerScoreItem } from '~/types/leaderboard';
 import LampBadge from '~/components/LampBadge.vue';
 import JudgmentDiamond from '~/components/JudgmentDiamond.vue';
+import Top50Modal from '~/components/Top50Modal.vue';
 
 definePageMeta({
   layout: 'admin',
@@ -388,6 +411,7 @@ const activeUserId = ref<number | null>(queryUser ? Number(queryUser) : null);
 const selectedDiff = ref<number | null>(null);
 const sortMode = ref<'rating' | 'date' | 'score'>('rating');
 const search = ref('');
+const showTop50Modal = ref(false);
 
 // Expand / collapse state
 const expandedCards = ref<Record<string, boolean>>({});
@@ -449,6 +473,12 @@ watch(players, (list) => {
     activeUserId.value = list[0]!.userId;
   }
 }, { immediate: true });
+
+onMounted(() => {
+  if (route.query.export === 'b50') {
+    showTop50Modal.value = true;
+  }
+});
 
 const filteredScores = computed(() => {
   let list = rawScores.value;

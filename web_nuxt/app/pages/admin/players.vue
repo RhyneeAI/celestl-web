@@ -255,6 +255,15 @@
               </svg>
             </button>
 
+            <!-- Export Top 50 B50 Link -->
+            <NuxtLink
+              :to="`/admin/records?user=${p.userId}&export=b50`"
+              class="px-2 py-1 rounded-lg bg-gradient-to-r from-[#9b51e0]/20 to-[#03a8e6]/20 hover:from-[#9b51e0]/40 hover:to-[#03a8e6]/40 text-xs font-black text-[#f768dd] border border-[#f768dd]/40 transition-all cursor-pointer flex items-center gap-1 shadow-sm"
+              title="Generate & Export Top 50 B50 Image"
+            >
+              <span>B50 📸</span>
+            </NuxtLink>
+
             <!-- View Score Records Link -->
             <NuxtLink
               :to="`/admin/records?user=${p.userId}`"
