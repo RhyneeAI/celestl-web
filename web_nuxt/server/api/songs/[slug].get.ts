@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { db, schema } from '../../database/index';
 import { eq } from 'drizzle-orm';
-import { getServerSonglistPath } from '../../utils/server-paths.ts';
+import { getServerSonglistPath, getSongDir } from '../../utils/server-paths.ts';
 
 function getDiffCode(rc: number): string {
     switch (rc) {
@@ -20,6 +20,9 @@ export default defineEventHandler(async (event) => {
     if (!slug) {
         throw createError({ statusCode: 400, message: 'Missing song slug' });
     }
+
+    const songDir = getSongDir(slug);
+    const hasServerPackage = Boolean(songDir);
 
     const song = db.select({
         id: schema.officialSongs.id,
@@ -54,7 +57,10 @@ export default defineEventHandler(async (event) => {
             });
 
         return {
-            song,
+            song: {
+                ...song,
+                hasServerPackage,
+            },
             charts
         };
     }
@@ -100,6 +106,7 @@ export default defineEventHandler(async (event) => {
                     jacketThumbPath: `/api/jacket/${s.id}`,
                     packSlug: s.set || 'single',
                     packName: s.set ? `Celest • ${s.set}` : 'Celest Custom',
+                    hasServerPackage: true,
                 };
 
                 return {

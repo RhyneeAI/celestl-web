@@ -57,3 +57,18 @@ export function getPacklistPath(): string | null {
     }
     return null;
 }
+
+export function getSongDir(slug: string): string | null {
+    const cleanSlug = slug.trim();
+    if (!cleanSlug) return null;
+    const candidates = [
+        path.resolve(process.cwd(), 'ArcaeaServerFork/database/songs', cleanSlug),
+        path.resolve(process.cwd(), '../ArcaeaServerFork/database/songs', cleanSlug),
+        path.resolve(process.cwd(), 'ArcaeaServerFork/database/songs', `dl_${cleanSlug}`),
+        path.resolve(process.cwd(), '../ArcaeaServerFork/database/songs', `dl_${cleanSlug}`),
+    ];
+    for (const c of candidates) {
+        if (fs.existsSync(c) && fs.statSync(c).isDirectory()) return c;
+    }
+    return null;
+}

@@ -6,6 +6,20 @@
         <span>← All Songs</span>
       </NuxtLink>
       <div class="flex items-center gap-2">
+        <!-- Download Server Package Zip (if hosted on server) -->
+        <a
+          v-if="song.hasServerPackage"
+          :href="`/api/songs/${song.slug}/download`"
+          download
+          class="rounded-xl bg-[#acff82]/15 text-[#acff82] hover:bg-[#acff82]/25 border border-[#acff82]/40 px-3 py-1.5 text-xs font-bold font-brand transition-colors flex items-center gap-1.5 shadow-sm"
+          title="Download Complete Server Chart Package (.zip)"
+        >
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          <span>Package (.zip)</span>
+        </a>
+
         <a
           :href="fandomWikiUrl"
           target="_blank"
@@ -78,6 +92,24 @@
             <span class="text-[#6f6e80] block text-[11px]">Composer</span>
             <span class="font-semibold text-[#fffafa] truncate block">{{ song.composer || song.artist || '—' }}</span>
           </div>
+        </div>
+
+        <!-- Server Package Download Banner (if hosted on server) -->
+        <div v-if="song.hasServerPackage" class="pt-3 border-t border-[#3f3c68]/30 flex flex-wrap items-center justify-between gap-3">
+          <div class="text-xs text-[#9a99a8] flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-[#acff82] shadow-[0_0_6px_#acff82]"></span>
+            <span>Server Asset Package (.aff charts, .ogg audio, jackets, background)</span>
+          </div>
+          <a
+            :href="`/api/songs/${song.slug}/download`"
+            download
+            class="rounded-xl bg-[#acff82] text-[#0c0c22] hover:bg-[#acff82]/90 px-3.5 py-1.5 text-xs font-extrabold font-brand transition-all flex items-center gap-1.5 shadow-md hover:scale-[1.02]"
+          >
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Download Package (.zip)</span>
+          </a>
         </div>
       </div>
     </div>
