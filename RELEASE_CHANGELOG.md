@@ -37,6 +37,15 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.6.0` — 2026-11-19
+- **Batch 6 Song Import (`11` New Songs + `1` Merged ETR + New `Emanant Glass` Pack)**:
+  - **New Singles (`7`)**: `maholova` (FTR 9+ / `9.8`), `hiasobi` (FTR 10 No-Cam / `10.3` + BYD 10 Camera / `10.3`), `ark` (FTR 10 / `10.4`), `chuten` (FTR 10+ / `10.9`, `side: 3`), `dualdoom` (Official `lowiro.dualdoom` PST 3 / PRS 6 / FTR 8+ / ETR 10 merged with Batch 6 BYD 11 / `11.4` + `jacketOverride`), `kakuriyo` (FTR 10 / `10.3`), `luminositydyw` (ETR 9+ / `9.8`).
+  - **New Pack (`emanantglass` — 4 Songs, `400` Memories)**: `hoshifuri` (FTR 9+ / `9.7`), `leadlight` (FTR 10 / `10.5`), `avys` (FTR 10+ / `10.7`), `zenith` (FTR 11 / `11.2`), bundled with `select_emanantglass.png` and `1080_select_emanantglass.png`.
+  - **Merged Song**: Added `angelhalo` Eternal (`4.aff`, ETR 10+ / `10.9`) with `audioOverride: true` (`4.ogg`, `4_preview.ogg`) and `jacketOverride: true`.
+- **Metadata & Unlocks**:
+  - Added full `category`, `source_copyright`, `search_title`, and `search_artist` localization for all Batch 6 songs.
+  - Synchronized `unlocks` fragment pricing (`round(constant * 10)`), correcting `ray` `rc=4` (`97` → `96`), `tsukinimurakumo` `rc=2` (`85` → `87`), `angelhalo` `rc=4` (`109`), and all new Batch 6 songs.
+
 ### `v1.5.6` — 2026-11-19
 - **Charts & Metadata (`deicide/3.aff`, `songlist`)**:
   - Restored `deicide/3.aff` (Beyond) back to the optimized `1f1d916` release (`357,187` bytes, keyframe/idle/triplet reductions with `hidegroup()` culling) after native Android performance comparison against the full 1.31 MB chart.
