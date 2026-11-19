@@ -9,6 +9,7 @@ This document provides mandatory guidance and automated verification procedures 
 1. **All written code and commit messages MUST be in English** (`<RULE[user_global]>`).
 2. **Never generate an APK without running the automated integrity audit** (`check_chart_integrity.py --fix`).
 3. **Always preserve base difficulties [0, 1, 2]**: In Arcaea, every single song must have entries for Past (0), Present (1), and Future (2) in [songlist](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/database/songs/songlist) and valid `.aff` files on disk. Missing base difficulties will cause `nullptr` dereference crashes in the game's native C++ engine (`libcocos2dcpp.so`).
+4. **Always bump the App Release Version on any songs, metadata, or lib changes**: Whenever modifying `database/songs/` charts/assets, metadata (`songlist`, `unlocks`, `packlist`), or especially native libraries/patcher (`libcocos2dcpp.so`, `patch_arcaea.py`), you MUST increment the release version (`arcelest_<X.Y.Z>_release.apk`), update `DEFAULT_OUTPUT_APK` in `patch_arcaea.py`, update `RELEASE_CHANGELOG.md`, and rebuild the APK (see [RELEASE_CHANGELOG.md](file:///home/luhung/Documents/project/Celestl/RELEASE_CHANGELOG.md)).
 
 ---
 
@@ -33,6 +34,7 @@ Before packaging the APK or pushing server updates, verify these 5 core requirem
   (1000,1);
   ```
 - **Prohibit ratingClass: 3 in `unlocks`**: Never declare entries for `ratingClass: 3` (Beyond) in `database/songs/unlocks`. Beyond difficulty has no native fragment purchase UI; declaring it in `unlocks` locks the 4th difficulty diamond, forces label to `"?"`, and hides unplayed charts from the BEYOND tab in Song Select.
+- **`ratingPlus` Threshold Rule**: For `rating < 11`, set `"ratingPlus": true` when the constant decimal is `>= .7` (e.g. `10.7` → `10+`); for `rating >= 11`, set `"ratingPlus": true` only when the constant decimal is `>= .8` (e.g. `11.7` → `11`, `11.8` → `11+`). See [CHART_FIX_DOCUMENTATION.md](file:///home/luhung/Documents/project/Celestl/CHART_FIX_DOCUMENTATION.md#L58-L68).
 
 ### Check 2: Song Asset Structure
 Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
@@ -158,9 +160,9 @@ celest-audit --fix --song <song_id>
 # 5. Audit background availability against client APK and server assets
 celest-audit --bg
 
-# 6. Rebuild patched APK (Pre-build integrity hook will automatically run)
+# 6. Rebuild patched APK (Pre-build integrity hook will automatically run; bump version on songs/metadata/lib changes)
 cd /home/luhung/Documents/project/Celestl
-/home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.5.3_release.apk
+/home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.5.6_release.apk
 
 # 7. Connect ADB to Waydroid and install patched APK
 celest-apk-update

@@ -1,6 +1,6 @@
-import { defineEventHandler, getRouterParam, createError, setHeader } from 'h3';
+import { defineEventHandler, getRouterParam, getQuery, createError, setHeader } from 'h3';
 import { spawn } from 'child_process';
-import { getSongDir } from '../../../utils/server-paths.ts';
+import { getSongPackageLocation } from '../../../utils/server-paths.ts';
 
 export default defineEventHandler((event) => {
     const rawSlug = getRouterParam(event, 'slug') || '';
@@ -9,8 +9,14 @@ export default defineEventHandler((event) => {
         throw createError({ statusCode: 400, statusMessage: 'Song ID is required' });
     }
 
-    const songDir = getSongDir(slug);
-    if (!songDir) {
+    const query = getQuery(event);
+    const preferredSource =
+        query.source === 'official' || query.source === 'unofficial'
+            ? query.source
+            : undefined;
+
+    const pkg = getSongPackageLocation(slug, preferredSource);
+    if (!pkg) {
         throw createError({
             statusCode: 404,
             statusMessage: `No server chart package found for '${slug}'.`,
@@ -22,7 +28,7 @@ export default defineEventHandler((event) => {
     setHeader(event, 'Cache-Control', 'public, max-age=3600');
 
     // Spawn zip process to stream directory contents directly to the response
-    const zipProc = spawn('zip', ['-q', '-r', '-', '.'], { cwd: songDir });
+    const zipProc = spawn('zip', ['-q', '-r', '-', '.'], { cwd: pkg.dir });
 
     return zipProc.stdout;
 });

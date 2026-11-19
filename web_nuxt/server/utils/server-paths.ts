@@ -69,19 +69,74 @@ export function getPacklistPath(): string | null {
     return null;
 }
 
-export function getSongDir(slug: string): string | null {
-    const cleanSlug = slug.trim();
-    if (!cleanSlug) return null;
+export function getOfficialSongsDir(): string | null {
     const candidates = [
-        path.resolve(process.cwd(), 'ArcaeaServerFork/database/songs', cleanSlug),
-        path.resolve(process.cwd(), '../ArcaeaServerFork/database/songs', cleanSlug),
-        path.resolve(process.cwd(), 'ArcaeaServerFork/database/songs', `dl_${cleanSlug}`),
-        path.resolve(process.cwd(), '../ArcaeaServerFork/database/songs', `dl_${cleanSlug}`),
+        path.resolve(process.cwd(), 'ArcaeaServerFork/database/songs_official'),
+        path.resolve(process.cwd(), '../ArcaeaServerFork/database/songs_official'),
     ];
     for (const c of candidates) {
-        if (fs.existsSync(c) && fs.statSync(c).isDirectory()) return c;
+        if (fs.existsSync(c)) return c;
     }
     return null;
+}
+
+export interface SongPackageLocation {
+    dir: string;
+    source: 'official' | 'unofficial';
+    relativePath: string;
+}
+
+export function getSongPackageLocation(
+    slug: string,
+    preferredSource?: 'official' | 'unofficial'
+): SongPackageLocation | null {
+    const cleanSlug = slug.trim();
+    if (!cleanSlug) return null;
+
+    const officialCandidates: SongPackageLocation[] = [];
+    const officialRoot = getOfficialSongsDir();
+    if (officialRoot) {
+        officialCandidates.push({
+            dir: path.join(officialRoot, cleanSlug),
+            source: 'official',
+            relativePath: `ArcaeaServerFork/database/songs_official/${cleanSlug}`,
+        });
+    }
+
+    const unofficialCandidates: SongPackageLocation[] = [];
+    const unofficialRoot = getServerSongsDir();
+    if (unofficialRoot) {
+        unofficialCandidates.push(
+            {
+                dir: path.join(unofficialRoot, cleanSlug),
+                source: 'unofficial',
+                relativePath: `ArcaeaServerFork/database/songs/${cleanSlug}`,
+            },
+            {
+                dir: path.join(unofficialRoot, `dl_${cleanSlug}`),
+                source: 'unofficial',
+                relativePath: `ArcaeaServerFork/database/songs/dl_${cleanSlug}`,
+            }
+        );
+    }
+
+    const ordered =
+        preferredSource === 'official'
+            ? [...officialCandidates, ...unofficialCandidates]
+            : preferredSource === 'unofficial'
+              ? [...unofficialCandidates]
+              : [...unofficialCandidates, ...officialCandidates];
+
+    for (const item of ordered) {
+        if (fs.existsSync(item.dir) && fs.statSync(item.dir).isDirectory()) {
+            return item;
+        }
+    }
+    return null;
+}
+
+export function getSongDir(slug: string, preferredSource?: 'official' | 'unofficial'): string | null {
+    return getSongPackageLocation(slug, preferredSource)?.dir || null;
 }
 
 const durationCache = new Map<string, { mtime: number; duration: string }>();

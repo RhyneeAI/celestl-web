@@ -41,6 +41,8 @@ export const officialSongs = sqliteTable('official_songs', {
     releasedAt: text('released_at'), // ISO date
     jacketPath: text('jacket_path'),
     jacketThumbPath: text('jacket_thumb_path'),
+    isOfficial: integer('is_official', { mode: 'boolean' }).default(true),
+    packageDir: text('package_dir'),
 });
 
 export const officialCharts = sqliteTable('official_charts', {
@@ -67,6 +69,8 @@ export const unofficialSongs = sqliteTable('unofficial_songs', {
     title: text('title').notNull(),
     artist: text('artist').notNull(),
     bpm: text('bpm'),
+    isOfficial: integer('is_official', { mode: 'boolean' }).default(false),
+    packageDir: text('package_dir'),
     createdAt: integer('created_at', { mode: 'timestamp' }).$defaultFn(() => new Date()),
     updatedAt: integer('updated_at', { mode: 'timestamp' }).$defaultFn(() => new Date()),
 });

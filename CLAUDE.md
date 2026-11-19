@@ -1206,7 +1206,11 @@ lalu profile dengan 4 play sungguhan menampilkan best play Extradimensional **13
 
 ## Mandatory Pre-Build Chart & Asset Integrity Workflow
 
-Whenever importing charts, fixing bugs, or updating assets before rebuilding `arcaea_7.1.0c_patched.apk`, follow these mandatory rules (full details also in `AGENTS.md` and `dokumentasi_fix_chart.md`):
+Whenever importing charts, fixing bugs, or updating assets/libraries before rebuilding the patched client APK (`arcelest_<X.Y.Z>_release.apk`, currently `arcelest_1.5.6_release.apk`), follow these mandatory rules (full details also in [AGENTS.md](file:///home/luhung/Documents/project/Celestl/AGENTS.md), [RELEASE_CHANGELOG.md](file:///home/luhung/Documents/project/Celestl/RELEASE_CHANGELOG.md), and `dokumentasi_fix_chart.md`):
+
+0. **Mandatory App Release Version Bump Rule**:
+   - **Every change to `songs/`** (charts `.aff`, audio `.ogg`/`.wav`, jackets, backgrounds), **metadata** (`songlist`, `unlocks`, `packlist`), **and especially `lib` / APK patching** (`libcocos2dcpp.so`, `patch_arcaea.py`, manifest/resources) **MUST bump the app release version (`arcelest_<MAJOR.MINOR.PATCH>_release.apk`)**.
+   - Update `DEFAULT_OUTPUT_APK` in `ArcaeaServerFork/tools/patch_arcaea.py`, record the release notes in `RELEASE_CHANGELOG.md`, update `AGENTS.md` / `CLAUDE.md`, and rebuild the release APK.
 
 1. **Songlist Base Difficulties [0, 1, 2]**:
    - Every song in `songlist` must declare `ratingClass: 0`, `ratingClass: 1`, and `ratingClass: 2`.
@@ -1241,10 +1245,10 @@ Whenever importing charts, fixing bugs, or updating assets before rebuilding `ar
    # Run automated test & auto-repair:
    $VENV_PY /home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/check_chart_integrity.py --fix
 
-   # Rebuild APK:
+   # Rebuild APK (always bump release version on songs/metadata/lib changes):
    cd /home/luhung/Documents/project/Celestl
-   $VENV_PY ArcaeaServerFork/tools/patch_arcaea.py --output arcaea_7.1.0c_patched.apk
+   $VENV_PY ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.5.6_release.apk
 
    # Install without incremental error:
-   adb install -r --no-incremental arcaea_7.1.0c_patched.apk
+   adb install -r --no-incremental arcelest_1.5.6_release.apk
    ```

@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { db, schema } from '../../database/index';
 import { eq } from 'drizzle-orm';
-import { getServerSonglistPath, getSongDir, getOggDurationFormatted } from '../../utils/server-paths.ts';
+import { getServerSonglistPath, getSongPackageLocation, getOggDurationFormatted } from '../../utils/server-paths.ts';
 
 function getDiffCode(rc: number): string {
     switch (rc) {
@@ -22,8 +22,9 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, message: 'Missing song slug' });
     }
 
-    const songDir = getSongDir(slug);
-    const hasServerPackage = Boolean(songDir);
+    const officialPkg = getSongPackageLocation(slug, 'official');
+    const songDir = officialPkg?.dir || null;
+    const hasServerPackage = Boolean(officialPkg);
 
     const song = db.select({
         id: schema.officialSongs.id,
@@ -67,6 +68,9 @@ export default defineEventHandler(async (event) => {
                 ...song,
                 length,
                 hasServerPackage,
+                isOfficial: true,
+                packageSource: officialPkg?.source || null,
+                packagePath: officialPkg?.relativePath || null,
             },
             charts
         };
@@ -79,7 +83,8 @@ export default defineEventHandler(async (event) => {
             const raw = JSON.parse(fs.readFileSync(songlistPath, 'utf-8'));
             const s = (raw.songs || []).find((item: any) => item.id === slug || item.id === slug.toLowerCase());
             if (s) {
-                const targetDir = getSongDir(s.id);
+                const unofficialPkg = getSongPackageLocation(s.id, 'unofficial');
+                const targetDir = unofficialPkg?.dir || null;
                 let length = null;
                 if (targetDir) {
                     length = getOggDurationFormatted(path.join(targetDir, 'base.ogg'));
@@ -121,7 +126,10 @@ export default defineEventHandler(async (event) => {
                     jacketThumbPath: `/api/jacket/${s.id}`,
                     packSlug: s.set || 'single',
                     packName: s.set ? `Celest • ${s.set}` : 'Celest Custom',
-                    hasServerPackage: Boolean(targetDir),
+                    hasServerPackage: Boolean(unofficialPkg),
+                    isOfficial: false,
+                    packageSource: unofficialPkg?.source || null,
+                    packagePath: unofficialPkg?.relativePath || null,
                 };
 
                 return {

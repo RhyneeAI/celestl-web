@@ -14,8 +14,39 @@
         </p>
       </div>
 
-      <!-- Tab Switcher -->
-      <div class="flex items-center rounded-2xl bg-[#1a1d32] p-1.5 border border-[#16133e] shadow-lg">
+      <!-- Live Sync & Tab Switcher -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          @click="liveSyncEnabled = !liveSyncEnabled"
+          :title="liveSyncEnabled ? 'Auto-syncing from DB every 8s (click to pause)' : 'Auto-sync paused (click to resume)'"
+          :class="[
+            'px-3 py-2 rounded-2xl border text-[11px] font-mono font-bold transition-all cursor-pointer flex items-center gap-2 shadow-lg',
+            liveSyncEnabled
+              ? 'bg-[#1a1d32] border-[#34d399]/40 text-[#34d399]'
+              : 'bg-[#1a1d32] border-[#16133e] text-[#6f6e80] hover:text-white'
+          ]"
+        >
+          <span
+            :class="[
+              'w-2 h-2 rounded-full',
+              liveSyncEnabled ? (isSyncing ? 'bg-[#60a5fa] animate-ping' : 'bg-[#34d399] animate-pulse') : 'bg-[#6f6e80]'
+            ]"
+          />
+          <span>{{ liveSyncEnabled ? 'Live 8s' : 'Paused' }}</span>
+        </button>
+
+        <button
+          type="button"
+          @click="syncAllNow"
+          :disabled="isSyncing"
+          class="px-3 py-2 rounded-2xl bg-[#1a1d32] border border-[#16133e] hover:border-[#3f3c68] text-[11px] font-mono font-bold text-[#9a99a8] hover:text-white transition-all cursor-pointer disabled:opacity-50"
+          title="Refresh now"
+        >
+          {{ isSyncing ? 'Syncing...' : 'Refresh' }}
+        </button>
+
+        <div class="flex items-center rounded-2xl bg-[#1a1d32] p-1.5 border border-[#16133e] shadow-lg">
         <button
           type="button"
           @click="activeTab = 'presents'"
@@ -43,6 +74,7 @@
             {{ redeemCodes.length }}
           </span>
         </button>
+        </div>
       </div>
     </div>
 
@@ -371,6 +403,7 @@
             <div v-for="(it, idx) in newPresent.items" :key="idx" class="flex items-center gap-2">
               <select
                 v-model="it.type"
+                @change="onItemTypeChange(it)"
                 class="w-28 px-2 py-1.5 bg-[#0c0c22] border border-[#16133e] rounded-xl text-xs text-white"
               >
                 <option value="ticket">ticket (Memories)</option>
@@ -380,11 +413,42 @@
                 <option value="pack">pack</option>
               </select>
 
+              <select
+                v-if="it.type === 'single'"
+                v-model="it.itemId"
+                class="flex-1 min-w-0 px-3 py-1.5 bg-[#0c0c22] border border-[#16133e] rounded-xl text-xs font-mono text-white"
+              >
+                <option v-for="song in songOptions" :key="song.id" :value="song.id">
+                  {{ song.title }} ({{ song.id }})
+                </option>
+              </select>
+
+              <select
+                v-else-if="it.type === 'pack'"
+                v-model="it.itemId"
+                class="flex-1 min-w-0 px-3 py-1.5 bg-[#0c0c22] border border-[#16133e] rounded-xl text-xs font-mono text-white"
+              >
+                <option v-for="pk in packOptions" :key="pk.id" :value="pk.id">
+                  {{ pk.title }} ({{ pk.id }})
+                </option>
+              </select>
+
+              <select
+                v-else-if="it.type === 'core'"
+                v-model="it.itemId"
+                class="flex-1 min-w-0 px-3 py-1.5 bg-[#0c0c22] border border-[#16133e] rounded-xl text-xs font-mono text-white"
+              >
+                <option v-for="cr in coreOptions" :key="cr.id" :value="cr.id">
+                  {{ cr.label }}
+                </option>
+              </select>
+
               <input
+                v-else
                 v-model="it.itemId"
                 type="text"
                 placeholder="Item ID"
-                class="flex-1 px-3 py-1.5 bg-[#0c0c22] border border-[#16133e] rounded-xl text-xs font-mono text-white"
+                class="flex-1 min-w-0 px-3 py-1.5 bg-[#0c0c22] border border-[#16133e] rounded-xl text-xs font-mono text-white"
               />
 
               <input
@@ -470,9 +534,13 @@
             <input
               v-model="newRedeem.code"
               type="text"
-              placeholder="e.g. CELESTL2026 (Leave blank for random)"
-              class="w-full px-3 py-2 bg-[#0c0c22] border border-[#16133e] focus:border-[#60a5fa] rounded-xl text-sm font-mono font-bold text-white uppercase focus:outline-none"
+              minlength="10"
+              placeholder="e.g. celestl2026 (Min. 10 chars, leave blank for random)"
+              class="w-full px-3 py-2 bg-[#0c0c22] border border-[#16133e] focus:border-[#60a5fa] rounded-xl text-sm font-mono font-bold text-white lowercase focus:outline-none"
             />
+            <p class="mt-1 text-[10px] text-[#6f6e80]">
+              Minimum 10 characters, lowercase (enforced by the in-game client).
+            </p>
           </div>
 
           <!-- Type Selector -->
@@ -531,6 +599,7 @@
             <div v-for="(it, idx) in newRedeem.items" :key="idx" class="flex items-center gap-2">
               <select
                 v-model="it.type"
+                @change="onItemTypeChange(it)"
                 class="w-28 px-2 py-1.5 bg-[#0c0c22] border border-[#16133e] rounded-xl text-xs text-white"
               >
                 <option value="ticket">ticket (Memories)</option>
@@ -540,11 +609,42 @@
                 <option value="pack">pack</option>
               </select>
 
+              <select
+                v-if="it.type === 'single'"
+                v-model="it.itemId"
+                class="flex-1 min-w-0 px-3 py-1.5 bg-[#0c0c22] border border-[#16133e] rounded-xl text-xs font-mono text-white"
+              >
+                <option v-for="song in songOptions" :key="song.id" :value="song.id">
+                  {{ song.title }} ({{ song.id }})
+                </option>
+              </select>
+
+              <select
+                v-else-if="it.type === 'pack'"
+                v-model="it.itemId"
+                class="flex-1 min-w-0 px-3 py-1.5 bg-[#0c0c22] border border-[#16133e] rounded-xl text-xs font-mono text-white"
+              >
+                <option v-for="pk in packOptions" :key="pk.id" :value="pk.id">
+                  {{ pk.title }} ({{ pk.id }})
+                </option>
+              </select>
+
+              <select
+                v-else-if="it.type === 'core'"
+                v-model="it.itemId"
+                class="flex-1 min-w-0 px-3 py-1.5 bg-[#0c0c22] border border-[#16133e] rounded-xl text-xs font-mono text-white"
+              >
+                <option v-for="cr in coreOptions" :key="cr.id" :value="cr.id">
+                  {{ cr.label }}
+                </option>
+              </select>
+
               <input
+                v-else
                 v-model="it.itemId"
                 type="text"
                 placeholder="Item ID"
-                class="flex-1 px-3 py-1.5 bg-[#0c0c22] border border-[#16133e] rounded-xl text-xs font-mono text-white"
+                class="flex-1 min-w-0 px-3 py-1.5 bg-[#0c0c22] border border-[#16133e] rounded-xl text-xs font-mono text-white"
               />
 
               <input
@@ -646,7 +746,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 definePageMeta({
   layout: 'admin',
@@ -699,6 +799,67 @@ const { data: playersData } = await useFetch<{
 }>('/api/admin/server/players');
 
 const playerOptions = computed(() => playersData.value?.players || []);
+
+// 4. Fetch Song & Pack lists for single/pack reward selectors
+const { data: songsData } = await useFetch<{
+  songs: Array<{ id: string; title: string; set: string }>;
+}>('/api/admin/server/songs');
+
+const { data: storeData } = await useFetch<{
+  items: Array<{ purchase_name: string; title: string; category: string; items?: Array<{ item_id: string; type: string }> }>;
+}>('/api/admin/server/store');
+
+const { data: coresData } = await useFetch<{
+  cores: Array<{ id: string; label: string }>;
+}>('/api/admin/server/rewards/cores');
+
+const coreOptions = computed(() => coresData.value?.cores || []);
+
+const songOptions = computed(() =>
+  [...(songsData.value?.songs || [])].sort((a, b) => a.title.localeCompare(b.title))
+);
+
+const packOptions = computed(() => {
+  const map = new Map<string, string>();
+  for (const item of storeData.value?.items || []) {
+    if (item.category === 'pack') {
+      const packId = item.items?.find((x) => x.type === 'pack')?.item_id || item.purchase_name;
+      if (packId && !map.has(packId)) {
+        map.set(packId, item.title || packId);
+      }
+    }
+  }
+  for (const s of songOptions.value) {
+    if (s.set && s.set !== 'single' && s.set !== 'base' && !map.has(s.set)) {
+      map.set(s.set, s.set);
+    }
+  }
+  return Array.from(map.entries())
+    .map(([id, title]) => ({ id, title }))
+    .sort((a, b) => a.title.localeCompare(b.title));
+});
+
+function onItemTypeChange(it: { type: string; itemId: string; amount: number }) {
+  if (it.type === 'single') {
+    if (!songOptions.value.some((s) => s.id === it.itemId)) {
+      it.itemId = songOptions.value[0]?.id || '';
+    }
+    it.amount = 1;
+  } else if (it.type === 'pack') {
+    if (!packOptions.value.some((p) => p.id === it.itemId)) {
+      it.itemId = packOptions.value[0]?.id || '';
+    }
+    it.amount = 1;
+  } else if (it.type === 'ticket') {
+    if (it.itemId !== 'ticket') it.itemId = 'ticket';
+  } else if (it.type === 'fragment') {
+    if (it.itemId !== 'fragment') it.itemId = 'fragment';
+  } else if (it.type === 'core') {
+    if (!coreOptions.value.some((c) => c.id === it.itemId)) {
+      it.itemId = coreOptions.value.find((c) => c.id === 'core_generic')?.id || coreOptions.value[0]?.id || 'core_generic';
+    }
+  }
+}
 
 
 // Modal 1: Create Present
@@ -779,7 +940,7 @@ function openCreateRedeemModal() {
 }
 
 function generateRandomCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const chars = 'abcdefghjklmnpqrstuvwxyz23456789';
   newRedeem.value.code = Array.from({ length: 10 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
 
@@ -788,6 +949,12 @@ function addPresetRedeemItem(type: string, itemId: string, amount: number) {
 }
 
 async function submitCreateRedeem() {
+  const trimmed = newRedeem.value.code.trim().toLowerCase();
+  if (trimmed && trimmed.length < 10) {
+    alert('Redeem code must be at least 10 characters (in-game client requirement).');
+    return;
+  }
+  newRedeem.value.code = trimmed;
   savingRedeem.value = true;
   try {
     await $fetch('/api/admin/server/rewards/redeem/create', {
@@ -826,4 +993,40 @@ const viewingClaimsCode = ref<any>(null);
 function viewClaims(rc: any) {
   viewingClaimsCode.value = rc;
 }
+
+// Live Sync (auto-polling every 8s when tab visible and no modal open)
+const liveSyncEnabled = ref(true);
+const isSyncing = ref(false);
+let pollTimer: ReturnType<typeof setInterval> | null = null;
+
+async function syncAllNow() {
+  if (isSyncing.value) return;
+  isSyncing.value = true;
+  try {
+    await Promise.all([refreshPresents(), refreshRedeem()]);
+  } finally {
+    isSyncing.value = false;
+  }
+}
+
+onMounted(() => {
+  pollTimer = setInterval(() => {
+    if (
+      !liveSyncEnabled.value ||
+      document.hidden ||
+      showCreatePresentModal.value ||
+      showCreateRedeemModal.value
+    ) {
+      return;
+    }
+    syncAllNow();
+  }, 8000);
+});
+
+onUnmounted(() => {
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+});
 </script>

@@ -25,17 +25,23 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 500, statusMessage: 'Server database not found' });
     }
 
-    // Auto-generate random 10-char uppercase code if not provided
-    const code = (body.code && body.code.trim())
-        ? body.code.trim().toUpperCase()
-        : Array.from({ length: 10 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]).join('');
+    // Auto-generate random 10-char lowercase code to match in-game input
+    const randomChars = 'abcdefghjklmnpqrstuvwxyz23456789';
+    const rawCode = (body.code && body.code.trim()) ? body.code.trim().toLowerCase() : '';
+    if (rawCode && rawCode.length < 10) {
+        throw createError({
+            statusCode: 400,
+            statusMessage: 'Redeem code must be at least 10 characters (in-game client requirement)',
+        });
+    }
+    const code = rawCode || Array.from({ length: 10 }, () => randomChars[Math.floor(Math.random() * randomChars.length)]).join('');
 
     const redeemType = body.type === 1 ? 1 : 0;
 
     try {
         const db = new Database(dbPath);
 
-        const exists = db.prepare('SELECT 1 FROM redeem WHERE code = ?').get(code);
+        const exists = db.prepare('SELECT 1 FROM redeem WHERE code = ? COLLATE NOCASE').get(code);
         if (exists) {
             db.close();
             throw createError({ statusCode: 400, statusMessage: `Redeem code "${code}" already exists` });

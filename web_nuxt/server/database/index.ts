@@ -68,7 +68,9 @@ CREATE TABLE IF NOT EXISTS official_songs (
     version TEXT,
     released_at TEXT,
     jacket_path TEXT,
-    jacket_thumb_path TEXT
+    jacket_thumb_path TEXT,
+    is_official INTEGER DEFAULT 1,
+    package_dir TEXT
 );
 
 CREATE TABLE IF NOT EXISTS official_charts (
@@ -91,6 +93,8 @@ CREATE TABLE IF NOT EXISTS unofficial_songs (
     title TEXT NOT NULL,
     artist TEXT NOT NULL,
     bpm TEXT,
+    is_official INTEGER DEFAULT 0,
+    package_dir TEXT,
     created_at INTEGER,
     updated_at INTEGER
 );
@@ -147,6 +151,18 @@ CREATE TABLE IF NOT EXISTS plays (
     played_at INTEGER
 );
 `);
+
+function ensureColumn(table: string, column: string, definition: string) {
+    const cols = sqlite.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>;
+    if (!cols.some((c) => c.name === column)) {
+        sqlite.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+    }
+}
+
+ensureColumn('official_songs', 'is_official', 'INTEGER DEFAULT 1');
+ensureColumn('official_songs', 'package_dir', 'TEXT');
+ensureColumn('unofficial_songs', 'is_official', 'INTEGER DEFAULT 0');
+ensureColumn('unofficial_songs', 'package_dir', 'TEXT');
 
 export const db = drizzle(sqlite, { schema });
 export { schema };
