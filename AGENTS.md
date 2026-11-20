@@ -10,6 +10,7 @@ This document provides mandatory guidance and automated verification procedures 
 2. **Never generate an APK without running the automated integrity audit** (`check_chart_integrity.py --fix`).
 3. **Always preserve base difficulties [0, 1, 2]**: In Arcaea, every single song must have entries for Past (0), Present (1), and Future (2) in [songlist](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/database/songs/songlist) and valid `.aff` files on disk. Missing base difficulties will cause `nullptr` dereference crashes in the game's native C++ engine (`libcocos2dcpp.so`).
 4. **Always bump the App Release Version on any songs, metadata, or lib changes**: Whenever modifying `database/songs/` charts/assets, metadata (`songlist`, `unlocks`, `packlist`), or especially native libraries/patcher (`libcocos2dcpp.so`, `patch_arcaea.py`), you MUST increment the release version (`arcelest_<X.Y.Z>_release.apk`), update `DEFAULT_OUTPUT_APK` in `patch_arcaea.py`, update `RELEASE_CHANGELOG.md`, and rebuild the APK (see [RELEASE_CHANGELOG.md](file:///home/luhung/Documents/project/Celestl/RELEASE_CHANGELOG.md)).
+5. **NEVER overwrite live VPS `arcaea_database.db` with a local copy**: Players actively submit scores and register on the VPS (`139.190.96.194`). Uploading local `arcaea_database.db` wipes live `best_score`, `recent30`, `user.rating_ptt`, and newly registered accounts. Always run DB migrations (`recalculate_ratings.py` / SQL updates) against the live VPS database directly (or pull a live `sqlite3.backup()` first, back it up on VPS, update, and verify).
 
 ---
 
@@ -162,7 +163,7 @@ celest-audit --bg
 
 # 6. Rebuild patched APK (Pre-build integrity hook will automatically run; bump version on songs/metadata/lib changes)
 cd /home/luhung/Documents/project/Celestl
-/home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.6.0_release.apk
+/home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.7.6_release.apk
 
 # 7. Connect ADB to Waydroid and install patched APK
 celest-apk-update
