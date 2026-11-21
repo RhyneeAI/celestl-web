@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
                     LIMIT 1
                 `).get(Number(targetUid)) as any;
                 db.close();
-            } catch {}
+            } catch { }
         }
     }
 

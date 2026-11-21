@@ -72,7 +72,7 @@ export default defineEventHandler(async () => {
                     diffMap[d.ratingClass] = d.constant || d.rating || 0;
                 }
             }
-        } catch {}
+        } catch { }
     }
 
     const mapRow = (r: any): ServerScoreItem => {

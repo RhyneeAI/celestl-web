@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
                 currentTicket = current.ticket || 0;
             }
             db.close();
-        } catch {}
+        } catch { }
     }
 
     // If not found locally, fetch current ticket from VPS
@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
             if (vpsUser) {
                 currentTicket = vpsUser.ticket || 0;
             }
-        } catch {}
+        } catch { }
     }
 
     let newBalance = body.amount;
@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
             const db = new Database(dbPath);
             db.prepare('UPDATE user SET ticket = ? WHERE user_id = ?').run(newBalance, body.userId);
             db.close();
-        } catch {}
+        } catch { }
     }
 
     // Sync memories update to VPS

@@ -89,8 +89,8 @@ export interface PlayerProfile {
 export default defineEventHandler(async (event) => {
     const query = getQuery(event);
     const reqUserId = query.userId ? Number(query.userId) : null;
-    const diffFilter = query.difficulty !== undefined && query.difficulty !== '' 
-        ? Number(query.difficulty) 
+    const diffFilter = query.difficulty !== undefined && query.difficulty !== ''
+        ? Number(query.difficulty)
         : null;
 
     const songlistPath = getServerSonglistPath();
@@ -115,7 +115,7 @@ export default defineEventHandler(async (event) => {
                     ratingMap[d.ratingClass] = d.ratingPlus ? `${rVal}+` : `${rVal}`;
                 }
             }
-        } catch {}
+        } catch { }
     }
 
     const currentYear = new Date().getFullYear();
@@ -211,7 +211,7 @@ export default defineEventHandler(async (event) => {
 
     try {
         const db = new Database(serverDbPath, { readonly: true });
-        
+
         // Fetch all players for dropdown
         const users = db.prepare(`
             SELECT 

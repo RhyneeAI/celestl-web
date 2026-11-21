@@ -761,7 +761,36 @@ export async function fetchAdminPlayersFromVps(): Promise<any[] | null> {
 conn = sqlite3.connect('${VPS_DB_PATH}')
 conn.row_factory = sqlite3.Row
 c = conn.cursor()
+
 counts = {r[0]: r[1] for r in c.execute('SELECT user_id, COUNT(*) FROM best_score GROUP BY user_id').fetchall()}
+
+clear_rows = c.execute('SELECT user_id, difficulty, clear_type, COUNT(*) as c FROM best_score GROUP BY user_id, difficulty, clear_type').fetchall()
+clears_map = {}
+for r in clear_rows:
+    uid, diff, ctype, count = r['user_id'], r['difficulty'], r['clear_type'], r['c']
+    if uid not in clears_map:
+        clears_map[uid] = {
+            'all': {'clear': 0, 'fr': 0, 'pm': 0, 'total': 0},
+            'pst': {'clear': 0, 'fr': 0, 'pm': 0, 'total': 0},
+            'prs': {'clear': 0, 'fr': 0, 'pm': 0, 'total': 0},
+            'ftr': {'clear': 0, 'fr': 0, 'pm': 0, 'total': 0},
+            'byd': {'clear': 0, 'fr': 0, 'pm': 0, 'total': 0},
+            'etr': {'clear': 0, 'fr': 0, 'pm': 0, 'total': 0},
+        }
+    diff_key = {0: 'pst', 1: 'prs', 2: 'ftr', 3: 'byd', 4: 'etr'}.get(diff)
+    if ctype == 3:
+        clears_map[uid]['all']['pm'] += count
+        if diff_key: clears_map[uid][diff_key]['pm'] += count
+    elif ctype == 2:
+        clears_map[uid]['all']['fr'] += count
+        if diff_key: clears_map[uid][diff_key]['fr'] += count
+    elif ctype in (1, 4, 5):
+        clears_map[uid]['all']['clear'] += count
+        if diff_key: clears_map[uid][diff_key]['clear'] += count
+    if ctype >= 1:
+        clears_map[uid]['all']['total'] += count
+        if diff_key: clears_map[uid][diff_key]['total'] += count
+
 users = c.execute('''
     SELECT 
         user_id, name, password, join_date, user_code, rating_ptt, 
@@ -770,10 +799,20 @@ users = c.execute('''
     FROM user
     ORDER BY rating_ptt DESC, user_id ASC
 ''').fetchall()
+
 res = []
 for u in users:
     d = dict(u)
-    d['play_count'] = counts.get(d['user_id'], 0)
+    uid = d['user_id']
+    d['play_count'] = counts.get(uid, 0)
+    d['clears'] = clears_map.get(uid, {
+        'all': {'clear': 0, 'fr': 0, 'pm': 0, 'total': 0},
+        'pst': {'clear': 0, 'fr': 0, 'pm': 0, 'total': 0},
+        'prs': {'clear': 0, 'fr': 0, 'pm': 0, 'total': 0},
+        'ftr': {'clear': 0, 'fr': 0, 'pm': 0, 'total': 0},
+        'byd': {'clear': 0, 'fr': 0, 'pm': 0, 'total': 0},
+        'etr': {'clear': 0, 'fr': 0, 'pm': 0, 'total': 0},
+    })
     res.append(d)
 print(json.dumps(res))
 `;
@@ -922,6 +961,35 @@ print(json.dumps({'users': users, 'scores': scores}))
     }
     return res;
 }
+
+/**
+ * Fetch player activity log (logins and recent plays) from VPS.
+ */
+export async function fetchPlayerActivityFromVps(userId: number): Promise<{
+    user: any;
+    logins: any[];
+    recentPlays: any[];
+} | null> {
+    const pyScript = `
+payload = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+uid = payload['userId']
+conn = sqlite3.connect('${VPS_DB_PATH}')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+
+user = c.execute('SELECT user_id, name, user_code, email, rating_ptt, character_id, ticket, join_date, ban_flag, password FROM user WHERE user_id = ? LIMIT 1', (uid,)).fetchone()
+logins = [dict(r) for r in c.execute('SELECT access_token, login_time, login_ip, login_device FROM login WHERE user_id = ? ORDER BY login_time DESC LIMIT 50', (uid,)).fetchall()]
+plays = [dict(r) for r in c.execute('SELECT song_id, difficulty, score, shiny_perfect_count, perfect_count, near_count, miss_count, health, clear_type, rating, time_played FROM recent30 WHERE user_id = ? ORDER BY time_played DESC LIMIT 30', (uid,)).fetchall()]
+
+print(json.dumps({
+    'user': dict(user) if user else None,
+    'logins': logins,
+    'recentPlays': plays
+}))
+`;
+    return queryVpsPython(pyScript, { userId });
+}
+
 
 
 

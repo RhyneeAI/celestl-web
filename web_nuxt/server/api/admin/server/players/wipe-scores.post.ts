@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
                 `).run(body.userId);
             }
             db.close();
-        } catch {}
+        } catch { }
     }
 
     // Sync score wipe to VPS and trigger recalculate

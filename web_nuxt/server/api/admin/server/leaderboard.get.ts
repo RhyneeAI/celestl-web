@@ -36,8 +36,8 @@ export interface LeaderboardEntry {
 
 export default defineEventHandler(async (event) => {
     const query = getQuery(event);
-    const diffFilter = query.difficulty !== undefined && query.difficulty !== '' 
-        ? Number(query.difficulty) 
+    const diffFilter = query.difficulty !== undefined && query.difficulty !== ''
+        ? Number(query.difficulty)
         : null;
 
     const songlistPath = getServerSonglistPath();
@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
                     diffMap[d.ratingClass] = d.constant || d.rating || 0;
                 }
             }
-        } catch {}
+        } catch { }
     }
 
     const processEntries = (users: any[], scores: any[]): LeaderboardEntry[] => {
