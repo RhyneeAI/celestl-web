@@ -38,4 +38,5 @@ export interface ServerSongItem {
   jacket_full: string;
   difficulties: ServerDifficulty[];
   diffs: ServerChartRow[];
+  rawJson?: any;
 }

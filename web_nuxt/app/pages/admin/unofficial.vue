@@ -119,7 +119,7 @@
             :aria-current="song.id === selectedId"
             @click="selectedId = song.id"
             :class="[
-              'flex w-full items-center gap-3 border-t border-[#0c0c22] px-4 py-2.5 text-left first:border-t-0 hover:bg-[#1e203a] transition-colors cursor-pointer',
+              'flex w-full items-center gap-3 border-t border-[#0c0c22] px-4 py-2.5 text-left first:border-t-0 hover:bg-[#1e203a] transition-colors cursor-pointer group',
               song.id === selectedId ? 'bg-[#16133e] border-l-2 border-l-[#f768dd]' : ''
             ]"
           >
@@ -139,20 +139,32 @@
               </span>
             </div>
 
-            <!-- Difficulties Levels on Right -->
+            <!-- Difficulties Levels & Quick JSON on Right -->
             <div class="flex flex-none items-center gap-1.5">
-              <b
-                v-for="(d, i) in song.diffs"
-                :key="d.difficulty"
-                :title="d.constant ? `Constant: ${d.constant}` : '—'"
-                :class="[
-                  'text-[11.5px] font-bold font-mono',
-                  i > 0 ? 'border-l border-[#6f6e80]/40 pl-1.5' : '',
-                  getDiffColor(d.difficulty)
-                ]"
+              <div class="flex items-center gap-1.5">
+                <b
+                  v-for="(d, i) in song.diffs"
+                  :key="d.difficulty"
+                  :title="d.constant ? `Constant: ${d.constant}` : '—'"
+                  :class="[
+                    'text-[11.5px] font-bold font-mono',
+                    i > 0 ? 'border-l border-[#6f6e80]/40 pl-1.5' : '',
+                    getDiffColor(d.difficulty)
+                  ]"
+                >
+                  {{ d.level }}
+                </b>
+              </div>
+
+              <!-- Quick Songlist JSON button on hover -->
+              <button
+                type="button"
+                @click.stop="openSonglistModal(song)"
+                class="size-6 rounded-lg bg-[#1e203a] hover:bg-[#ffd76a] text-[#ffd76a] hover:text-[#0c0c22] border border-white/5 flex items-center justify-center text-[10px] font-mono font-bold transition-all opacity-0 group-hover:opacity-100 shrink-0 ml-1"
+                title="Lihat potongan songlist JSON"
               >
-                {{ d.level }}
-              </b>
+                { }
+              </button>
             </div>
           </button>
         </div>
@@ -203,17 +215,31 @@
                 </span>
               </div>
 
-              <!-- Remote DL Status Pill -->
-              <span
-                :class="[
-                  'px-2.5 py-1 rounded-full text-[11px] font-bold font-mono shrink-0 shadow-sm border',
-                  selected.remoteDl
-                    ? 'bg-[#acff82]/15 text-[#acff82] border-[#acff82]/30'
-                    : 'bg-[#e14763]/15 text-[#e14763] border-[#e14763]/30'
-                ]"
-              >
-                {{ selected.remoteDl ? 'remote_dl' : 'offline' }}
-              </span>
+              <!-- Action Buttons & Remote DL Status Pill -->
+              <div class="flex items-center gap-2 shrink-0">
+                <!-- View Songlist JSON Button -->
+                <button
+                  type="button"
+                  @click="openSonglistModal(selected)"
+                  class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#ffd76a] border border-[#ffd76a]/30 hover:border-[#ffd76a]/60 transition-colors cursor-pointer shadow-sm"
+                  title="Lihat potongan JSON songlist untuk lagu ini"
+                >
+                  <span class="font-mono text-sm leading-none font-black">{ }</span>
+                  <span>Songlist JSON</span>
+                </button>
+
+                <!-- Remote DL Status Pill -->
+                <span
+                  :class="[
+                    'px-2.5 py-1 rounded-full text-[11px] font-bold font-mono shrink-0 shadow-sm border',
+                    selected.remoteDl
+                      ? 'bg-[#acff82]/15 text-[#acff82] border-[#acff82]/30'
+                      : 'bg-[#e14763]/15 text-[#e14763] border-[#e14763]/30'
+                  ]"
+                >
+                  {{ selected.remoteDl ? 'remote_dl' : 'offline' }}
+                </span>
+              </div>
             </div>
 
             <!-- Metadata Grid -->
@@ -789,6 +815,97 @@
         </div>
       </div>
     </Teleport>
+
+    <!-- View Songlist Entry JSON Modal -->
+    <Teleport to="body">
+      <div
+        v-if="viewingSonglistSong"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-[#06060f]/85 p-4 backdrop-blur-[3px] animate-in fade-in duration-150"
+        @click.self="viewingSonglistSong = null"
+      >
+        <div class="flex flex-col h-[85vh] max-h-[800px] w-full max-w-[760px] rounded-[24px] bg-[#1a1d32] border border-[#16133e] text-[#fffafa] shadow-2xl overflow-hidden">
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between border-b border-[#0c0c22] px-6 py-4 bg-[#141628]">
+            <div class="flex items-center gap-3">
+              <div class="size-10 rounded-xl bg-[#0c0c22] border border-white/10 flex items-center justify-center font-mono font-black text-lg text-[#ffd76a] shadow-inner">
+                { }
+              </div>
+              <div>
+                <h2 class="text-base font-bold font-brand text-white flex items-center gap-2">
+                  <span>Songlist Entry JSON</span>
+                  <span class="font-mono text-xs px-2 py-0.5 rounded-md bg-[#ffd76a]/15 text-[#ffd76a] border border-[#ffd76a]/30">
+                    {{ viewingSonglistSong.id }}
+                  </span>
+                </h2>
+                <p class="text-xs text-[#9a99a8] font-mono">
+                  {{ viewingSonglistSong.title }} · {{ viewingSonglistSong.artist }}
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <!-- Copy JSON Button -->
+              <button
+                type="button"
+                @click="copySonglistJson"
+                class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm border"
+                :class="copiedJson ? 'bg-emerald-500 text-slate-900 border-emerald-400 font-black' : 'bg-[#1e203a] hover:bg-[#3f3c68] text-white border-white/10'"
+              >
+                <span v-if="copiedJson">✓ Copied!</span>
+                <template v-else>
+                  <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                  </svg>
+                  <span>Copy JSON</span>
+                </template>
+              </button>
+
+              <!-- Close Button -->
+              <button
+                type="button"
+                aria-label="Close"
+                @click="viewingSonglistSong = null"
+                class="flex size-7 items-center justify-center rounded-xl border border-[#3f3c68] bg-[#1e203a] text-sm hover:border-[#fffafa] text-[#9a99a8] hover:text-white transition-colors cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <!-- File Source Bar -->
+          <div class="flex items-center justify-between px-6 py-2 bg-[#0e101f] border-b border-[#0c0c22] text-[11px] font-mono text-[#6f6e80]">
+            <span class="flex items-center gap-1.5">
+              <span class="size-2 rounded-full bg-emerald-400" :class="{ 'animate-pulse': loadingSonglistEntry }"></span>
+              <span>Source: ArcaeaServerFork/database/songs/songlist</span>
+            </span>
+            <span class="text-[#9a99a8]">{{ songlistJsonText.split('\n').length }} lines · {{ songlistJsonText.length }} chars</span>
+          </div>
+
+          <!-- Code Body -->
+          <div class="flex-1 overflow-auto p-4 bg-[#0c0c22] relative">
+            <div v-if="loadingSonglistEntry" class="absolute top-3 right-3 text-[11px] text-[#ffd76a] bg-black/60 px-2 py-0.5 rounded border border-[#ffd76a]/30 flex items-center gap-1.5">
+              <span class="size-1.5 rounded-full bg-[#ffd76a] animate-ping"></span>
+              <span>Fetching live from disk...</span>
+            </div>
+            <pre class="font-mono text-xs leading-relaxed text-[#acff82] select-all whitespace-pre"><code>{{ songlistJsonText }}</code></pre>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="flex items-center justify-between px-6 py-3 bg-[#141628] border-t border-[#0c0c22] text-xs">
+            <span class="text-[#6f6e80]">
+              Potongan JSON resmi lagu ini di file database songlist server.
+            </span>
+            <button
+              type="button"
+              @click="viewingSonglistSong = null"
+              class="px-4 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-semibold text-white transition-colors cursor-pointer"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -1189,10 +1306,62 @@ async function recalculateAllRatings() {
   }
 }
 
+// Songlist Entry Modal State
+const viewingSonglistSong = ref<ServerSongItem | null>(null);
+const songlistJsonText = ref<string>('');
+const copiedJson = ref<boolean>(false);
+const loadingSonglistEntry = ref<boolean>(false);
+let copiedTimer: ReturnType<typeof setTimeout> | null = null;
+
+async function openSonglistModal(song: ServerSongItem) {
+  viewingSonglistSong.value = song;
+  copiedJson.value = false;
+
+  // Use preloaded rawJson if available
+  if (song.rawJson) {
+    songlistJsonText.value = JSON.stringify(song.rawJson, null, 2);
+  } else {
+    songlistJsonText.value = 'Loading songlist entry...';
+  }
+
+  // Fetch live entry from API to ensure it reflects any recent file updates
+  loadingSonglistEntry.value = true;
+  try {
+    const res = await $fetch<{ success: boolean; formatted: string; entry: any }>(
+      `/api/admin/server/charts/songlist-entry?song_id=${encodeURIComponent(song.id)}`
+    );
+    if (res.formatted) {
+      songlistJsonText.value = res.formatted;
+      song.rawJson = res.entry;
+    }
+  } catch (err: any) {
+    if (!song.rawJson) {
+      songlistJsonText.value = JSON.stringify({ error: err?.data?.statusMessage || err?.message || 'Failed to fetch entry' }, null, 2);
+    }
+  } finally {
+    loadingSonglistEntry.value = false;
+  }
+}
+
+async function copySonglistJson() {
+  if (!songlistJsonText.value) return;
+  try {
+    await navigator.clipboard.writeText(songlistJsonText.value);
+    copiedJson.value = true;
+    if (copiedTimer) clearTimeout(copiedTimer);
+    copiedTimer = setTimeout(() => {
+      copiedJson.value = false;
+    }, 2000);
+  } catch (err) {
+    console.error('Failed to copy to clipboard', err);
+  }
+}
+
 // Global Keyboard listener for Lightbox & Modal
 function handleKeyDown(e: KeyboardEvent) {
   if (e.key === 'Escape') {
-    if (showAuditModal.value) showAuditModal.value = false;
+    if (viewingSonglistSong.value) viewingSonglistSong.value = null;
+    else if (showAuditModal.value) showAuditModal.value = false;
     else if (lightboxBg.value) lightboxBg.value = null;
     else if (editingAffSong.value) closeAffModal();
     else if (editingSong.value) editingSong.value = null;

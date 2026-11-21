@@ -41,6 +41,7 @@ export interface ServerSongItem {
     jacket_full: string;
     difficulties: ServerDifficulty[];
     diffs: ServerChartRow[];
+    rawJson?: any;
 }
 
 function getDiffCode(rc: number): string {
@@ -112,6 +113,7 @@ export default defineEventHandler(async () => {
                 jacket_full: `/api/jacket/${s.id}`,
                 difficulties,
                 diffs,
+                rawJson: s,
             };
         });
 

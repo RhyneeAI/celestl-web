@@ -726,3 +726,4 @@ export function getCharacterPortraits(characterId: number): {
         hasUncappedIcon: hasUncapIcon,
     };
 }
+
