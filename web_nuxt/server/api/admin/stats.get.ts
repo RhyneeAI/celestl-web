@@ -1,4 +1,32 @@
+import https from 'https';
+import http from 'http';
 import { db, schema } from '../../database/index';
+
+function checkServerHealth(serverUrl: string): Promise<string> {
+    return new Promise((resolve) => {
+        try {
+            const url = new URL(serverUrl);
+            const client = url.protocol === 'https:' ? https : http;
+            const req = client.get(
+                serverUrl,
+                {
+                    rejectUnauthorized: false,
+                    timeout: 3000,
+                },
+                (res) => {
+                    resolve(res.statusCode === 200 ? 'online' : `http_${res.statusCode}`);
+                }
+            );
+            req.on('error', () => resolve('offline'));
+            req.on('timeout', () => {
+                req.destroy();
+                resolve('offline');
+            });
+        } catch {
+            resolve('offline');
+        }
+    });
+}
 
 export default defineEventHandler(async () => {
     const config = useRuntimeConfig();
@@ -32,14 +60,9 @@ export default defineEventHandler(async () => {
     .reverse()
     .slice(0, 15);
 
-    // Check ArcaeaServerFork connection
-    let serverStatus = 'checking';
-    try {
-        const res = await fetch(`${config.arcaeaServerUrl}/`, { signal: AbortSignal.timeout(2000) });
-        serverStatus = res.ok ? 'online' : `http_${res.status}`;
-    } catch (e: any) {
-        serverStatus = 'offline';
-    }
+    // Check ArcaeaServerFork connection (handles self-signed HTTPS)
+    const serverUrl = config.arcaeaServerUrl || 'https://139.190.96.194:8765';
+    const serverStatus = await checkServerHealth(serverUrl);
 
     return {
         totalSongs,
@@ -47,7 +70,7 @@ export default defineEventHandler(async () => {
         difficultyBreakdown,
         recentSongs,
         server: {
-            url: config.arcaeaServerUrl,
+            url: serverUrl,
             status: serverStatus
         }
     };

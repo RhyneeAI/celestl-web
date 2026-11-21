@@ -1,13 +1,33 @@
 import { defineEventHandler } from 'h3';
 import fs from 'fs';
+import https from 'https';
+import http from 'http';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { getServerDbPath, getServerSonglistPath } from '../../../../utils/server-paths.ts';
 
 const execFileAsync = promisify(execFile);
 
+function checkServerHealth(serverUrl: string): Promise<boolean> {
+    return new Promise((resolve) => {
+        try {
+            const url = new URL(serverUrl);
+            const client = url.protocol === 'https:' ? https : http;
+            const req = client.get(
+                serverUrl,
+                { rejectUnauthorized: false, timeout: 2500 },
+                (res) => resolve(res.statusCode === 200)
+            );
+            req.on('error', () => resolve(false));
+            req.on('timeout', () => { req.destroy(); resolve(false); });
+        } catch {
+            resolve(false);
+        }
+    });
+}
+
 export default defineEventHandler(async () => {
-    // 1. Check daemon status on port 8765
+    // 1. Check daemon status on port 8765 (Local process or Live VPS)
     let isRunning = false;
     let pid: number | null = null;
     try {
@@ -19,6 +39,11 @@ export default defineEventHandler(async () => {
         }
     } catch {
         // ss might not be available or exit non-zero
+    }
+
+    // Fallback: If not running locally, check if live VPS is responding
+    if (!isRunning) {
+        isRunning = await checkServerHealth('https://139.190.96.194:8765');
     }
 
     // 2. Database statistics
