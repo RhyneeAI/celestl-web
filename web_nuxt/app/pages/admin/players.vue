@@ -156,8 +156,8 @@
           <div class="flex items-center gap-4 min-w-0">
             <!-- Arcaea Diamond Character Profile Avatar (Rhombus Frame) -->
             <div class="relative size-16 shrink-0 flex items-center justify-center">
-              <div class="size-12 rotate-45 rounded-[13px] p-[2px] bg-gradient-to-tr from-[#00d2ff] via-[#7928ca] to-[#ff0080] shadow-[0_0_15px_rgba(0,210,255,0.35)] flex items-center justify-center transition-transform group-hover:scale-105 duration-300">
-                <div class="size-full rounded-[11px] overflow-hidden bg-[#0c0c22] flex items-center justify-center">
+              <div class="size-12 rotate-45 rounded-[12px] p-[2px] bg-gradient-to-br from-[#a855f7] via-[#6366f1] to-[#00d2ff] shadow-[0_0_15px_rgba(0,210,255,0.35)] flex items-center justify-center transition-transform group-hover:scale-105 duration-300">
+                <div class="size-full rounded-[10px] overflow-hidden bg-[#0c0c22] flex items-center justify-center">
                   <img
                     :src="p.characterAvatar"
                     :alt="p.name"

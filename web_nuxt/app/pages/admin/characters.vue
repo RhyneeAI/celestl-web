@@ -116,7 +116,10 @@
           ]"
           title="Toggle between Normal and Awakened portrait previews for all partners"
         >
-          <span>✨</span>
+          <!-- FontAwesome fa-wand-magic-sparkles -->
+          <svg class="size-3.5 text-[#f768dd]" viewBox="0 0 512 512" fill="currentColor">
+            <path d="M432.8 52.5C419 38.7 396.6 38.7 382.8 52.5L344 91.3l-28.7-28.7c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9L310.1 125l-71.5 71.5c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0L344 158.9l28.7 28.7c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9L377.9 125l38.8-38.8c13.8-13.8 13.8-36.2 0-50zM224 288c-17.7 0-32 14.3-32 32l0 128c0 17.7 14.3 32 32 32s32-14.3 32-32l0-128c0-17.7-14.3-32-32-32zm-64-64c0-17.7-14.3-32-32-32L32 192c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32zM320 384c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0z"/>
+          </svg>
           <span>{{ globalAwakenedView ? 'Awakened Art' : 'Normal Art' }}</span>
         </button>
 
@@ -194,10 +197,13 @@
           <div class="absolute top-3 right-3 flex flex-col items-end gap-1.5 z-10">
             <span
               v-if="c.activeUsersCount > 0"
-              class="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1 shadow-md"
+              class="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 shadow-md"
               title="Equipped by players on server"
             >
-              <span>👥</span>
+              <!-- FontAwesome fa-users -->
+              <svg class="size-3 text-emerald-400" viewBox="0 0 640 512" fill="currentColor">
+                <path d="M144 0a80 80 0 1 1 0 160A80 80 0 1 1 144 0zM512 0a80 80 0 1 1 0 160A80 80 0 1 1 512 0zM0 298.7C0 239.8 47.8 192 106.7 192l74.7 0c58.9 0 106.7 47.8 106.7 106.7L288 320l0 128c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 298.7zM352 320l0-21.3c0-58.9 47.8-106.7 106.7-106.7l74.7 0c58.9 0 106.7 47.8 106.7 106.7l0 21.3 0 128c0 35.3-28.7 64-64 64l-160 0c-35.3 0-64-28.7-64-64l0-128z"/>
+              </svg>
               <span>{{ c.activeUsersCount }} in use</span>
             </span>
 
@@ -216,7 +222,7 @@
               v-if="c.hasUncappedPortrait"
               type="button"
               @click.stop="toggleCharacterPortrait(c.characterId)"
-              class="px-2.5 py-1 rounded-xl text-[10px] font-bold font-mono shadow-lg border cursor-pointer transition-transform hover:scale-105 flex items-center gap-1 backdrop-blur-md"
+              class="px-2.5 py-1 rounded-xl text-[10px] font-bold font-mono shadow-lg border cursor-pointer transition-transform hover:scale-105 flex items-center gap-1.5 backdrop-blur-md"
               :class="[
                 isShowingAwakened(c.characterId)
                   ? 'bg-[#f768dd] text-[#0c0c22] border-[#f768dd] font-black'
@@ -224,7 +230,10 @@
               ]"
               :title="isShowingAwakened(c.characterId) ? 'Click to show Normal Portrait' : 'Click to show Awakened Portrait'"
             >
-              <span>✨</span>
+              <!-- FontAwesome fa-wand-magic-sparkles -->
+              <svg class="size-3" viewBox="0 0 512 512" fill="currentColor">
+                <path d="M432.8 52.5C419 38.7 396.6 38.7 382.8 52.5L344 91.3l-28.7-28.7c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9L310.1 125l-71.5 71.5c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0L344 158.9l28.7 28.7c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9L377.9 125l38.8-38.8c13.8-13.8 13.8-36.2 0-50zM224 288c-17.7 0-32 14.3-32 32l0 128c0 17.7 14.3 32 32 32s32-14.3 32-32l0-128c0-17.7-14.3-32-32-32zm-64-64c0-17.7-14.3-32-32-32L32 192c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32zM320 384c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0z"/>
+              </svg>
               <span>{{ isShowingAwakened(c.characterId) ? 'AWAKENED' : 'NORMAL' }}</span>
             </button>
             <div v-else></div>
@@ -233,12 +242,12 @@
             <button
               type="button"
               @click.stop="openArtworkModal(c)"
-              class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-[#0c0c22]/85 hover:bg-[#3f3c68] text-white border border-white/15 backdrop-blur-md shadow-lg transition-colors cursor-pointer flex items-center gap-1"
+              class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-[#0c0c22]/85 hover:bg-[#3f3c68] text-white border border-white/15 backdrop-blur-md shadow-lg transition-colors cursor-pointer flex items-center gap-1.5"
               title="View full-resolution uncropped artwork"
             >
-              <svg class="h-3.5 w-3.5 text-[#f768dd]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              <!-- FontAwesome fa-eye -->
+              <svg class="size-3.5 text-[#f768dd]" viewBox="0 0 576 512" fill="currentColor">
+                <path d="M288 80c-65.2 0-118.8 29.6-159.9 67.7C89.6 183.5 63 226 49.4 256c13.6 30 40.2 72.5 78.6 108.3C169.2 402.4 222.8 432 288 432s118.8-29.6 159.9-67.7C486.4 328.5 513 286 526.6 256c-13.6-30-40.2-72.5-78.6-108.3C406.8 109.6 353.2 80 288 80zM95.4 112.6C142.5 68.8 207.2 32 288 32s145.5 36.8 192.6 80.6c46.8 43.5 78.1 95.4 93 131.1c3.3 7.9 3.3 16.7 0 24.6c-14.9 35.7-46.2 87.7-93 131.1C433.5 443.2 368.8 480 288 480s-145.5-36.8-192.6-80.6C48.6 356 17.3 304 2.5 268.3c-3.3-7.9-3.3-16.7 0-24.6C17.3 208 48.6 156 95.4 112.6zM288 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"/>
               </svg>
               <span>Full Art</span>
             </button>
@@ -294,7 +303,10 @@
           <div>
             <div class="flex items-center justify-between gap-1">
               <div class="flex items-center gap-1.5">
-                <span class="text-xs">⚡</span>
+                <!-- FontAwesome fa-bolt -->
+                <svg class="size-3 text-[#38bdf8]" viewBox="0 0 384 512" fill="currentColor">
+                  <path d="M0 256L240 0l-48 192h192L144 512l48-192H0z"/>
+                </svg>
                 <span class="text-xs font-bold text-white truncate" :title="c.skillInfo.name">
                   {{ c.skillInfo.name }}
                 </span>
@@ -314,7 +326,10 @@
           <div v-if="c.skillIdUncap && c.skillIdUncap !== 'none'" class="pt-2 border-t border-white/5">
             <div class="flex items-center justify-between gap-1">
               <div class="flex items-center gap-1.5">
-                <span class="text-xs">🌟</span>
+                <!-- FontAwesome fa-star -->
+                <svg class="size-3 text-[#f768dd]" viewBox="0 0 576 512" fill="currentColor">
+                  <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.6 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/>
+                </svg>
                 <span class="text-xs font-bold text-[#f768dd] truncate" :title="c.skillUncapInfo.name">
                   {{ c.skillUncapInfo.name }}
                 </span>
@@ -379,8 +394,9 @@
             @click="openEditModal(c)"
             class="flex-1 py-2 px-3 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-white transition-colors cursor-pointer border border-white/5 flex items-center justify-center gap-1.5 shadow-sm"
           >
-            <svg class="h-3.5 w-3.5 text-[#f768dd]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            <!-- FontAwesome fa-pen-to-square -->
+            <svg class="size-3.5 text-[#f768dd]" viewBox="0 0 512 512" fill="currentColor">
+              <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/>
             </svg>
             <span>Edit Stats & Cap</span>
           </button>
@@ -391,8 +407,9 @@
             class="p-2 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-white transition-colors cursor-pointer border border-white/5 shadow-sm"
             title="Open high-res portrait artwork"
           >
-            <svg class="h-4 w-4 text-[#9a99a8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+            <!-- FontAwesome fa-expand -->
+            <svg class="size-3.5 text-[#9a99a8]" viewBox="0 0 448 512" fill="currentColor">
+              <path d="M32 32C14.3 32 0 46.3 0 64l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 32zM64 352c-17.7 0-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64c0-17.7-14.3-32-32-32zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM448 384c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96z"/>
             </svg>
           </button>
         </div>
@@ -694,11 +711,12 @@
           <a
             :href="getLightboxImageSrc(viewingArtwork)"
             target="_blank"
-            class="text-[#f768dd] hover:underline flex items-center gap-1 font-semibold"
+            class="text-[#f768dd] hover:underline flex items-center gap-1.5 font-semibold"
           >
             <span>Open Original Image</span>
-            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            <!-- FontAwesome fa-arrow-up-right-from-square -->
+            <svg class="size-3 text-[#f768dd]" viewBox="0 0 512 512" fill="currentColor">
+              <path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l82.7 0L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3l0 82.7c0 17.7 14.3 32 32 32s32-14.3 32-32l0-160c0-17.7-14.3-32-32-32L320 0zM80 32C35.8 32 0 67.8 0 112L0 432c0 44.2 35.8 80 80 80l320 0c44.2 0 80-35.8 80-80l0-112c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 112c0 8.8-7.2 16-16 16L80 448c-8.8 0-16-7.2-16-16L64 112c0-8.8 7.2-16 16-16l112 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L80 32z"/>
             </svg>
           </a>
         </div>
@@ -725,7 +743,7 @@ const { data: charactersData, pending, refresh } = await useFetch<{
 }>('/api/admin/server/characters');
 
 const searchQuery = ref('');
-const activeFilter = ref<'all' | 'conflict' | 'light' | 'special' | 'uncapped' | 'in_use' | 'lv30'>('all');
+const activeFilter = ref<'all' | 'conflict' | 'light' | 'special' | 'uncapped'>('all');
 const sortBy = ref<'id_asc' | 'id_desc' | 'users_desc' | 'name' | 'step_desc' | 'frag_desc' | 'over_desc'>('id_asc');
 
 const filterTabs = [
@@ -734,8 +752,6 @@ const filterTabs = [
   { id: 'conflict' as const, label: 'Conflict' },
   { id: 'light' as const, label: 'Light' },
   { id: 'special' as const, label: 'Special' },
-  { id: 'in_use' as const, label: 'In Use' },
-  { id: 'lv30' as const, label: 'Lv.30 Cap' },
 ];
 
 // Per-character preview toggle: characterId -> boolean (true = show awakened)
@@ -835,10 +851,6 @@ const filteredCharacters = computed(() => {
     list = list.filter(c => c.charType === 1);
   } else if (activeFilter.value === 'special') {
     list = list.filter(c => c.charType >= 2);
-  } else if (activeFilter.value === 'in_use') {
-    list = list.filter(c => c.activeUsersCount > 0);
-  } else if (activeFilter.value === 'lv30') {
-    list = list.filter(c => c.maxLevel >= 30);
   }
 
   // Sort
