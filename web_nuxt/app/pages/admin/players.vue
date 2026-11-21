@@ -153,15 +153,19 @@
 
         <!-- 1. HEADER SECTION -->
         <div class="flex items-start justify-between gap-3 relative z-10">
-          <div class="flex items-center gap-3.5 min-w-0">
-            <!-- Character Highlighted with Image -->
-            <div class="relative size-14 shrink-0 rounded-2xl bg-[#0c0c22] ring-2 ring-[#f768dd]/30 p-1 shadow-md overflow-hidden flex items-center justify-center">
-              <img
-                :src="p.characterAvatar"
-                :alt="p.name"
-                class="size-full object-cover rounded-xl"
-                @error="onImgFallback($event, p.name)"
-              />
+          <div class="flex items-center gap-4 min-w-0">
+            <!-- Arcaea Diamond Character Profile Avatar (Rhombus Frame) -->
+            <div class="relative size-16 shrink-0 flex items-center justify-center">
+              <div class="size-12 rotate-45 rounded-[13px] p-[2px] bg-gradient-to-tr from-[#00d2ff] via-[#7928ca] to-[#ff0080] shadow-[0_0_15px_rgba(0,210,255,0.35)] flex items-center justify-center transition-transform group-hover:scale-105 duration-300">
+                <div class="size-full rounded-[11px] overflow-hidden bg-[#0c0c22] flex items-center justify-center">
+                  <img
+                    :src="p.characterAvatar"
+                    :alt="p.name"
+                    class="size-[142%] max-w-none object-cover -rotate-45 select-none"
+                    @error="onImgFallback($event, p.name)"
+                  />
+                </div>
+              </div>
             </div>
 
             <!-- Player Name + UUID + User Code -->
@@ -209,14 +213,21 @@
               <span
                 v-if="p.worldRank"
                 :class="[
-                  'px-2 py-0.5 rounded-lg text-[10px] font-bold font-mono border flex items-center gap-1 shadow-sm',
+                  'px-2 py-0.5 rounded-lg text-[10px] font-bold font-mono border flex items-center gap-1.5 shadow-sm',
                   p.worldRank === 1 ? 'bg-[#ffd76a]/20 text-[#ffd76a] border-[#ffd76a]/50' :
                   p.worldRank === 2 ? 'bg-slate-300/20 text-slate-200 border-slate-300/40' :
                   p.worldRank === 3 ? 'bg-amber-600/20 text-amber-300 border-amber-600/40' :
                   'bg-[#1e203a] text-[#9a99a8] border-white/10'
                 ]"
               >
-                <span>{{ p.worldRank === 1 ? '👑' : p.worldRank <= 3 ? '🏆' : '#' }}</span>
+                <!-- FontAwesome Crown/Trophy Icons -->
+                <svg v-if="p.worldRank === 1" class="size-3 text-[#ffd76a]" viewBox="0 0 576 512" fill="currentColor">
+                  <path d="M309 106c11.4-7 19-19.7 19-34c0-22.1-17.9-40-40-40s-40 17.9-40 40c0 14.3 7.6 27 19 34L209.7 220.6c-9.1 18.2-32.9 23.3-48.6 10.5L62.7 150.3c7.5-6.7 12.3-16.5 12.3-27.3c0-20.4-16.6-37-37-37S1 102.6 1 123c0 12.5 6.2 23.6 15.7 30.2L70.9 407.9c4.2 20.6 22.2 35.1 43.1 35.1l348 0c20.9 0 38.9-14.5 43.1-35.1l54.2-254.7c9.5-6.6 15.7-17.7 15.7-30.2c0-20.4-16.6-37-37-37s-37 16.6-37 37c0 10.8 4.8 20.6 12.3 27.3L414.9 231.1c-15.7 12.8-39.5 7.7-48.6-10.5L309 106z"/>
+                </svg>
+                <svg v-else-if="p.worldRank <= 3" class="size-3 text-amber-300" viewBox="0 0 576 512" fill="currentColor">
+                  <path d="M400 0L176 0c-26.5 0-48.1 21.8-47.1 48.2c.2 5.3 .9 10.6 2.1 15.8L144 128l-48 0c-53 0-96 43-96 96c0 39.4 23.7 73.3 57.6 87.8c21.4 64.9 76.5 113.8 144.4 125.1c7 1.2 14.2 1.9 21.6 2.1L224 448l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l192 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0 0-9.1c7.4-.2 14.6-.9 21.6-2.1c67.9-11.3 123-60.2 144.4-125.1C552.3 297.3 576 263.4 576 224c0-53-43-96-96-96l-48 0 13-64c1.2-5.2 1.9-10.5 2.1-15.8C448.1 21.8 426.5 0 400 0zM96 224c0-17.7 14.3-32 32-32l32 0 0 64-32 0c-17.7 0-32-14.3-32-32zm384 32l-32 0 0-64 32 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/>
+                </svg>
+                <span v-else class="text-[#6f6e80]">#</span>
                 <span>Rank #{{ p.worldRank }}</span>
               </span>
               <span v-else class="text-[10px] font-mono text-[#6f6e80]">
@@ -340,10 +351,13 @@
             <!-- Direct to B50 / Top Recent Plays -->
             <NuxtLink
               :to="`/admin/player-scores?userId=${p.userId}`"
-              class="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-[#9b51e0]/20 to-[#03a8e6]/20 hover:from-[#9b51e0]/40 hover:to-[#03a8e6]/40 text-xs font-bold text-[#f768dd] border border-[#f768dd]/40 transition-all cursor-pointer flex items-center gap-1 shadow-sm"
+              class="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-[#9b51e0]/20 to-[#03a8e6]/20 hover:from-[#9b51e0]/40 hover:to-[#03a8e6]/40 text-xs font-bold text-[#f768dd] border border-[#f768dd]/40 transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
               title="View Top Recent Plays & B50 recalculation"
             >
-              <span>📊</span>
+              <!-- FontAwesome Chart Column -->
+              <svg class="size-3 shrink-0" viewBox="0 0 448 512" fill="currentColor">
+                <path d="M160 80c0-26.5 21.5-48 48-48l32 0c26.5 0 48 21.5 48 48l0 352c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48l0-352zM0 272c0-26.5 21.5-48 48-48l32 0c26.5 0 48 21.5 48 48l0 160c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48L0 272zM368 96l32 0c26.5 0 48 21.5 48 48l0 288c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48z"/>
+              </svg>
               <span>B50 Scores</span>
             </NuxtLink>
 
@@ -351,10 +365,13 @@
             <button
               type="button"
               @click="openMemoriesModal(p)"
-              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#60a5fa] border border-[#3f3c68]/40 transition-colors cursor-pointer flex items-center gap-1"
+              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#60a5fa] border border-[#3f3c68]/40 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
               title="Adjust memories balance"
             >
-              <span>💎</span>
+              <!-- FontAwesome Gem -->
+              <svg class="size-3 shrink-0" viewBox="0 0 512 512" fill="currentColor">
+                <path d="M116.9 160l69.7-96L325.4 64l69.7 96-278.2 0zm14.3 32l249.6 0-124.8 249.6L131.2 192zM90.3 192l80.5 161L92.2 192l-1.9 0zm-20.9 0l110.2 220.5L34.1 202.9c-3.1-6.2-4.1-13.3-2.9-20.2s5.1-13 11-17.1l74.3-51.5L69.4 192zm373.2 0l-46.9-77.9 74.3 51.5c5.9 4.1 9.8 10.2 11 17.1s.2 14-2.9 20.2L328.7 412.5 442.6 192z"/>
+              </svg>
               <span>Memories</span>
             </button>
 
@@ -362,10 +379,13 @@
             <button
               type="button"
               @click="openPasswordModal(p)"
-              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#fffafa] border border-[#3f3c68]/40 transition-colors cursor-pointer flex items-center gap-1"
+              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#fffafa] border border-[#3f3c68]/40 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
               title="Change player password"
             >
-              <span>🔑</span>
+              <!-- FontAwesome Key -->
+              <svg class="size-3 shrink-0 text-[#9a99a8]" viewBox="0 0 512 512" fill="currentColor">
+                <path d="M336 352c97.2 0 176-78.8 176-176S433.2 0 336 0S160 78.8 160 176c0 18.7 2.9 36.6 8.3 53.4L8 389.7V480c0 17.7 14.3 32 32 32h64v-48h48v-48h48v-48h48l42.6-42.6c16.8 5.4 34.7 8.2 53.4 8.2zm64-224a48 48 0 1 0-96 0 48 48 0 1 0 96 0z"/>
+              </svg>
               <span>Password</span>
             </button>
 
@@ -374,13 +394,17 @@
               type="button"
               @click="toggleBan(p)"
               :class="[
-                'px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer flex items-center gap-1',
+                'px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm',
                 p.isBanned
                   ? 'bg-[#acff82]/15 text-[#acff82] border-[#acff82]/30 hover:bg-[#acff82]/25'
                   : 'bg-[#e14763]/15 text-[#e14763] border-[#e14763]/30 hover:bg-[#e14763]/25'
               ]"
             >
-              <span>🛡️</span>
+              <!-- FontAwesome Ban / Shield -->
+              <svg class="size-3 shrink-0" viewBox="0 0 512 512" fill="currentColor">
+                <path v-if="!p.isBanned" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-464a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm-74.5 101.5a16 16 0 0 1 22.6 0l192 192a16 16 0 0 1-22.6 22.6l-192-192a16 16 0 0 1 0-22.6z"/>
+                <path v-else d="M256 0c44.2 0 80 35.8 80 80V160H176V80c0-44.2 35.8-80 80-80zm128 160h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64H80V80C80 35.8 115.8 0 160 0h192c44.2 0 80 35.8 80 80v80z"/>
+              </svg>
               <span>{{ p.isBanned ? 'Unban' : 'Ban' }}</span>
             </button>
           </div>
@@ -390,10 +414,13 @@
             <button
               type="button"
               @click="openActivityModal(p)"
-              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#ffd76a] border border-[#ffd76a]/30 transition-all cursor-pointer flex items-center gap-1 shadow-sm"
+              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#ffd76a] border border-[#ffd76a]/30 hover:border-[#ffd76a]/60 transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
               title="View login sessions and activity history"
             >
-              <span>📜</span>
+              <!-- FontAwesome Clock Rotate Left (History) -->
+              <svg class="size-3 shrink-0" viewBox="0 0 512 512" fill="currentColor">
+                <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41L117.8 117.8C155 77.9 203.7 54.4 256 54.4c111.4 0 201.6 90.2 201.6 201.6S367.4 457.6 256 457.6c-59.8 0-113.8-26.1-151.1-67.6c-9.3-10.4-25.3-11.2-35.6-1.9s-11.2 25.3-1.9 35.6C112.5 474.3 180.2 505.6 256 505.6c138.1 0 249.6-111.5 249.6-249.6S394.1 6.4 256 6.4C188.7 6.4 127.3 33.1 82.2 76.5L75 75zM232 120c0-13.3 10.7-24 24-24s24 10.7 24 24v122.8l74.6 44.7c11.4 6.8 15.1 21.6 8.3 33s-21.6 15.1-33 8.3l-81.9-49.1c-7.4-4.5-12-12.4-12-21.1V120z"/>
+              </svg>
               <span>Activity Log</span>
             </button>
           </div>
@@ -454,8 +481,13 @@
           <!-- Header -->
           <div class="p-4 sm:p-5 border-b border-[#2b2d4f] flex items-center justify-between gap-3 bg-[#1a1d32]/80 shrink-0">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="size-11 rounded-2xl bg-[#0c0c22] p-1 border border-white/10 shrink-0 overflow-hidden">
-                <img :src="activityPlayer.characterAvatar" :alt="activityPlayer.name" class="size-full object-cover rounded-xl" />
+              <!-- Arcaea Diamond Character Profile Avatar -->
+              <div class="relative size-13 shrink-0 flex items-center justify-center">
+                <div class="size-10 rotate-45 rounded-[10px] p-[2px] bg-gradient-to-tr from-[#00d2ff] via-[#7928ca] to-[#ff0080] shadow-[0_0_12px_rgba(0,210,255,0.35)] flex items-center justify-center">
+                  <div class="size-full rounded-[8px] overflow-hidden bg-[#0c0c22] flex items-center justify-center">
+                    <img :src="activityPlayer.characterAvatar" :alt="activityPlayer.name" class="size-[142%] max-w-none object-cover -rotate-45 select-none" />
+                  </div>
+                </div>
               </div>
               <div class="min-w-0">
                 <div class="flex items-center gap-2">
