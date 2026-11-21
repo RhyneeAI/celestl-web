@@ -12,6 +12,30 @@ const VPS_PEM_KEY = '/home/luhung/.ssh/sefeo-biznet.pem';
 const VPS_SONGS_DIR = '/home/sefeo-english/celest-server/database/songs';
 const VPS_DB_PATH = '/home/sefeo-english/celest-server/database/arcaea_database.db';
 
+interface VpsCacheEntry<T> {
+    data: T;
+    expiresAt: number;
+}
+const vpsCache = new Map<string, VpsCacheEntry<any>>();
+
+export function getVpsCache<T>(key: string): T | null {
+    const entry = vpsCache.get(key);
+    if (!entry) return null;
+    if (Date.now() > entry.expiresAt) {
+        vpsCache.delete(key);
+        return null;
+    }
+    return entry.data;
+}
+
+export function setVpsCache<T>(key: string, data: T, ttlMs: number = 8000): void {
+    vpsCache.set(key, { data, expiresAt: Date.now() + ttlMs });
+}
+
+export function clearVpsCache(): void {
+    vpsCache.clear();
+}
+
 export interface VpsSyncResult {
     success: boolean;
     synced_vps: boolean;
@@ -388,6 +412,7 @@ export async function runVpsPythonWithPayload(pyScript: string, payload: any): P
             `${VPS_USER}@${VPS_HOST}`,
             remoteCmd,
         ]);
+        clearVpsCache();
         return { success: true, synced_vps: true, message: stdout.trim() };
     } catch (err: any) {
         console.error('[VPS Sync Error]:', err);
@@ -648,5 +673,255 @@ print(json.dumps({'presents': presents, 'items': items, 'counts': counts}))`;
         return null;
     }
 }
+
+/**
+ * Generic helper to execute a Python query script on VPS and return parsed JSON data.
+ */
+export async function queryVpsPython<T = any>(pyScript: string, payload?: any): Promise<T | null> {
+    if (!fs.existsSync(VPS_PEM_KEY)) return null;
+
+    const b64Payload = payload !== undefined ? Buffer.from(JSON.stringify(payload)).toString('base64') : '';
+    const fullScript = `import base64, json, sys, sqlite3\n${pyScript}`;
+    const b64Script = Buffer.from(fullScript).toString('base64');
+    const remoteCmd = b64Payload
+        ? `python3 -c "import base64; exec(base64.b64decode('${b64Script}').decode('utf-8'))" "${b64Payload}"`
+        : `python3 -c "import base64; exec(base64.b64decode('${b64Script}').decode('utf-8'))"`;
+
+    try {
+        const { stdout } = await execFileAsync('ssh', [
+            '-i', VPS_PEM_KEY,
+            '-o', 'BatchMode=yes',
+            '-o', 'StrictHostKeyChecking=no',
+            '-o', 'ConnectTimeout=5',
+            `${VPS_USER}@${VPS_HOST}`,
+            remoteCmd,
+        ], { maxBuffer: 15 * 1024 * 1024 });
+
+        if (!stdout || !stdout.trim()) return null;
+        return JSON.parse(stdout.trim()) as T;
+    } catch (err: any) {
+        console.warn('[VPS Query Warning]:', err.message || err);
+        return null;
+    }
+}
+
+/**
+ * Execute a read-only SQL query on the VPS database and return rows as objects.
+ */
+export async function queryVpsDatabase<T = any>(sql: string, params: any[] = []): Promise<T[] | null> {
+    const pyScript = `
+payload = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+conn = sqlite3.connect('${VPS_DB_PATH}')
+conn.row_factory = sqlite3.Row
+rows = conn.execute(payload['sql'], payload.get('params', [])).fetchall()
+print(json.dumps([dict(r) for r in rows]))
+`;
+    return queryVpsPython<T[]>(pyScript, { sql, params });
+}
+
+/**
+ * Fetch a single player from VPS by user_id, user_code, or username.
+ */
+export async function fetchPlayerFromVps(identifier: string | number, skipCache: boolean = false): Promise<any | null> {
+    const cacheKey = `player:${identifier}`;
+    if (!skipCache) {
+        const cached = getVpsCache<any>(cacheKey);
+        if (cached !== null) return cached;
+    }
+
+    const pyScript = `
+payload = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+val = payload['identifier']
+conn = sqlite3.connect('${VPS_DB_PATH}')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+row = None
+if isinstance(val, int) or (isinstance(val, str) and val.isdigit() and len(val) <= 7):
+    row = c.execute('SELECT user_id, name, user_code, rating_ptt, character_id, ticket FROM user WHERE user_id = ? LIMIT 1', (int(val),)).fetchone()
+if not row:
+    row = c.execute('SELECT user_id, name, user_code, rating_ptt, character_id, ticket FROM user WHERE name = ? COLLATE NOCASE OR user_code = ? LIMIT 1', (str(val), str(val))).fetchone()
+print(json.dumps(dict(row) if row else None))
+`;
+    const res = await queryVpsPython<any>(pyScript, { identifier });
+    if (res) {
+        setVpsCache(cacheKey, res, 10000);
+    }
+    return res;
+}
+
+/**
+ * Fetch all players from VPS for Admin Players list.
+ */
+export async function fetchAdminPlayersFromVps(): Promise<any[] | null> {
+    const cacheKey = 'admin:players';
+    const cached = getVpsCache<any[]>(cacheKey);
+    if (cached) return cached;
+
+    const pyScript = `
+conn = sqlite3.connect('${VPS_DB_PATH}')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+counts = {r[0]: r[1] for r in c.execute('SELECT user_id, COUNT(*) FROM best_score GROUP BY user_id').fetchall()}
+users = c.execute('''
+    SELECT 
+        user_id, name, password, join_date, user_code, rating_ptt, 
+        character_id, ticket, email, ban_flag,
+        song_id, difficulty, score, clear_type, time_played
+    FROM user
+    ORDER BY rating_ptt DESC, user_id ASC
+''').fetchall()
+res = []
+for u in users:
+    d = dict(u)
+    d['play_count'] = counts.get(d['user_id'], 0)
+    res.append(d)
+print(json.dumps(res))
+`;
+    const res = await queryVpsPython<any[]>(pyScript);
+    if (res) {
+        setVpsCache(cacheKey, res, 8000);
+    }
+    return res;
+}
+
+/**
+ * Fetch players dropdown & scores for a selected player from VPS.
+ */
+export async function fetchPlayerScoresFromVps(userId?: number | null, diffFilter?: number | null): Promise<{
+    players: any[];
+    selectedPlayerId: number | null;
+    scores: any[];
+} | null> {
+    const cacheKey = `player_scores:${userId ?? 'default'}:${diffFilter ?? 'all'}`;
+    const cached = getVpsCache<any>(cacheKey);
+    if (cached) return cached;
+
+    const pyScript = `
+payload = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+req_uid = payload.get('userId')
+diff = payload.get('diffFilter')
+conn = sqlite3.connect('${VPS_DB_PATH}')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+
+user_rows = c.execute('''
+    SELECT 
+        u.user_id, 
+        u.name, 
+        u.user_code, 
+        u.rating_ptt, 
+        u.character_id,
+        COUNT(b.song_id) as total_scores
+    FROM user u
+    LEFT JOIN best_score b ON u.user_id = b.user_id
+    GROUP BY u.user_id
+    ORDER BY u.rating_ptt DESC
+''').fetchall()
+players = [dict(u) for u in user_rows]
+
+active_uid = req_uid
+if not active_uid and players:
+    with_scores = next((p for p in players if p['total_scores'] > 0), None)
+    active_uid = with_scores['user_id'] if with_scores else players[0]['user_id']
+
+scores = []
+if active_uid:
+    sql = '''
+        SELECT 
+            song_id, difficulty, score, shiny_perfect_count, perfect_count, near_count, miss_count, clear_type, time_played
+        FROM best_score
+        WHERE user_id = ?
+    '''
+    params = [active_uid]
+    if diff is not None:
+        sql += ' AND difficulty = ?'
+        params.append(diff)
+    sql += ' ORDER BY score DESC'
+    score_rows = c.execute(sql, params).fetchall()
+    scores = [dict(s) for s in score_rows]
+
+print(json.dumps({'players': players, 'selectedPlayerId': active_uid, 'scores': scores}))
+`;
+    const res = await queryVpsPython<{ players: any[]; selectedPlayerId: number | null; scores: any[] }>(pyScript, { userId, diffFilter });
+    if (res) {
+        setVpsCache(cacheKey, res, 8000);
+    }
+    return res;
+}
+
+/**
+ * Fetch all best scores from VPS for Admin Scores feed.
+ */
+export async function fetchRecentScoresFromVps(): Promise<any[] | null> {
+    const cacheKey = 'admin:recent_scores';
+    const cached = getVpsCache<any[]>(cacheKey);
+    if (cached) return cached;
+
+    const pyScript = `
+conn = sqlite3.connect('${VPS_DB_PATH}')
+conn.row_factory = sqlite3.Row
+rows = conn.execute('''
+    SELECT 
+        b.user_id,
+        b.song_id,
+        b.difficulty,
+        b.score,
+        b.shiny_perfect_count,
+        b.perfect_count,
+        b.near_count,
+        b.miss_count,
+        b.health,
+        b.clear_type,
+        b.rating AS server_rating,
+        b.time_played,
+        u.name AS player_name,
+        u.user_code AS player_code
+    FROM best_score b
+    LEFT JOIN user u ON b.user_id = u.user_id
+    ORDER BY b.score DESC
+''').fetchall()
+print(json.dumps([dict(r) for r in rows]))
+`;
+    const res = await queryVpsPython<any[]>(pyScript);
+    if (res) {
+        setVpsCache(cacheKey, res, 8000);
+    }
+    return res;
+}
+
+/**
+ * Fetch leaderboard players & scores from VPS.
+ */
+export async function fetchLeaderboardFromVps(diffFilter?: number | null): Promise<{ users: any[]; scores: any[] } | null> {
+    const cacheKey = `admin:leaderboard:${diffFilter ?? 'all'}`;
+    const cached = getVpsCache<any>(cacheKey);
+    if (cached) return cached;
+
+    const pyScript = `
+payload = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+diff = payload.get('diffFilter')
+conn = sqlite3.connect('${VPS_DB_PATH}')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+
+users = [dict(u) for u in c.execute('SELECT user_id, name, user_code, rating_ptt, character_id FROM user ORDER BY rating_ptt DESC').fetchall()]
+
+sql = 'SELECT user_id, song_id, difficulty, score, clear_type, time_played FROM best_score'
+params = []
+if diff is not None:
+    sql += ' WHERE difficulty = ?'
+    params.append(diff)
+sql += ' ORDER BY score DESC'
+
+scores = [dict(s) for s in c.execute(sql, params).fetchall()]
+print(json.dumps({'users': users, 'scores': scores}))
+`;
+    const res = await queryVpsPython<{ users: any[]; scores: any[] }>(pyScript, { diffFilter });
+    if (res) {
+        setVpsCache(cacheKey, res, 8000);
+    }
+    return res;
+}
+
 
 

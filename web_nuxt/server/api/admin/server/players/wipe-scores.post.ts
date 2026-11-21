@@ -14,58 +14,46 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, statusMessage: 'Invalid parameters: userId required' });
     }
 
+    let playerName = `User ${body.userId}`;
+
     const dbPath = getServerDbPath();
-    if (!dbPath) {
-        throw createError({ statusCode: 500, statusMessage: 'Server database not found' });
-    }
-
-    try {
-        const db = new Database(dbPath);
-
-        const current = db.prepare('SELECT user_id, name FROM user WHERE user_id = ?').get(body.userId) as any;
-        if (!current) {
+    if (dbPath) {
+        try {
+            const db = new Database(dbPath);
+            const current = db.prepare('SELECT user_id, name FROM user WHERE user_id = ?').get(body.userId) as any;
+            if (current) {
+                playerName = current.name || playerName;
+                db.prepare('DELETE FROM best_score WHERE user_id = ?').run(body.userId);
+                db.prepare('DELETE FROM recent30 WHERE user_id = ?').run(body.userId);
+                db.prepare(`
+                    UPDATE user 
+                    SET rating_ptt = 0,
+                        song_id = '',
+                        difficulty = 0,
+                        score = 0,
+                        shiny_perfect_count = 0,
+                        perfect_count = 0,
+                        near_count = 0,
+                        miss_count = 0,
+                        health = 0,
+                        time_played = 0,
+                        rating = 0,
+                        world_rank_score = 0
+                    WHERE user_id = ?
+                `).run(body.userId);
+            }
             db.close();
-            throw createError({ statusCode: 404, statusMessage: 'Player not found' });
-        }
-
-        // Wipe best_score
-        const deletedBest = db.prepare('DELETE FROM best_score WHERE user_id = ?').run(body.userId);
-        // Wipe recent30
-        const deletedRecent = db.prepare('DELETE FROM recent30 WHERE user_id = ?').run(body.userId);
-
-        // Reset user table stats
-        db.prepare(`
-            UPDATE user 
-            SET rating_ptt = 0,
-                song_id = '',
-                difficulty = 0,
-                score = 0,
-                shiny_perfect_count = 0,
-                perfect_count = 0,
-                near_count = 0,
-                miss_count = 0,
-                health = 0,
-                time_played = 0,
-                rating = 0,
-                world_rank_score = 0
-            WHERE user_id = ?
-        `).run(body.userId);
-
-        db.close();
-
-        // Sync score wipe to VPS and trigger recalculate
-        const vpsRes = await syncPlayerWipeScoresToVps(body.userId);
-
-        return {
-            success: true,
-            userId: body.userId,
-            deletedBestCount: deletedBest.changes,
-            deletedRecentCount: deletedRecent.changes,
-            synced_vps: vpsRes.synced_vps,
-            message: `Successfully wiped ${deletedBest.changes} scores and reset PTT to 0 for ${current.name} (UID ${body.userId})${vpsRes.synced_vps ? ' (Synced to VPS)' : ''}`,
-        };
-    } catch (err: any) {
-        if (err.statusCode) throw err;
-        throw createError({ statusCode: 500, statusMessage: err.message || 'Database wipe failed' });
+        } catch {}
     }
+
+    // Sync score wipe to VPS and trigger recalculate
+    const vpsRes = await syncPlayerWipeScoresToVps(body.userId);
+
+    return {
+        success: true,
+        userId: body.userId,
+        name: playerName,
+        synced_vps: vpsRes.synced_vps,
+        message: `All scores wiped for player ${playerName} (UID ${body.userId})${vpsRes.synced_vps ? ' (Synced to VPS)' : ''}`,
+    };
 });

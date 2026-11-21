@@ -20,39 +20,38 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, statusMessage: 'Password must be at least 6 characters' });
     }
 
+    let playerName = `User ${body.userId}`;
+    let existsLocally = false;
+    const hashed = crypto.createHash('sha256').update(body.newPassword).digest('hex');
+
     const dbPath = getServerDbPath();
-    if (!dbPath) {
-        throw createError({ statusCode: 500, statusMessage: 'Server database not found' });
-    }
-
-    try {
-        const db = new Database(dbPath);
-
-        const current = db.prepare('SELECT user_id, name FROM user WHERE user_id = ?').get(body.userId) as { user_id: number; name: string } | undefined;
-        if (!current) {
+    if (dbPath) {
+        try {
+            const db = new Database(dbPath);
+            const current = db.prepare('SELECT user_id, name FROM user WHERE user_id = ?').get(body.userId) as any;
+            if (current) {
+                existsLocally = true;
+                playerName = current.name || playerName;
+                db.prepare('UPDATE user SET password = ?, ban_flag = NULL WHERE user_id = ?').run(hashed, body.userId);
+                db.prepare('DELETE FROM login WHERE user_id = ?').run(body.userId);
+            }
             db.close();
-            throw createError({ statusCode: 404, statusMessage: 'Player not found' });
+        } catch (localErr) {
+            console.warn('[Reset Password] Local DB update error:', localErr);
         }
-
-        const hashed = crypto.createHash('sha256').update(body.newPassword).digest('hex');
-
-        // Update password and clear ban flag / old sessions
-        db.prepare('UPDATE user SET password = ?, ban_flag = NULL WHERE user_id = ?').run(hashed, body.userId);
-        db.prepare('DELETE FROM login WHERE user_id = ?').run(body.userId);
-        db.close();
-
-        // Sync password reset to VPS
-        const vpsRes = await syncPlayerPasswordToVps(body.userId, hashed);
-
-        return {
-            success: true,
-            userId: body.userId,
-            name: current.name,
-            synced_vps: vpsRes.synced_vps,
-            message: `Password reset successfully for player ${current.name} (UID ${body.userId})${vpsRes.synced_vps ? ' (Synced to VPS)' : ''}`,
-        };
-    } catch (err: any) {
-        if (err.statusCode) throw err;
-        throw createError({ statusCode: 500, statusMessage: err.message || 'Database update failed' });
     }
+
+    // Sync password reset to VPS
+    const vpsRes = await syncPlayerPasswordToVps(body.userId, hashed);
+    if (!existsLocally && !vpsRes.synced_vps) {
+        throw createError({ statusCode: 404, statusMessage: 'Player not found on server' });
+    }
+
+    return {
+        success: true,
+        userId: body.userId,
+        name: playerName,
+        synced_vps: vpsRes.synced_vps,
+        message: `Password reset successfully for player ${playerName} (UID ${body.userId})${vpsRes.synced_vps ? ' (Synced to VPS)' : ''}`,
+    };
 });
