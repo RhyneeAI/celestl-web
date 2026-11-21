@@ -1006,6 +1006,83 @@ print(json.dumps({
     return queryVpsPython(pyScript, { userId });
 }
 
+/**
+ * Fetch characters and player character assignment counts from VPS.
+ */
+export async function fetchCharactersFromVps(): Promise<{
+    characters: any[];
+    userCounts: Record<number, number>;
+} | null> {
+    const pyScript = `
+conn = sqlite3.connect('${VPS_DB_PATH}')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+
+counts = {}
+for r in c.execute('SELECT character_id, COUNT(*) as c FROM user GROUP BY character_id').fetchall():
+    counts[r['character_id']] = r['c']
+
+rows = [dict(r) for r in c.execute('''
+    SELECT character_id, name, max_level, 
+           frag1, prog1, overdrive1, 
+           frag20, prog20, overdrive20, 
+           frag30, prog30, overdrive30, 
+           skill_id, skill_unlock_level, skill_requires_uncap, skill_id_uncap, 
+           char_type, is_uncapped 
+    FROM character 
+    ORDER BY character_id ASC
+''').fetchall()]
+
+print(json.dumps({'characters': rows, 'userCounts': counts}))
+`;
+    return queryVpsPython(pyScript);
+}
+
+/**
+ * Sync character stats and uncap state updates to VPS.
+ */
+export async function syncCharacterUpdateToVps(data: {
+    characterId: number;
+    maxLevel: number;
+    isUncapped: boolean;
+    frag1: number;
+    prog1: number;
+    overdrive1: number;
+    frag20: number;
+    prog20: number;
+    overdrive20: number;
+    frag30: number;
+    prog30: number;
+    overdrive30: number;
+}): Promise<boolean> {
+    const pyScript = `
+payload = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+conn = sqlite3.connect('${VPS_DB_PATH}')
+c = conn.cursor()
+c.execute('''
+    UPDATE character 
+    SET max_level = ?,
+        is_uncapped = ?,
+        frag1 = ?, prog1 = ?, overdrive1 = ?,
+        frag20 = ?, prog20 = ?, overdrive20 = ?,
+        frag30 = ?, prog30 = ?, overdrive30 = ?
+    WHERE character_id = ?
+''', (
+    payload['maxLevel'],
+    1 if payload['isUncapped'] else 0,
+    payload['frag1'], payload['prog1'], payload['overdrive1'],
+    payload['frag20'], payload['prog20'], payload['overdrive20'],
+    payload['frag30'], payload['prog30'], payload['overdrive30'],
+    payload['characterId']
+))
+conn.commit()
+print(json.dumps({'success': True}))
+`;
+    const res = await queryVpsPython<{ success: boolean }>(pyScript, data);
+    return Boolean(res?.success);
+}
+
+
 
 
 

@@ -2,6 +2,7 @@ import { defineEventHandler, readBody, createError } from 'h3';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import { getServerDbPath } from '../../../../utils/server-paths.ts';
+import { syncCharacterUpdateToVps } from '../../../../utils/vps-sync.ts';
 
 interface UpdateCharacterBody {
     characterId: number;
@@ -57,14 +58,22 @@ export default defineEventHandler(async (event) => {
 
         db.close();
 
+        // Also synchronize to live VPS
+        let vpsSynced = false;
+        try {
+            vpsSynced = await syncCharacterUpdateToVps(body);
+        } catch (vpsErr) {
+            console.warn('[Character Update] VPS sync error:', vpsErr);
+        }
+
         return {
             success: true,
             characterId: body.characterId,
-            message: `Partner "${exists.name}" (ID ${body.characterId}) stats updated successfully.`,
+            vpsSynced,
+            message: `Partner "${exists.name}" (ID ${body.characterId}) stats updated successfully${vpsSynced ? ' (synced to VPS)' : ''}.`,
         };
     } catch (err: any) {
         if (err.statusCode) throw err;
         throw createError({ statusCode: 500, statusMessage: err.message || 'Failed to update character' });
     }
 });
-
