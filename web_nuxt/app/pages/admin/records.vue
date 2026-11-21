@@ -72,10 +72,10 @@
           <button
             type="button"
             @click="showTop50Modal = true"
-            class="px-3.5 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-[#9b51e0] via-[#f768dd] to-[#03a8e6] text-[#0c0c22] hover:opacity-90 shadow-lg transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
+            class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#79287a] hover:bg-[#8e3290] text-[#fffafa] border border-[#f768dd]/40 hover:border-[#f768dd] shadow-md shadow-[#79287a]/25 transition-all flex items-center gap-1.5 shrink-0 cursor-pointer"
             title="Generate & Export Top 50 (B50) Image"
           >
-            <svg class="h-4 w-4 text-[#0c0c22]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="h-4 w-4 text-[#fffafa]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
             </svg>
             <span class="hidden sm:inline">Export B50 Image</span>
@@ -120,6 +120,13 @@
           </button>
         </div>
       </div>
+
+      <!-- Potential Growth Chart (1D, 3D, 1W, 1M, 3M, 1Y) -->
+      <PotentialChart
+        :potential-history="potentialHistory"
+        :current-ptt="selectedPlayer?.ratingPtt || 0"
+        :player-name="selectedPlayer?.name || 'Player'"
+      />
 
       <!-- Difficulty Filter Diamonds (Image 2: PST, PRS, FTR, ETR, BYD) -->
       <div class="flex items-center justify-center gap-2 sm:gap-3 py-1">
@@ -395,10 +402,11 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
-import type { PlayerProfile, PlayerScoreItem } from '~/types/leaderboard';
+import type { PlayerProfile, PlayerScoreItem, PotentialHistoryPoint } from '~/types/leaderboard';
 import LampBadge from '~/components/LampBadge.vue';
 import JudgmentDiamond from '~/components/JudgmentDiamond.vue';
 import Top50Modal from '~/components/Top50Modal.vue';
+import PotentialChart from '~/components/PotentialChart.vue';
 
 definePageMeta({
   layout: 'admin',
@@ -466,6 +474,9 @@ const { data, pending } = await useFetch('/api/admin/server/player-scores', {
 const players = computed<PlayerProfile[]>(() => data.value?.players || []);
 const selectedPlayer = computed(() => data.value?.selectedPlayer || null);
 const rawScores = computed<PlayerScoreItem[]>(() => (data.value?.scores as PlayerScoreItem[]) || []);
+const potentialHistory = computed<PotentialHistoryPoint[]>(() => {
+  return (data.value as any)?.potentialHistory || [];
+});
 
 // Auto set active user if none set
 watch(players, (list) => {

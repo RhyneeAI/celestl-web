@@ -55,3 +55,8 @@ export interface PlayerProfile {
     bestRating?: number;
 }
 
+export interface PotentialHistoryPoint {
+    time: number;
+    ratingPtt: number;
+}
+

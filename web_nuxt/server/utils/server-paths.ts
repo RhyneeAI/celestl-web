@@ -12,6 +12,17 @@ export function getServerDbPath(): string | null {
     return null;
 }
 
+export function getServerLogDbPath(): string | null {
+    const candidates = [
+        path.resolve(process.cwd(), 'ArcaeaServerFork/database/arcaea_log.db'),
+        path.resolve(process.cwd(), '../ArcaeaServerFork/database/arcaea_log.db'),
+    ];
+    for (const c of candidates) {
+        if (fs.existsSync(c)) return c;
+    }
+    return null;
+}
+
 export function getServerSonglistPath(): string | null {
     const candidates = [
         path.resolve(process.cwd(), 'ArcaeaServerFork/database/songs/songlist'),

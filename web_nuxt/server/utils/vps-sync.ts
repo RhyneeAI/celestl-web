@@ -400,7 +400,7 @@ export async function runVpsPythonWithPayload(pyScript: string, payload: any): P
         return { success: true, synced_vps: false, message: 'VPS SSH key not found, skipped.' };
     }
     const b64Payload = Buffer.from(JSON.stringify(payload)).toString('base64');
-    const fullScript = `import base64, json, sys, sqlite3\n${pyScript}`;
+    const fullScript = `import base64, json, sys, sqlite3, os\n${pyScript}`;
     const b64Script = Buffer.from(fullScript).toString('base64');
     const remoteCmd = `python3 -c "import base64; exec(base64.b64decode('${b64Script}').decode('utf-8'))" "${b64Payload}"`;
     try {
@@ -681,7 +681,7 @@ export async function queryVpsPython<T = any>(pyScript: string, payload?: any): 
     if (!fs.existsSync(VPS_PEM_KEY)) return null;
 
     const b64Payload = payload !== undefined ? Buffer.from(JSON.stringify(payload)).toString('base64') : '';
-    const fullScript = `import base64, json, sys, sqlite3\n${pyScript}`;
+    const fullScript = `import base64, json, sys, sqlite3, os\n${pyScript}`;
     const b64Script = Buffer.from(fullScript).toString('base64');
     const remoteCmd = b64Payload
         ? `python3 -c "import base64; exec(base64.b64decode('${b64Script}').decode('utf-8'))" "${b64Payload}"`
@@ -830,6 +830,7 @@ export async function fetchPlayerScoresFromVps(userId?: number | null, diffFilte
     players: any[];
     selectedPlayerId: number | null;
     scores: any[];
+    potentialHistory?: Array<{ time: number; ratingPtt: number }>;
 } | null> {
     const cacheKey = `player_scores:${userId ?? 'default'}:${diffFilter ?? 'all'}`;
     const cached = getVpsCache<any>(cacheKey);
@@ -879,9 +880,24 @@ if active_uid:
     score_rows = c.execute(sql, params).fetchall()
     scores = [dict(s) for s in score_rows]
 
-print(json.dumps({'players': players, 'selectedPlayerId': active_uid, 'scores': scores}))
+potential_history = []
+log_db_path = '/home/sefeo-english/celest-server/database/arcaea_log.db'
+if active_uid and os.path.exists(log_db_path):
+    try:
+        log_conn = sqlite3.connect(log_db_path)
+        log_rows = log_conn.execute('''
+            SELECT time, rating_ptt 
+            FROM user_rating 
+            WHERE user_id = ? 
+            ORDER BY time ASC
+        ''', (active_uid,)).fetchall()
+        potential_history = [{'time': int(r[0]), 'ratingPtt': round(float(r[1]), 3)} for r in log_rows]
+    except Exception:
+        pass
+
+print(json.dumps({'players': players, 'selectedPlayerId': active_uid, 'scores': scores, 'potentialHistory': potential_history}))
 `;
-    const res = await queryVpsPython<{ players: any[]; selectedPlayerId: number | null; scores: any[] }>(pyScript, { userId, diffFilter });
+    const res = await queryVpsPython<{ players: any[]; selectedPlayerId: number | null; scores: any[]; potentialHistory?: Array<{ time: number; ratingPtt: number }> }>(pyScript, { userId, diffFilter });
     if (res) {
         setVpsCache(cacheKey, res, 8000);
     }

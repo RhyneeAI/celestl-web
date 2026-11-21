@@ -2,7 +2,7 @@ import { defineEventHandler, getQuery } from 'h3';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import fs from 'fs';
-import { getServerDbPath, getServerSonglistPath } from '../../../utils/server-paths.ts';
+import { getServerDbPath, getServerLogDbPath, getServerSonglistPath } from '../../../utils/server-paths.ts';
 import { playRating, grade, type Lamp } from '../../../../app/utils/arcaea-rating.ts';
 import { fetchPlayerScoresFromVps } from '../../../utils/vps-sync.ts';
 
@@ -191,6 +191,7 @@ export default defineEventHandler(async (event) => {
                 players,
                 selectedPlayer,
                 scores,
+                potentialHistory: (vpsData as any).potentialHistory || [],
                 source: 'vps',
             };
         }
@@ -340,10 +341,30 @@ export default defineEventHandler(async (event) => {
             selectedPlayer.bestRating = top10.length > 0 ? top10[0]!.recalculatedRating : 0;
         }
 
+        const logDbPath = getServerLogDbPath();
+        let potentialHistory: Array<{ time: number; ratingPtt: number }> = [];
+        if (logDbPath && fs.existsSync(logDbPath) && activeUserId) {
+            try {
+                const logDb = new Database(logDbPath, { readonly: true });
+                const logRows = logDb.prepare(`
+                    SELECT time, rating_ptt
+                    FROM user_rating
+                    WHERE user_id = ?
+                    ORDER BY time ASC
+                `).all(activeUserId) as Array<{ time: number; rating_ptt: number }>;
+                logDb.close();
+                potentialHistory = logRows.map(r => ({
+                    time: Number(r.time),
+                    ratingPtt: Number(Number(r.rating_ptt).toFixed(3))
+                }));
+            } catch { }
+        }
+
         return {
             players,
             selectedPlayer,
             scores,
+            potentialHistory,
             source: 'local',
         };
     } catch (e: any) {
