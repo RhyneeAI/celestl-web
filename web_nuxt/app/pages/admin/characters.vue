@@ -25,7 +25,7 @@
       <div class="flex items-center gap-2">
         <button
           type="button"
-          @click="refresh"
+          @click="() => refresh()"
           :disabled="pending"
           class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#fffafa] border border-white/5 transition-colors cursor-pointer shadow-sm disabled:opacity-50"
         >
