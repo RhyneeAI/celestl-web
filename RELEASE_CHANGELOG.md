@@ -37,6 +37,14 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.7.7` — 2026-11-22
+- **Fragment Reward Multipliers Boost (+25% Higher Across Grade Tiers)**:
+  - Increased post-play fragment reward multipliers in native Cocos2d engine (`_build_frag_mult_cave`, `0x1A119C0` -> `0xA46B58`) by +25% across all grade conditions:
+    - **Grade AA** (`score >= 9,500,000`): `1.10x` $\rightarrow$ **`1.375x`** (`0x3FB00000`)
+    - **Grade EX** (`score >= 9,800,000`): `1.25x` $\rightarrow$ **`1.5625x`** (`0x3FC80000`)
+    - **Grade EX+** (`score >= 9,900,000`): `1.50x` $\rightarrow$ **`1.875x`** (`0x3FF00000`)
+  - Retained 2-decimal UI auto-formatting in `FragRewardNode` (`0xBF496C` -> `0xA46BD4`) with automatic text scaling (`0.8x`).
+
 ### `v1.7.6` — 2026-11-20
 - **Batch 1–5 Extreme BPM Restoration & Non-Opening `groupalpha` → `hidegroup` Conversion (`70` Songs)**:
   - Restored **`17,467`** over-clamped `timing()` lines across `70` Batch 1–5 songs (including `merikurilostinthesnowstorm/2.aff`, `terabyteconnection/2.aff`, `tsunagite/2.aff`, `veil/2.aff`/`3.aff`, `arcaeamashup`, `artemibility`, `somioncernullset`, `lostrequiem`, `mixxion`, `xaleidoscopix`, `aegleseeker`, etc.) back to original BPMs within `[-16000000.00, 16000000.00]` while keeping segment-level Scudo OOM protection (`12` dense segments kept at `±10000.00`).
