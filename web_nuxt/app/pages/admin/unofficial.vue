@@ -3,9 +3,9 @@
     <!-- Split Layout: Master (Song List) & Detail (Song & Chart Info) -->
     <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(400px,1fr)]">
       <!-- Left Panel: Custom songs List -->
-      <section class="overflow-hidden rounded-2xl bg-[#1a1d32] border border-[#16133e] shadow-xl">
+      <section class="overflow-hidden rounded-2xl bg-[#1a1d32] border border-[#16133e] shadow-xl flex flex-col max-h-[calc(100vh-140px)]">
         <!-- Panel Head -->
-        <div class="flex flex-wrap items-center gap-2.5 px-4 py-[13px] border-b border-[#16133e]">
+        <div class="flex flex-wrap items-center gap-2.5 px-4 py-[13px] border-b border-[#16133e] shrink-0">
           <h2 class="text-[15px] font-semibold text-[#fffafa] font-brand">Custom charts</h2>
           <span class="rounded-full bg-[#1e203a] px-[9px] py-[2px] text-[11px] font-bold text-[#9a99a8]">
             {{ filtered.length }} / {{ songs.length }} songs
@@ -62,7 +62,7 @@
           <div
             v-if="recalcNotification"
             :class="[
-              'mx-4 mt-2.5 flex items-center justify-between rounded-xl px-3.5 py-2 text-xs font-semibold border shadow-sm',
+              'mx-4 mt-2.5 flex items-center justify-between rounded-xl px-3.5 py-2 text-xs font-semibold border shadow-sm shrink-0',
               recalcNotification.type === 'success'
                 ? 'bg-[#acff82]/10 text-[#acff82] border-[#acff82]/30'
                 : 'bg-[#e14763]/10 text-[#e14763] border-[#e14763]/30'
@@ -89,7 +89,7 @@
         </transition>
 
         <!-- Filter Row -->
-        <div class="flex flex-wrap items-center gap-1.5 px-4 pt-3 pb-3">
+        <div class="flex flex-wrap items-center gap-1.5 px-4 pt-3 pb-3 shrink-0">
           <input
             v-model="query"
             type="search"
@@ -113,7 +113,7 @@
         </div>
 
         <!-- Scrollable Song List -->
-        <div class="flex h-[calc(100vh-175px)] flex-col overflow-y-auto">
+        <div class="flex-1 min-h-0 overflow-y-auto">
           <!-- Empty State -->
           <div v-if="filtered.length === 0" class="p-9 text-center text-[#9a99a8]">
             <b class="mb-1 block text-[#fffafa] font-brand">No custom charts match</b>
@@ -154,14 +154,14 @@
                 <b
                   v-for="(d, i) in song.diffs"
                   :key="d.difficulty"
-                  :title="d.constant ? `Constant: ${d.constant}` : '—'"
+                  :title="parseFloat(d.constant) > 0 ? `Constant: ${d.constant}` : 'Unrated placeholder'"
                   :class="[
                     'text-[11.5px] font-bold font-mono',
                     i > 0 ? 'border-l border-[#6f6e80]/40 pl-1.5' : '',
-                    getDiffColor(d.difficulty)
+                    parseFloat(d.constant) === 0 ? 'text-[#6f6e80]/50' : getDiffColor(d.difficulty)
                   ]"
                 >
-                  {{ d.level }}
+                  {{ parseFloat(d.constant) === 0 ? '-' : d.level }}
                 </b>
               </div>
 
@@ -180,7 +180,7 @@
       </section>
 
       <!-- Right Panel: Selected Custom Song Details -->
-      <section class="overflow-hidden rounded-2xl bg-[#1a1d32] border border-[#16133e] shadow-xl">
+      <section class="overflow-hidden rounded-2xl bg-[#1a1d32] border border-[#16133e] shadow-xl lg:sticky lg:top-4 lg:self-start lg:max-h-[calc(100vh-140px)] lg:overflow-y-auto">
         <div v-if="!selected" class="p-10 text-center text-[13px] text-[#9a99a8]">
           No custom song selected
         </div>
@@ -289,24 +289,31 @@
                   @click="selectedDiffRc = selectedDiffRc === d.ratingClass ? null : d.ratingClass"
                   :class="[
                     'border-t border-[#0c0c22] hover:bg-[#1e203a]/50 transition-colors cursor-pointer',
-                    selectedDiffRc === d.ratingClass ? 'bg-[#16133e] ring-1 ring-inset ring-[#f768dd]' : ''
+                    selectedDiffRc === d.ratingClass ? 'bg-[#16133e] ring-1 ring-inset ring-[#f768dd]' : '',
+                    parseFloat(d.constant) === 0 ? 'opacity-60' : ''
                   ]"
                 >
-                  <td :class="['px-2.5 py-2 font-bold font-mono flex items-center gap-1.5', getDiffColor(d.difficulty)]">
+                  <td :class="['px-2.5 py-2 font-bold font-mono flex items-center gap-1.5', parseFloat(d.constant) === 0 ? 'text-[#6f6e80]' : getDiffColor(d.difficulty)]">
                     <span>{{ d.difficulty }}</span>
                     <span
-                      v-if="d.jacketOverride"
+                      v-if="parseFloat(d.constant) === 0"
+                      class="px-1.5 py-0.5 rounded text-[9.5px] font-sans font-semibold bg-[#1e203a] text-[#9a99a8] border border-white/5"
+                    >
+                      Placeholder
+                    </span>
+                    <span
+                      v-else-if="d.jacketOverride"
                       class="px-1.5 py-0.5 rounded text-[10px] font-sans font-bold bg-[#f768dd]/20 text-[#f768dd] border border-[#f768dd]/40"
                       title="Custom jacket override active"
                     >
                       Jacket
                     </span>
                   </td>
-                  <td class="px-2.5 py-2 tabular-nums text-[#fffafa] font-bold">
-                    {{ d.level }}
+                  <td class="px-2.5 py-2 tabular-nums font-bold" :class="parseFloat(d.constant) === 0 ? 'text-[#6f6e80]' : 'text-[#fffafa]'">
+                    {{ parseFloat(d.constant) === 0 ? '—' : d.level }}
                   </td>
-                  <td class="px-2.5 py-2 tabular-nums text-[#ffd76a] font-mono font-black">
-                    {{ d.constant }}
+                  <td class="px-2.5 py-2 tabular-nums font-mono font-black" :class="parseFloat(d.constant) === 0 ? 'text-[#6f6e80]' : 'text-[#ffd76a]'">
+                    {{ parseFloat(d.constant) === 0 ? '0.0 (Unrated)' : d.constant }}
                   </td>
                   <td class="px-2.5 py-2 text-xs text-[#9a99a8]">
                     {{ d.chart_designer || 'uncredited' }}
