@@ -21,8 +21,9 @@
           :disabled="pending"
           class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#fffafa] border border-white/5 transition-colors cursor-pointer shadow-sm disabled:opacity-50"
         >
-          <svg class="h-3.5 w-3.5" :class="{ 'animate-spin': pending }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          <!-- FontAwesome fa-arrows-rotate -->
+          <svg class="size-3.5 shrink-0" :class="{ 'animate-spin': pending }" viewBox="0 0 512 512" fill="currentColor">
+            <path d="M105.1 202.6c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0L386.3 160 352 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l112 0c17.7 0 32-14.3 32-32l0-112c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 35.2L414.4 68C336.3-10.1 209.7-10.1 131.6 68C109.6 90 93.9 115.8 84.4 143.5c-5.8 16.7 3.1 34.8 19.8 40.6s34.8-3.1 40.6-19.8zM406.9 309.4c-7.7 21.8-20.2 42.3-37.8 59.8c-62.5 62.5-163.8 62.5-226.3 0l-17.1-17.1L160 352c17.7 0 32-14.3 32-32s-14.3-32-32-32l-112 0c-17.7 0-32 14.3-32 32l0 112c0 17.7 14.3 32 32 32s32-14.3 32-32l0-35.2L65.6 444C143.7 522.1 270.3 522.1 348.4 444c22-22 37.7-47.8 47.2-75.5c5.8-16.7-3.1-34.8-19.8-40.6s-34.8 3.1-40.6 19.8z"/>
           </svg>
           <span>Refresh</span>
         </button>
@@ -61,8 +62,9 @@
       <!-- Search Box -->
       <div class="relative flex-1">
         <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#6f6e80]">
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <!-- FontAwesome fa-magnifying-glass -->
+          <svg class="size-3.5" viewBox="0 0 512 512" fill="currentColor">
+            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0s208 93.1 208 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
           </svg>
         </span>
         <input
@@ -133,8 +135,9 @@
     <!-- Empty State -->
     <div v-if="paginatedPlayers.length === 0" class="rounded-3xl bg-[#1a1d32] p-12 text-center border border-[#16133e]">
       <div class="h-10 w-10 mx-auto mb-3 rounded-2xl bg-[#0c0c22] border border-[#16133e] flex items-center justify-center text-[#6f6e80]">
-        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        <!-- FontAwesome fa-users-slash -->
+        <svg class="size-5" viewBox="0 0 640 512" fill="currentColor">
+          <path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L516.4 378.1c32.7-3.4 60.5-17.7 77.9-40.3c15.2-19.8 21.7-44.5 21.7-70.1c0-26.6-8.2-51.2-24.9-70.9C572.7 175.1 547.2 160 512 160c-11.7 0-23 1.7-33.7 4.9C464.9 133.5 425.2 112 376 112c-35.3 0-66.8 11.1-91.8 30.1L38.8 5.1zM288 384c0-22.1 4.5-43.1 12.7-62.1L244 277.2C226.7 285.8 211.3 298.1 200 312.8c-17.5 22.8-24 50.8-24 79.2l0 24c0 17.7 14.3 32 32 32l160 0c6.7 0 13-2.1 18.2-5.7l-94.7-74.2c-2.3 0-4.6 0-3.5 0l0 15.7zm-96-224a96 96 0 1 1 192 0 96 96 0 1 1 -192 0z"/>
         </svg>
       </div>
       <h3 class="text-base font-bold text-[#fffafa] font-brand">No players found</h3>
@@ -156,12 +159,12 @@
           <div class="flex items-center gap-4 min-w-0">
             <!-- Arcaea Diamond Character Profile Avatar (Rhombus Frame) -->
             <div class="relative size-16 shrink-0 flex items-center justify-center">
-              <div class="size-12 rotate-45 rounded-[12px] p-[2px] bg-gradient-to-br from-[#a855f7] via-[#6366f1] to-[#00d2ff] shadow-[0_0_15px_rgba(0,210,255,0.35)] flex items-center justify-center transition-transform group-hover:scale-105 duration-300">
-                <div class="size-full rounded-[10px] overflow-hidden bg-[#0c0c22] flex items-center justify-center">
+              <div class="h-11 w-11 rotate-45 overflow-hidden rounded-xl bg-gradient-to-tr from-[#79287a] to-[#03a8e6] p-0.5 shadow-md shrink-0 border border-white/20 transition-transform group-hover:scale-105 duration-300">
+                <div class="relative h-full w-full overflow-hidden rounded-lg bg-slate-900">
                   <img
-                    :src="p.characterAvatar"
+                    :src="p.characterAvatar || '/storage/characters/0_icon.png'"
                     :alt="p.name"
-                    class="size-[142%] max-w-none object-cover -rotate-45 select-none"
+                    class="absolute inset-[-25%] h-[150%] w-[150%] max-w-none -rotate-45 object-cover select-none"
                     @error="onImgFallback($event, p.name)"
                   />
                 </div>
@@ -365,28 +368,20 @@
             <button
               type="button"
               @click="openMemoriesModal(p)"
-              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#60a5fa] border border-[#3f3c68]/40 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
+              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#60a5fa] border border-[#3f3c68]/40 transition-colors cursor-pointer shadow-sm"
               title="Adjust memories balance"
             >
-              <!-- FontAwesome Gem -->
-              <svg class="size-3 shrink-0" viewBox="0 0 512 512" fill="currentColor">
-                <path d="M116.9 160l69.7-96L325.4 64l69.7 96-278.2 0zm14.3 32l249.6 0-124.8 249.6L131.2 192zM90.3 192l80.5 161L92.2 192l-1.9 0zm-20.9 0l110.2 220.5L34.1 202.9c-3.1-6.2-4.1-13.3-2.9-20.2s5.1-13 11-17.1l74.3-51.5L69.4 192zm373.2 0l-46.9-77.9 74.3 51.5c5.9 4.1 9.8 10.2 11 17.1s.2 14-2.9 20.2L328.7 412.5 442.6 192z"/>
-              </svg>
-              <span>Memories</span>
+              Memories
             </button>
 
             <!-- Reset Password -->
             <button
               type="button"
               @click="openPasswordModal(p)"
-              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#fffafa] border border-[#3f3c68]/40 transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
+              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#fffafa] border border-[#3f3c68]/40 transition-colors cursor-pointer shadow-sm"
               title="Change player password"
             >
-              <!-- FontAwesome Key -->
-              <svg class="size-3 shrink-0 text-[#9a99a8]" viewBox="0 0 512 512" fill="currentColor">
-                <path d="M336 352c97.2 0 176-78.8 176-176S433.2 0 336 0S160 78.8 160 176c0 18.7 2.9 36.6 8.3 53.4L8 389.7V480c0 17.7 14.3 32 32 32h64v-48h48v-48h48v-48h48l42.6-42.6c16.8 5.4 34.7 8.2 53.4 8.2zm64-224a48 48 0 1 0-96 0 48 48 0 1 0 96 0z"/>
-              </svg>
-              <span>Password</span>
+              Password
             </button>
 
             <!-- Ban / Unban -->
@@ -394,18 +389,13 @@
               type="button"
               @click="toggleBan(p)"
               :class="[
-                'px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm',
+                'px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer shadow-sm',
                 p.isBanned
                   ? 'bg-[#acff82]/15 text-[#acff82] border-[#acff82]/30 hover:bg-[#acff82]/25'
                   : 'bg-[#e14763]/15 text-[#e14763] border-[#e14763]/30 hover:bg-[#e14763]/25'
               ]"
             >
-              <!-- FontAwesome Ban / Shield -->
-              <svg class="size-3 shrink-0" viewBox="0 0 512 512" fill="currentColor">
-                <path v-if="!p.isBanned" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-464a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm-74.5 101.5a16 16 0 0 1 22.6 0l192 192a16 16 0 0 1-22.6 22.6l-192-192a16 16 0 0 1 0-22.6z"/>
-                <path v-else d="M256 0c44.2 0 80 35.8 80 80V160H176V80c0-44.2 35.8-80 80-80zm128 160h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64H80V80C80 35.8 115.8 0 160 0h192c44.2 0 80 35.8 80 80v80z"/>
-              </svg>
-              <span>{{ p.isBanned ? 'Unban' : 'Ban' }}</span>
+              {{ p.isBanned ? 'Unban' : 'Ban' }}
             </button>
           </div>
 
@@ -414,14 +404,10 @@
             <button
               type="button"
               @click="openActivityModal(p)"
-              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#ffd76a] border border-[#ffd76a]/30 hover:border-[#ffd76a]/60 transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#ffd76a] border border-[#ffd76a]/30 hover:border-[#ffd76a]/60 transition-all cursor-pointer shadow-sm"
               title="View login sessions and activity history"
             >
-              <!-- FontAwesome Clock Rotate Left (History) -->
-              <svg class="size-3 shrink-0" viewBox="0 0 512 512" fill="currentColor">
-                <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41L117.8 117.8C155 77.9 203.7 54.4 256 54.4c111.4 0 201.6 90.2 201.6 201.6S367.4 457.6 256 457.6c-59.8 0-113.8-26.1-151.1-67.6c-9.3-10.4-25.3-11.2-35.6-1.9s-11.2 25.3-1.9 35.6C112.5 474.3 180.2 505.6 256 505.6c138.1 0 249.6-111.5 249.6-249.6S394.1 6.4 256 6.4C188.7 6.4 127.3 33.1 82.2 76.5L75 75zM232 120c0-13.3 10.7-24 24-24s24 10.7 24 24v122.8l74.6 44.7c11.4 6.8 15.1 21.6 8.3 33s-21.6 15.1-33 8.3l-81.9-49.1c-7.4-4.5-12-12.4-12-21.1V120z"/>
-              </svg>
-              <span>Activity Log</span>
+              Activity Log
             </button>
           </div>
         </div>
@@ -483,9 +469,13 @@
             <div class="flex items-center gap-3 min-w-0">
               <!-- Arcaea Diamond Character Profile Avatar -->
               <div class="relative size-13 shrink-0 flex items-center justify-center">
-                <div class="size-10 rotate-45 rounded-[10px] p-[2px] bg-gradient-to-tr from-[#00d2ff] via-[#7928ca] to-[#ff0080] shadow-[0_0_12px_rgba(0,210,255,0.35)] flex items-center justify-center">
-                  <div class="size-full rounded-[8px] overflow-hidden bg-[#0c0c22] flex items-center justify-center">
-                    <img :src="activityPlayer.characterAvatar" :alt="activityPlayer.name" class="size-[142%] max-w-none object-cover -rotate-45 select-none" />
+                <div class="h-9 w-9 rotate-45 overflow-hidden rounded-lg bg-gradient-to-tr from-[#79287a] to-[#03a8e6] p-0.5 shadow-md shrink-0 border border-white/20">
+                  <div class="relative h-full w-full overflow-hidden rounded-md bg-slate-900">
+                    <img
+                      :src="activityPlayer.characterAvatar || '/storage/characters/0_icon.png'"
+                      :alt="activityPlayer.name"
+                      class="absolute inset-[-25%] h-[150%] w-[150%] max-w-none -rotate-45 object-cover select-none"
+                    />
                   </div>
                 </div>
               </div>
@@ -540,8 +530,9 @@
           <!-- Body Content -->
           <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
             <div v-if="loadingActivity" class="py-12 text-center text-xs text-[#9a99a8] space-y-2">
-              <svg class="h-6 w-6 mx-auto animate-spin text-[#f768dd]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              <!-- FontAwesome fa-circle-notch -->
+              <svg class="size-6 mx-auto animate-spin text-[#f768dd]" viewBox="0 0 512 512" fill="currentColor">
+                <path d="M222.7 32.1c5 16.9-4.6 34.8-21.5 39.8C121.8 95.6 64 169.1 64 256c0 106 86 192 192 192s192-86 192-192c0-86.9-57.8-160.4-137.1-184.1c-16.9-5-26.6-22.9-21.5-39.8s22.9-26.6 39.8-21.5C434.9 42.1 512 139.6 512 256c0 141.4-114.6 256-256 256S0 397.4 0 256C0 139.6 77.1 42.1 182.9 10.6c16.9-5 34.8 4.6 39.8 21.5z"/>
               </svg>
               <div>Loading activity history from VPS…</div>
             </div>

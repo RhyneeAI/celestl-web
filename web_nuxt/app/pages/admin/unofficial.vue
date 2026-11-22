@@ -29,7 +29,10 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
               </svg>
-              <span v-else>⚡</span>
+              <!-- FontAwesome fa-bolt -->
+              <svg v-else class="size-3 text-[#ffd76a]" viewBox="0 0 384 512" fill="currentColor">
+                <path d="M0 256L240 0l-48 192h192L144 512l48-192H0z"/>
+              </svg>
               <span>{{ recalculating ? 'Recalculating…' : 'Recalculate PTT (B50)' }}</span>
             </button>
 
@@ -66,7 +69,13 @@
             ]"
           >
             <div class="flex items-center gap-2">
-              <span>{{ recalcNotification.type === 'success' ? '✓' : '⚠' }}</span>
+              <!-- FontAwesome fa-circle-check / fa-triangle-exclamation -->
+              <svg v-if="recalcNotification.type === 'success'" class="size-3.5 text-[#acff82]" viewBox="0 0 512 512" fill="currentColor">
+                <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/>
+              </svg>
+              <svg v-else class="size-3.5 text-[#e14763]" viewBox="0 0 512 512" fill="currentColor">
+                <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+              </svg>
               <span>{{ recalcNotification.text }}</span>
             </div>
             <button
@@ -307,10 +316,13 @@
                       <button
                         type="button"
                         @click.stop="openAffModal(selected, d.ratingClass)"
-                        class="rounded-lg bg-[#1e203a] hover:bg-[#3f3c68] px-2.5 py-1 text-xs font-bold text-[#acff82] border border-[#3f3c68]/40 transition-colors cursor-pointer shadow-sm flex items-center gap-1"
+                        class="rounded-lg bg-[#1e203a] hover:bg-[#3f3c68] px-2.5 py-1 text-xs font-bold text-[#acff82] border border-[#3f3c68]/40 transition-colors cursor-pointer shadow-sm flex items-center gap-1.5"
                         title="View & Edit chart .aff file"
                       >
-                        <span>📝</span>
+                        <!-- FontAwesome fa-pen-to-square -->
+                        <svg class="size-3 text-[#acff82]" viewBox="0 0 512 512" fill="currentColor">
+                          <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/>
+                        </svg>
                         <span>Chart (.aff)</span>
                       </button>
                       <button
@@ -435,7 +447,10 @@
             </div>
 
             <div class="rounded-xl bg-[#101222] p-2.5 border border-[#3f3c68]/30 text-xs text-[#acff82] flex items-center gap-1.5">
-              <span>⚡</span>
+              <!-- FontAwesome fa-bolt -->
+              <svg class="size-3 text-[#acff82] shrink-0" viewBox="0 0 384 512" fill="currentColor">
+                <path d="M0 256L240 0l-48 192h192L144 512l48-192H0z"/>
+              </svg>
               <span>Otomatis sinkron ke server VPS (celest-server) & trigger client Hot Reload.</span>
             </div>
           </div>
@@ -555,8 +570,12 @@
           <!-- Modal Footer -->
           <div class="flex items-center justify-between border-t border-[#0c0c22] px-6 py-3.5 bg-[#141628]">
             <div class="flex items-center gap-2 text-xs">
-              <span class="text-[#acff82] flex items-center gap-1 font-semibold">
-                <span>⚡</span> Auto-sync ke VPS (celest-server) & client Hot Reload
+              <span class="text-[#acff82] flex items-center gap-1.5 font-semibold">
+                <!-- FontAwesome fa-bolt -->
+                <svg class="size-3 text-[#acff82] shrink-0" viewBox="0 0 384 512" fill="currentColor">
+                  <path d="M0 256L240 0l-48 192h192L144 512l48-192H0z"/>
+                </svg>
+                <span>Auto-sync ke VPS (celest-server) & client Hot Reload</span>
               </span>
               <span v-if="affSaveSuccess" class="text-[#acff82] font-bold ml-2">✓ {{ affSaveSuccess }}</span>
               <span v-if="affSaveError" class="text-[#e14763] font-bold ml-2">✕ {{ affSaveError }}</span>
@@ -576,8 +595,13 @@
                 class="rounded-[11px] bg-[#1e203a] hover:bg-[#282a4d] border border-[#3f3c68]/50 px-3.5 py-2 text-[12.5px] font-semibold text-[#fffafa] transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
                 title="Cek integritas chart terhadap Poin 3, 4, dan 5"
               >
-                <span v-if="validatingAff" class="animate-spin text-xs">⟳</span>
-                <span v-else>🔍</span>
+                <svg v-if="validatingAff" class="size-3 animate-spin text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <!-- FontAwesome fa-magnifying-glass -->
+                <svg v-else class="size-3 text-[#fffafa]" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0s208 93.1 208 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
+                </svg>
                 <span>{{ validatingAff ? 'Memeriksa Poin 3, 4, 5…' : 'Preview Test (Poin 3, 4, 5)' }}</span>
               </button>
               <button
@@ -586,7 +610,9 @@
                 @click="handleSaveAndDeploy"
                 class="rounded-[11px] bg-[#acff82] px-4 py-2 text-[12.5px] font-bold text-[#0c0c22] hover:bg-[#acff82]/90 transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
               >
-                <span v-if="savingAff" class="animate-spin text-xs">⟳</span>
+                <svg v-if="savingAff" class="size-3 animate-spin text-[#0c0c22]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
                 <span>{{ savingAff ? 'Deploying to VPS…' : 'Save & Deploy to VPS' }}</span>
               </button>
             </div>
@@ -606,7 +632,10 @@
           <div class="flex items-center justify-between border-b border-[#0c0c22] px-6 py-4 bg-[#141628]">
             <div>
               <div class="flex items-center gap-2">
-                <span class="text-lg">🛡️</span>
+                <!-- FontAwesome fa-shield-halved -->
+                <svg class="size-4 text-[#38bdf8]" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.6 363.2c-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.9 1 251.4 0 256 0zm0 66.8V444.8C394 378 431.1 230.1 432 141.4L256 66.8z"/>
+                </svg>
                 <h3 class="text-base font-bold text-[#fffafa]">
                   Audit Integritas Chart (Poin 3, 4, 5)
                 </h3>
@@ -632,7 +661,13 @@
               : 'bg-[#381622] text-[#ff6880] border-[#552030]'
           ]">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-bold">{{ auditResult.valid ? '✓' : '⚠️' }}</span>
+              <!-- FontAwesome Status Icon -->
+              <svg v-if="auditResult.valid" class="size-4 text-[#acff82] shrink-0" viewBox="0 0 512 512" fill="currentColor">
+                <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/>
+              </svg>
+              <svg v-else class="size-4 text-[#ff6880] shrink-0" viewBox="0 0 512 512" fill="currentColor">
+                <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+              </svg>
               <span>
                 {{ auditResult.valid
                     ? (auditResult.has_warnings ? 'Lolos Audit dengan Catatan / Warnings' : 'Lolos Audit Poin 3, 4, 5 — Bersih dari Potensi Crash Native Engine')
@@ -697,7 +732,11 @@
             <!-- List of Errors -->
             <div v-if="auditResult.has_errors" class="space-y-2">
               <div class="text-xs font-bold text-[#ff6880] flex items-center gap-1.5 uppercase tracking-wider">
-                <span>✕</span> Rincian Kesalahan Fatal (Penyebab Crash Native Arcaea):
+                <!-- FontAwesome fa-circle-xmark -->
+                <svg class="size-3.5 text-[#ff6880]" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/>
+                </svg>
+                <span>Rincian Kesalahan Fatal (Penyebab Crash Native Arcaea):</span>
               </div>
               <div class="rounded-xl border border-[#552030] bg-[#1a0a10] p-3 space-y-2 text-xs font-mono">
                 <div
@@ -722,7 +761,11 @@
             <!-- List of Warnings -->
             <div v-if="auditResult.has_warnings" class="space-y-2">
               <div class="text-xs font-bold text-[#ffc83b] flex items-center gap-1.5 uppercase tracking-wider">
-                <span>⚠️</span> Peringatan Format & Standar Lintasan:
+                <!-- FontAwesome fa-triangle-exclamation -->
+                <svg class="size-3.5 text-[#ffc83b]" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+                </svg>
+                <span>Peringatan Format & Standar Lintasan:</span>
               </div>
               <div class="rounded-xl border border-[#443818] bg-[#161408] p-3 space-y-2 text-xs font-mono">
                 <div
@@ -748,7 +791,11 @@
             <div v-if="auditResult.is_fixable" class="rounded-xl border border-[#224430] bg-[#0c1f14] p-3.5 flex items-center justify-between">
               <div>
                 <div class="text-xs font-bold text-[#acff82] flex items-center gap-1.5">
-                  <span>⚡</span> Perbaikan Otomatis Tersedia ({{ auditResult.total_fixes }} fixes)
+                  <!-- FontAwesome fa-bolt -->
+                  <svg class="size-3 text-[#acff82] shrink-0" viewBox="0 0 384 512" fill="currentColor">
+                    <path d="M0 256L240 0l-48 192h192L144 512l48-192H0z"/>
+                  </svg>
+                  <span>Perbaikan Otomatis Tersedia ({{ auditResult.total_fixes }} fixes)</span>
                 </div>
                 <div class="text-[11.5px] text-[#9a99a8] mt-0.5">
                   Dapat memperbaiki otomatis 0ms arc (+1ms), zero BPM, pembersihan scenecontrol anomali, & normalisasi koma timinggroup.
@@ -783,7 +830,11 @@
                 class="rounded-[11px] bg-[#3b4172] hover:bg-[#49518c] text-white px-3.5 py-2 text-[12.5px] font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
                 title="Simpan file .aff di server lokal saja tanpa deploy ke VPS"
               >
-                <span>💾 Simpan Lokal Saja (Fix Sendiri)</span>
+                <!-- FontAwesome fa-floppy-disk -->
+                <svg class="size-3.5 text-white" viewBox="0 0 448 512" fill="currentColor">
+                  <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-242.7c0-17-6.7-33.3-18.7-45.3L352 50.7C340 38.7 323.7 32 306.7 32L64 32zm0 64l242.7 0L384 173.3 384 416c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32L64 96zm32 32c-17.7 0-32 14.3-32 32s14.3 32 32 32l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 128zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 288z"/>
+                </svg>
+                <span>Simpan Lokal Saja (Fix Sendiri)</span>
               </button>
               <button
                 v-if="auditResult.valid"
@@ -792,16 +843,24 @@
                 @click="executeSaveChart({ deployVps: true })"
                 class="rounded-[11px] bg-[#acff82] hover:bg-[#acff82]/90 text-[#0c0c22] px-4 py-2 text-[12.5px] font-bold transition-colors cursor-pointer flex items-center gap-1.5"
               >
-                <span>🚀 Lanjutkan Deploy ke VPS</span>
+                <!-- FontAwesome fa-rocket -->
+                <svg class="size-3.5 text-[#0c0c22]" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="M156.6 384.9L125.7 354c-8.5-8.5-11.5-20.8-7.7-32.2c3-8.9 7-20.5 11.8-33.8L24.2 216.7c-9.2-5.7-15.6-15.1-17.5-25.8s1.6-21.8 9.7-28.8L94.7 90.6c14.6-12.8 36-13.8 51.8-2.5l71.6 51.1 57.6-57.6c59.8-59.8 147.2-76.4 223.7-42.3c6.5 2.9 10.9 9.1 11.4 16.2s-2.8 13.9-8.7 18L438.3 128c-14.7 10.2-22.3 28.2-18.7 45.9c3.9 19.3 17.6 34.9 36.1 41.2l53.9 18.5c6.5 2.2 11.1 7.9 11.9 14.7s-2.7 13.4-8.8 16.9c-76.5 44-165.7 33-228.6-29.9l-57.6 57.6 51.1 71.6c11.3 15.8 10.3 37.2-2.5 51.8l-71.5 78.4c-7 7.7-17.4 11.9-28.1 11.3s-20.6-6.6-26.9-15.3l-71.3-97.8zM48 464c0-26.5 21.5-48 48-48l48 0c0 26.5-21.5 48-48 48l-48 0zm0-80l24 0c0-13.3-10.7-24-24-24l0 24z"/>
+                </svg>
+                <span>Lanjutkan Deploy ke VPS</span>
               </button>
               <button
                 v-else
                 type="button"
                 :disabled="savingAff"
                 @click="executeSaveChart({ deployVps: true })"
-                class="rounded-[11px] border border-[#e14763]/60 bg-[#2a1018] hover:bg-[#3d1522] text-[#ff8095] px-3.5 py-2 text-[12px] font-semibold transition-colors cursor-pointer"
+                class="rounded-[11px] border border-[#e14763]/60 bg-[#2a1018] hover:bg-[#3d1522] text-[#ff8095] px-3.5 py-2 text-[12px] font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
                 title="Abaikan peringatan dan paksa deploy ke VPS"
               >
+                <!-- FontAwesome fa-triangle-exclamation -->
+                <svg class="size-3 text-[#ff8095]" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+                </svg>
                 <span>Paksa Deploy VPS (Risiko Crash)</span>
               </button>
             </div>
@@ -847,8 +906,9 @@
               >
                 <span v-if="copiedJson">✓ Copied!</span>
                 <template v-else>
-                  <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                  <!-- FontAwesome fa-copy -->
+                  <svg class="size-3.5" viewBox="0 0 448 512" fill="currentColor">
+                    <path d="M384 336l-192 0c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l140.1 0L384 96.1 384 320c0 8.8-7.2 16-16 16zM192 0C165.5 0 144 21.5 144 48l0 272c0 26.5 21.5 48 48 48l192 0c26.5 0 48-21.5 48-48l0-229.5c0-12.7-5.1-24.9-14.1-33.9L381.5 14.1C372.5 5.1 360.3 0 347.5 0L192 0zM64 128c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-32-48 0 0 32c0 8.8-7.2 16-16 16L64 464c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l32 0 0-48-32 0z"/>
                   </svg>
                   <span>Copy JSON</span>
                 </template>

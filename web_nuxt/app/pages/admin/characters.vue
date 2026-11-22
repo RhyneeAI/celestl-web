@@ -21,8 +21,9 @@
           :disabled="pending"
           class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#fffafa] border border-white/5 transition-colors cursor-pointer shadow-sm disabled:opacity-50"
         >
-          <svg class="h-3.5 w-3.5" :class="{ 'animate-spin': pending }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          <!-- FontAwesome fa-arrows-rotate -->
+          <svg class="size-3.5" :class="{ 'animate-spin': pending }" viewBox="0 0 512 512" fill="currentColor">
+            <path d="M105.1 202.6c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0L386.3 160 352 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l112 0c17.7 0 32-14.3 32-32l0-112c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 35.2L414.4 68.6C336.3-.5 209.7-.5 131.6 68.6C107.5 92.7 89.9 121.5 78.8 153.2c-5.9 16.7 2.8 34.9 19.5 40.8s34.9-2.8 40.8-19.5zM406.9 309.4c-7.7 21.8-20.2 42.3-37.8 59.8c-62.5 62.5-163.8 62.5-226.3 0l-17.1-17.1L160 352c17.7 0 32-14.3 32-32s-14.3-32-32-32L48 288c-17.7 0-32 14.3-32 32l0 112c0 17.7 14.3 32 32 32s32-14.3 32-32l0-35.2L97.6 443.4c78.1 69.1 204.7 69.1 282.8 0c24.1-24.1 41.7-52.9 52.8-84.6c5.9-16.7-2.8-34.9-19.5-40.8s-34.9 2.8-40.8 19.5z"/>
           </svg>
           <span>Refresh</span>
         </button>
@@ -418,8 +419,17 @@
         <!-- Modal Header -->
         <div class="flex items-start justify-between border-b border-[#202447] pb-4">
           <div class="flex items-center gap-3">
-            <div class="size-14 rounded-2xl bg-[#0c0c22] border border-white/10 overflow-hidden shrink-0 flex items-center justify-center">
-              <img :src="editingCharacter.iconNormal" :alt="editingCharacter.name" class="size-full object-cover" />
+            <!-- Arcaea Diamond Character Profile Avatar -->
+            <div class="relative size-14 shrink-0 flex items-center justify-center">
+              <div class="h-10 w-10 rotate-45 overflow-hidden rounded-xl bg-gradient-to-tr from-[#79287a] to-[#03a8e6] p-0.5 shadow-md shrink-0 border border-white/20">
+                <div class="relative h-full w-full overflow-hidden rounded-lg bg-slate-900">
+                  <img
+                    :src="editingCharacter.iconNormal"
+                    :alt="editingCharacter.name"
+                    class="absolute inset-[-25%] h-[150%] w-[150%] max-w-none -rotate-45 object-cover select-none"
+                  />
+                </div>
+              </div>
             </div>
             <div>
               <h3 class="text-base font-bold font-brand text-white">

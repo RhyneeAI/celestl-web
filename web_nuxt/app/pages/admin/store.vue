@@ -14,15 +14,27 @@
           <b class="text-[#ffd76a] font-mono">{{ counts.all }}</b>
         </span>
         <span class="rounded-xl bg-[#1a1d32] px-3 py-1.5 text-xs font-semibold text-[#9a99a8] border border-[#16133e] flex items-center gap-1.5">
-          <span>📦 Packs:</span>
+          <!-- FontAwesome fa-box-archive -->
+          <svg class="size-3 text-[#a575ff]" viewBox="0 0 512 512" fill="currentColor">
+            <path d="M32 32H480c17.7 0 32 14.3 32 32V96c0 17.7-14.3 32-32 32H32C14.3 128 0 113.7 0 96V64C0 46.3 14.3 32 32 32zm0 128H480V416c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V160zm128 64c0-8.8-7.2-16-16-16s-16 7.2-16 16v16c0 8.8 7.2 16 16 16h160c8.8 0 16-7.2 16-16V224c0-8.8-7.2-16-16-16s-16 7.2-16 16v16H160V224z"/>
+          </svg>
+          <span>Packs:</span>
           <b class="text-[#a575ff] font-mono">{{ counts.packs }}</b>
         </span>
         <span class="rounded-xl bg-[#1a1d32] px-3 py-1.5 text-xs font-semibold text-[#9a99a8] border border-[#16133e] flex items-center gap-1.5">
-          <span>🎵 Singles:</span>
+          <!-- FontAwesome fa-music -->
+          <svg class="size-3 text-[#03a8e6]" viewBox="0 0 512 512" fill="currentColor">
+            <path d="M499.1 6.3c8.1 6 12.9 15.6 12.9 25.7l0 352c0 53-43 96-96 96s-96-43-96-96s43-96 96-96c11.2 0 21.9 1.9 32 5.4l0-174.1L192 195.4l0 196.6c0 53-43 96-96 96s-96-43-96-96s43-96 96-96c11.2 0 21.9 1.9 32 5.4l0-288c0-13.3 8.3-25.3 20.8-30s26.9-1.2 36.1 8.9L499.1 6.3z"/>
+          </svg>
+          <span>Singles:</span>
           <b class="text-[#03a8e6] font-mono">{{ counts.singles }}</b>
         </span>
         <span v-if="counts.onSale > 0" class="rounded-xl bg-[#acff82]/10 px-3 py-1.5 text-xs font-semibold text-[#acff82] border border-[#acff82]/30 flex items-center gap-1.5">
-          <span>🔥 On Sale:</span>
+          <!-- FontAwesome fa-fire -->
+          <svg class="size-3 text-[#acff82]" viewBox="0 0 448 512" fill="currentColor">
+            <path d="M159.3 5.4c7.8-7.3 19.9-7.2 27.7 .1c27.6 26 53.5 56.7 77.4 91.6c16.8 24.5 32.1 50.7 45.6 77.8c12.1-13.8 23.3-28.7 33.4-44.5c4.7-7.4 13.5-11.5 22.2-10.4s15.9 7.1 18.2 15.7c26.3 98.4 20.3 203.4-16.8 280.5C340.9 470 293.4 512 224 512c-69.1 0-117.8-42.2-143.5-96.8C54.1 360.8 52.8 297.8 77.2 232.5c2.7-7.2 9.5-12 17.2-12.2s14.8 4.3 17.8 11.4c16.3 38.3 35.9 66.8 58.7 85.5c3.2-17.7 7.7-35.9 13.7-54.4c12.2-37.7 30.6-76.3 51.6-113.8c-12 25.4-23.7 51.3-34.9 77.2c-3.6 8.3-12.8 13-21.7 11.2s-14.8-9.4-14.3-18.5c3.8-63.5 24.3-138.8 74.3-211.7l.3-.4z"/>
+          </svg>
+          <span>On Sale:</span>
           <b class="font-mono">{{ counts.onSale }}</b>
         </span>
       </div>
@@ -45,6 +57,16 @@
                 : 'text-[#9a99a8] hover:text-[#fffafa] hover:bg-[#1e203a]'
             ]"
           >
+            <!-- FontAwesome Icons for Categories -->
+            <svg v-if="tab.id === 'pack'" class="size-3 text-[#a575ff]" viewBox="0 0 512 512" fill="currentColor">
+              <path d="M32 32H480c17.7 0 32 14.3 32 32V96c0 17.7-14.3 32-32 32H32C14.3 128 0 113.7 0 96V64C0 46.3 14.3 32 32 32zm0 128H480V416c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V160zm128 64c0-8.8-7.2-16-16-16s-16 7.2-16 16v16c0 8.8 7.2 16 16 16h160c8.8 0 16-7.2 16-16V224c0-8.8-7.2-16-16-16s-16 7.2-16 16v16H160V224z"/>
+            </svg>
+            <svg v-else-if="tab.id === 'single'" class="size-3 text-[#03a8e6]" viewBox="0 0 512 512" fill="currentColor">
+              <path d="M499.1 6.3c8.1 6 12.9 15.6 12.9 25.7l0 352c0 53-43 96-96 96s-96-43-96-96s43-96 96-96c11.2 0 21.9 1.9 32 5.4l0-174.1L192 195.4l0 196.6c0 53-43 96-96 96s-96-43-96-96s43-96 96-96c11.2 0 21.9 1.9 32 5.4l0-288c0-13.3 8.3-25.3 20.8-30s26.9-1.2 36.1 8.9L499.1 6.3z"/>
+            </svg>
+            <svg v-else-if="tab.id === 'on_sale'" class="size-3 text-[#acff82]" viewBox="0 0 448 512" fill="currentColor">
+              <path d="M159.3 5.4c7.8-7.3 19.9-7.2 27.7 .1c27.6 26 53.5 56.7 77.4 91.6c16.8 24.5 32.1 50.7 45.6 77.8c12.1-13.8 23.3-28.7 33.4-44.5c4.7-7.4 13.5-11.5 22.2-10.4s15.9 7.1 18.2 15.7c26.3 98.4 20.3 203.4-16.8 280.5C340.9 470 293.4 512 224 512c-69.1 0-117.8-42.2-143.5-96.8C54.1 360.8 52.8 297.8 77.2 232.5c2.7-7.2 9.5-12 17.2-12.2s14.8 4.3 17.8 11.4c16.3 38.3 35.9 66.8 58.7 85.5c3.2-17.7 7.7-35.9 13.7-54.4c12.2-37.7 30.6-76.3 51.6-113.8c-12 25.4-23.7 51.3-34.9 77.2c-3.6 8.3-12.8 13-21.7 11.2s-14.8-9.4-14.3-18.5c3.8-63.5 24.3-138.8 74.3-211.7l.3-.4z"/>
+            </svg>
             <span>{{ tab.label }}</span>
             <span
               :class="[
@@ -97,7 +119,10 @@
       v-if="filteredItems.length === 0"
       class="rounded-3xl border border-[#16133e] bg-[#1a1d32] p-12 text-center text-[#9a99a8]"
     >
-      <div class="text-3xl mb-2">🔍</div>
+      <!-- FontAwesome fa-magnifying-glass -->
+      <svg class="size-10 mx-auto mb-3 text-[#6f6e80]" viewBox="0 0 512 512" fill="currentColor">
+        <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0s208 93.1 208 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
+      </svg>
       <b class="text-base text-[#fffafa] font-brand block mb-1">No store items match your criteria</b>
       <p class="text-xs text-[#6f6e80]">Try searching with a different keyword or selecting another category tab.</p>
     </div>
@@ -137,21 +162,32 @@
           <!-- Top-Left Category Badge -->
           <span
             :class="[
-              'absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold shadow-md border backdrop-blur-md',
+              'absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold shadow-md border backdrop-blur-md flex items-center gap-1.5',
               item.category === 'pack'
                 ? 'bg-[#7d5fff]/80 text-white border-[#7d5fff]'
                 : 'bg-[#03a8e6]/80 text-white border-[#03a8e6]'
             ]"
           >
-            {{ item.category === 'pack' ? '📦 Song Pack' : '🎵 Single Song' }}
+            <!-- FontAwesome Category Icon -->
+            <svg v-if="item.category === 'pack'" class="size-3" viewBox="0 0 512 512" fill="currentColor">
+              <path d="M32 32H480c17.7 0 32 14.3 32 32V96c0 17.7-14.3 32-32 32H32C14.3 128 0 113.7 0 96V64C0 46.3 14.3 32 32 32zm0 128H480V416c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V160zm128 64c0-8.8-7.2-16-16-16s-16 7.2-16 16v16c0 8.8 7.2 16 16 16h160c8.8 0 16-7.2 16-16V224c0-8.8-7.2-16-16-16s-16 7.2-16 16v16H160V224z"/>
+            </svg>
+            <svg v-else class="size-3" viewBox="0 0 512 512" fill="currentColor">
+              <path d="M499.1 6.3c8.1 6 12.9 15.6 12.9 25.7l0 352c0 53-43 96-96 96s-96-43-96-96s43-96 96-96c11.2 0 21.9 1.9 32 5.4l0-174.1L192 195.4l0 196.6c0 53-43 96-96 96s-96-43-96-96s43-96 96-96c11.2 0 21.9 1.9 32 5.4l0-288c0-13.3 8.3-25.3 20.8-30s26.9-1.2 36.1 8.9L499.1 6.3z"/>
+            </svg>
+            <span>{{ item.category === 'pack' ? 'Song Pack' : 'Single Song' }}</span>
           </span>
 
           <!-- Top-Right Sale Status Badge -->
           <span
             v-if="item.is_on_sale"
-            class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10.5px] font-extrabold font-mono bg-[#acff82] text-[#0c0c22] shadow-md"
+            class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10.5px] font-extrabold font-mono bg-[#acff82] text-[#0c0c22] shadow-md flex items-center gap-1"
           >
-            🔥 -{{ item.discount_percent }}%
+            <!-- FontAwesome fa-fire -->
+            <svg class="size-2.5 text-[#0c0c22]" viewBox="0 0 448 512" fill="currentColor">
+              <path d="M159.3 5.4c7.8-7.3 19.9-7.2 27.7 .1c27.6 26 53.5 56.7 77.4 91.6c16.8 24.5 32.1 50.7 45.6 77.8c12.1-13.8 23.3-28.7 33.4-44.5c4.7-7.4 13.5-11.5 22.2-10.4s15.9 7.1 18.2 15.7c26.3 98.4 20.3 203.4-16.8 280.5C340.9 470 293.4 512 224 512c-69.1 0-117.8-42.2-143.5-96.8C54.1 360.8 52.8 297.8 77.2 232.5c2.7-7.2 9.5-12 17.2-12.2s14.8 4.3 17.8 11.4c16.3 38.3 35.9 66.8 58.7 85.5c3.2-17.7 7.7-35.9 13.7-54.4c12.2-37.7 30.6-76.3 51.6-113.8c-12 25.4-23.7 51.3-34.9 77.2c-3.6 8.3-12.8 13-21.7 11.2s-14.8-9.4-14.3-18.5c3.8-63.5 24.3-138.8 74.3-211.7l.3-.4z"/>
+            </svg>
+            <span>-{{ item.discount_percent }}%</span>
           </span>
         </div>
 
@@ -184,11 +220,19 @@
                 :key="sub.item_id + sub.type"
                 class="flex items-center gap-1.5 text-[11px] leading-tight text-[#fffafa]"
               >
-                <!-- Type Icon -->
-                <span v-if="sub.type === 'pack'" class="text-[#a575ff]">📦</span>
-                <span v-else-if="sub.type === 'character'" class="text-[#f768dd]">👤</span>
-                <span v-else-if="sub.type === 'core'" class="text-[#ffd76a]">💎</span>
-                <span v-else class="text-[#03a8e6]">🎵</span>
+                <!-- FontAwesome Type Icons -->
+                <svg v-if="sub.type === 'pack'" class="size-3 text-[#a575ff] shrink-0" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="M32 32H480c17.7 0 32 14.3 32 32V96c0 17.7-14.3 32-32 32H32C14.3 128 0 113.7 0 96V64C0 46.3 14.3 32 32 32zm0 128H480V416c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V160zm128 64c0-8.8-7.2-16-16-16s-16 7.2-16 16v16c0 8.8 7.2 16 16 16h160c8.8 0 16-7.2 16-16V224c0-8.8-7.2-16-16-16s-16 7.2-16 16v16H160V224z"/>
+                </svg>
+                <svg v-else-if="sub.type === 'character'" class="size-3 text-[#f768dd] shrink-0" viewBox="0 0 448 512" fill="currentColor">
+                  <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/>
+                </svg>
+                <svg v-else-if="sub.type === 'core'" class="size-3 text-[#ffd76a] shrink-0" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="M116.7 33.8c4.5-6.1 11.7-9.8 19.3-9.8l240 0c7.6 0 14.8 3.6 19.3 9.8l112 152c6.8 9.2 6.1 21.9-1.5 30.4l-232 256c-4.5 5-11 7.9-17.8 7.9s-13.2-2.9-17.8-7.9l-232-256c-7.7-8.5-8.3-21.2-1.5-30.4l112-152zm38.4 22.2L66.2 176l96.6 0 52-120-59.7 0zm88.8 0L191.9 176l128.2 0L268.1 56l-24.2 0zm52 0l52 120 96.6 0-88.9-120-59.7 0zM358.9 208L256 366.8 153.1 208l205.8 0zM127.4 208L241 383.4 46.1 208l81.3 0zm257.2 0l81.3 0L351 383.4 464.6 208z"/>
+                </svg>
+                <svg v-else class="size-3 text-[#03a8e6] shrink-0" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="M499.1 6.3c8.1 6 12.9 15.6 12.9 25.7l0 352c0 53-43 96-96 96s-96-43-96-96s43-96 96-96c11.2 0 21.9 1.9 32 5.4l0-174.1L192 195.4l0 196.6c0 53-43 96-96 96s-96-43-96-96s43-96 96-96c11.2 0 21.9 1.9 32 5.4l0-288c0-13.3 8.3-25.3 20.8-30s26.9-1.2 36.1 8.9L499.1 6.3z"/>
+                </svg>
 
                 <span class="truncate flex-1 font-medium" :title="sub.name">
                   {{ sub.name }}
@@ -208,8 +252,12 @@
               v-if="item.category === 'pack' && item.pack_songs && item.pack_songs.length > 0"
               class="pt-2 mt-1 border-t border-[#16133e]/80 space-y-1"
             >
-              <div class="flex items-center justify-between text-[10px] font-bold text-[#a575ff]">
-                <span>🎵 {{ item.pack_songs.length }} Songs in Pack:</span>
+              <div class="flex items-center gap-1.5 text-[10px] font-bold text-[#a575ff]">
+                <!-- FontAwesome fa-music -->
+                <svg class="size-3 text-[#a575ff]" viewBox="0 0 512 512" fill="currentColor">
+                  <path d="M499.1 6.3c8.1 6 12.9 15.6 12.9 25.7l0 352c0 53-43 96-96 96s-96-43-96-96s43-96 96-96c11.2 0 21.9 1.9 32 5.4l0-174.1L192 195.4l0 196.6c0 53-43 96-96 96s-96-43-96-96s43-96 96-96c11.2 0 21.9 1.9 32 5.4l0-288c0-13.3 8.3-25.3 20.8-30s26.9-1.2 36.1 8.9L499.1 6.3z"/>
+                </svg>
+                <span>{{ item.pack_songs.length }} Songs in Pack:</span>
               </div>
               <div class="flex flex-wrap gap-1 max-h-24 overflow-y-auto pr-0.5">
                 <span
@@ -327,9 +375,13 @@
             v-if="editingItem.category === 'pack' && editingItem.pack_songs && editingItem.pack_songs.length > 0"
             class="pt-2 border-t border-[#16133e] space-y-1"
           >
-            <span class="block text-[10.5px] uppercase font-bold text-[#a575ff]">
-              🎵 {{ editingItem.pack_songs.length }} Songs Included in Pack:
-            </span>
+            <div class="flex items-center gap-1.5 text-[10.5px] font-bold text-[#a575ff]">
+              <!-- FontAwesome fa-music -->
+              <svg class="size-3 text-[#a575ff]" viewBox="0 0 512 512" fill="currentColor">
+                <path d="M499.1 6.3c8.1 6 12.9 15.6 12.9 25.7l0 352c0 53-43 96-96 96s-96-43-96-96s43-96 96-96c11.2 0 21.9 1.9 32 5.4l0-174.1L192 195.4l0 196.6c0 53-43 96-96 96s-96-43-96-96s43-96 96-96c11.2 0 21.9 1.9 32 5.4l0-288c0-13.3 8.3-25.3 20.8-30s26.9-1.2 36.1 8.9L499.1 6.3z"/>
+              </svg>
+              <span>{{ editingItem.pack_songs.length }} Songs Included in Pack:</span>
+            </div>
             <div class="flex flex-wrap gap-1 max-h-32 overflow-y-auto pr-1">
               <span
                 v-for="sname in editingItem.pack_songs"
@@ -375,7 +427,10 @@
           </div>
 
           <div class="rounded-xl bg-[#101222] p-2.5 border border-[#3f3c68]/30 text-xs text-[#acff82] flex items-center gap-1.5">
-            <span>⚡</span>
+            <!-- FontAwesome fa-bolt -->
+            <svg class="size-3 text-[#acff82] shrink-0" viewBox="0 0 384 512" fill="currentColor">
+              <path d="M0 256L240 0l-48 192h192L144 512l48-192H0z"/>
+            </svg>
             <span>Otomatis disinkronkan ke database lokal & server VPS (celest-server).</span>
           </div>
         </div>
@@ -457,9 +512,9 @@ const perPage = 24;
 
 const categoryTabs = computed(() => [
   { id: 'all' as const, label: 'All Items', count: counts.value.all },
-  { id: 'pack' as const, label: '📦 Song Packs', count: counts.value.packs },
-  { id: 'single' as const, label: '🎵 Single Songs', count: counts.value.singles },
-  { id: 'on_sale' as const, label: '🔥 On Sale', count: counts.value.onSale },
+  { id: 'pack' as const, label: 'Song Packs', count: counts.value.packs },
+  { id: 'single' as const, label: 'Single Songs', count: counts.value.singles },
+  { id: 'on_sale' as const, label: 'On Sale', count: counts.value.onSale },
 ]);
 
 const filteredItems = computed(() => {
