@@ -486,12 +486,6 @@
                 </h2>
                 <div class="flex items-center gap-2 text-xs text-[#9a99a8]">
                   <span>Song ID: <span class="font-mono text-[#ffd76a]">{{ editingAffSong.id }}</span></span>
-                  <span>•</span>
-                  <span v-if="affSource === 'vps'" class="text-[#acff82] flex items-center gap-1 font-semibold">
-                    <span class="size-1.5 rounded-full bg-[#acff82] animate-pulse"></span>
-                    Live VPS Server
-                  </span>
-                  <span v-else class="text-[#9a99a8]">Local Storage</span>
                 </div>
               </div>
             </div>

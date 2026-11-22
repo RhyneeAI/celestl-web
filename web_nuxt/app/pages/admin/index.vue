@@ -1,26 +1,10 @@
 <template>
   <div class="space-y-6">
-    <!-- Top Welcome & Live Server Status -->
+    <!-- Top Welcome -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl font-bold tracking-tight text-[#fffafa] font-brand">Administration Dashboard</h1>
         <p class="text-sm text-[#9a99a8]">Manage Arcaea official catalog and Celest private server core.</p>
-      </div>
-
-      <!-- Live Server Status Pill -->
-      <div class="flex items-center gap-3 rounded-2xl bg-[#1a1d32] px-4 py-2 border border-[#16133e] text-xs">
-        <span class="text-[#6f6e80]">Game Server:</span>
-        <div class="flex items-center gap-1.5 font-mono">
-          <span
-            :class="[
-              'h-2.5 w-2.5 rounded-full',
-              stats?.server?.status === 'online' ? 'bg-[#acff82] shadow-[0_0_8px_#acff82]' : 'bg-[#e14763]'
-            ]"
-          ></span>
-          <span :class="stats?.server?.status === 'online' ? 'text-[#acff82]' : 'text-[#e14763]'">
-            {{ stats?.server?.status === 'online' ? '139.190.96.194:8765 (Online)' : 'Server Offline' }}
-          </span>
-        </div>
       </div>
     </div>
 
