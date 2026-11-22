@@ -94,14 +94,75 @@
         <slot />
       </main>
     </div>
+
+    <!-- Floating Live VPS Status Indicator (Pojok Kanan Bawah) -->
+    <button
+      type="button"
+      @click="() => refreshVpsStatus()"
+      :disabled="vpsPending"
+      class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-[#0c0c22]/90 hover:bg-[#151733] backdrop-blur-md border shadow-2xl transition-all duration-300 select-none group cursor-pointer hover:scale-105 active:scale-95 disabled:opacity-75"
+      :class="isVpsLive ? 'border-emerald-500/40 text-emerald-400 shadow-[0_4px_20px_rgba(16,185,129,0.2)] hover:border-emerald-400' : 'border-amber-500/30 text-amber-400 shadow-lg hover:border-amber-400'"
+      :title="isVpsLive ? `Connected directly to Live VPS (139.190.96.194:8765) · Click to check latency` : 'Operating in Local Server mode · Click to re-check VPS'"
+    >
+      <span class="relative flex size-2">
+        <span
+          v-if="isVpsLive && !vpsPending"
+          class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
+        ></span>
+        <span
+          class="relative inline-flex rounded-full size-2"
+          :class="[
+            vpsPending ? 'animate-pulse bg-sky-400' : isVpsLive ? 'bg-emerald-400' : 'bg-amber-400'
+          ]"
+        ></span>
+      </span>
+
+      <span class="text-[11px] font-mono font-bold tracking-wider">
+        {{ vpsPending ? 'CHECKING…' : (isVpsLive ? 'LIVE VPS' : 'LOCAL SERVER') }}
+      </span>
+
+      <span
+        v-if="vpsStatus?.latencyMs && vpsStatus.latencyMs > 0 && !vpsPending"
+        class="text-[10px] font-mono text-[#6f6e80] group-hover:text-emerald-300 transition-colors"
+      >
+        {{ vpsStatus.latencyMs }}ms
+      </span>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { h, ref } from 'vue';
+import { h, ref, computed, onMounted, onUnmounted } from 'vue';
 
 const route = useRoute();
 const sidebarOpen = ref(false);
+
+interface VpsStatusResponse {
+  success: boolean;
+  isLive: boolean;
+  host: string;
+  port: number;
+  latencyMs?: number;
+  hasSshKey: boolean;
+}
+
+const { data: vpsStatus, pending: vpsPending, refresh: refreshVpsStatus } = await useFetch<VpsStatusResponse>(
+  '/api/admin/server/vps-status',
+  { lazy: true, server: false }
+);
+
+const isVpsLive = computed(() => Boolean(vpsStatus.value?.isLive));
+
+let vpsPollTimer: ReturnType<typeof setInterval> | null = null;
+onMounted(() => {
+  vpsPollTimer = setInterval(() => {
+    refreshVpsStatus();
+  }, 45_000);
+});
+
+onUnmounted(() => {
+  if (vpsPollTimer) clearInterval(vpsPollTimer);
+});
 
 async function logout() {
   try {

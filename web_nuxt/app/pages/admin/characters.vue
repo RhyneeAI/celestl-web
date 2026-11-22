@@ -8,14 +8,6 @@
           <span class="text-xs px-2.5 py-0.5 rounded-full font-mono font-bold bg-[#f768dd]/15 text-[#f768dd] border border-[#f768dd]/30">
             {{ charactersData?.total ?? 0 }} PARTNERS
           </span>
-          <span
-            v-if="charactersData?.dataSource === 'vps'"
-            class="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1"
-            title="Connected directly to live VPS database"
-          >
-            <span class="size-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>LIVE VPS</span>
-          </span>
         </h1>
         <p class="text-xs sm:text-[13px] text-[#9a99a8] mt-1">
           High-resolution partner portraits, skill mechanics, stat progression curves (Frag, Step, Overdrive), and live user equip assignments.
