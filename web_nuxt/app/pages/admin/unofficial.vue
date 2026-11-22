@@ -641,7 +641,7 @@
                 </h3>
               </div>
               <p class="text-xs text-[#9a99a8] mt-0.5">
-                {{ editingAffSong?.title_localized?.en }} · <span class="font-mono font-bold">{{ getDiffCode(selectedAffRc) }}</span>
+                {{ editingAffSong?.title }} · <span class="font-mono font-bold">{{ getDiffCode(selectedAffRc) }}</span>
               </p>
             </div>
             <button
