@@ -14,36 +14,19 @@
         </p>
       </div>
 
-      <!-- Live Sync & Tab Switcher -->
+      <!-- Action Controls & Tab Switcher -->
       <div class="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          @click="liveSyncEnabled = !liveSyncEnabled"
-          :title="liveSyncEnabled ? 'Auto-syncing from DB every 8s (click to pause)' : 'Auto-sync paused (click to resume)'"
-          :class="[
-            'px-3 py-2 rounded-2xl border text-[11px] font-mono font-bold transition-all cursor-pointer flex items-center gap-2 shadow-lg',
-            liveSyncEnabled
-              ? 'bg-[#1a1d32] border-[#34d399]/40 text-[#34d399]'
-              : 'bg-[#1a1d32] border-[#16133e] text-[#6f6e80] hover:text-white'
-          ]"
-        >
-          <span
-            :class="[
-              'w-2 h-2 rounded-full',
-              liveSyncEnabled ? (isSyncing ? 'bg-[#60a5fa] animate-ping' : 'bg-[#34d399] animate-pulse') : 'bg-[#6f6e80]'
-            ]"
-          />
-          <span>{{ liveSyncEnabled ? 'Live 8s' : 'Paused' }}</span>
-        </button>
-
         <button
           type="button"
           @click="syncAllNow"
           :disabled="isSyncing"
-          class="px-3 py-2 rounded-2xl bg-[#1a1d32] border border-[#16133e] hover:border-[#3f3c68] text-[11px] font-mono font-bold text-[#9a99a8] hover:text-white transition-all cursor-pointer disabled:opacity-50"
-          title="Refresh now"
+          class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#fffafa] border border-white/5 transition-colors cursor-pointer shadow-sm disabled:opacity-50"
+          title="Refresh presents and redeem codes"
         >
-          {{ isSyncing ? 'Syncing...' : 'Refresh' }}
+          <svg class="h-3.5 w-3.5" :class="{ 'animate-spin': isSyncing }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span>Refresh</span>
         </button>
 
         <div class="flex items-center rounded-2xl bg-[#1a1d32] p-1.5 border border-[#16133e] shadow-lg">
@@ -994,8 +977,7 @@ function viewClaims(rc: any) {
   viewingClaimsCode.value = rc;
 }
 
-// Live Sync (auto-polling every 8s when tab visible and no modal open)
-const liveSyncEnabled = ref(true);
+// Auto-polling when tab visible and no modal open
 const isSyncing = ref(false);
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -1012,7 +994,6 @@ async function syncAllNow() {
 onMounted(() => {
   pollTimer = setInterval(() => {
     if (
-      !liveSyncEnabled.value ||
       document.hidden ||
       showCreatePresentModal.value ||
       showCreateRedeemModal.value
@@ -1020,7 +1001,7 @@ onMounted(() => {
       return;
     }
     syncAllNow();
-  }, 8000);
+  }, 12000);
 });
 
 onUnmounted(() => {
