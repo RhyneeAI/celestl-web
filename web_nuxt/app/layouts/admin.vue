@@ -90,8 +90,23 @@
       </header>
 
       <!-- Page Content -->
-      <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-        <slot />
+      <main class="flex-1 p-4 sm:p-6 lg:p-8 pb-24 sm:pb-28 overflow-y-auto flex flex-col justify-between">
+        <div class="flex-1">
+          <slot />
+        </div>
+
+        <!-- Spare Footer: ensures floating 'Live VPS' indicator never obstructs pagination / bottom controls -->
+        <footer class="mt-12 pt-6 pb-2 border-t border-[#16133e]/40 text-xs text-[#6f6e80] flex flex-col sm:flex-row items-center justify-between gap-3 select-none">
+          <div class="flex items-center gap-2">
+            <span class="inline-block size-1.5 rounded-full bg-[#f768dd]/60"></span>
+            <span>Celestl Admin Portal</span>
+            <span class="text-[#3f3c68]">&bull;</span>
+            <span class="text-[11px] text-[#55536b]">Arcaea Private Server Management</span>
+          </div>
+          <div class="text-[11px] text-[#55536b] sm:pr-44">
+            <span>&copy; {{ new Date().getFullYear() }} Celestl</span>
+          </div>
+        </footer>
       </main>
     </div>
 
