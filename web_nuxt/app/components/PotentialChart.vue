@@ -4,16 +4,9 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <!-- Title & Current Potential Metric -->
       <div class="space-y-1">
-        <div class="flex items-center gap-2">
-          <span class="h-2 w-2 rounded-full bg-[#f768dd] shadow-[0_0_8px_#f768dd]"></span>
-          <span class="text-[10px] font-brand font-black uppercase tracking-widest text-[#9a99a8]">
-            Potential Growth · {{ playerName }}
-          </span>
-        </div>
         <div class="flex items-baseline gap-3">
           <span class="font-mono font-black text-2xl sm:text-3xl tracking-tight text-[#fffafa]">
             {{ currentDisplayPtt.toFixed(3) }}
-            <span class="text-xs font-brand font-bold text-[#f768dd] tracking-wider ml-0.5">PTT</span>
           </span>
 
           <!-- Delta Change Badge in Period -->
@@ -59,9 +52,6 @@
         <span>Period Min: <b class="text-[#fffafa]">{{ minRangePtt.toFixed(3) }}</b></span>
         <span class="text-[#3f3c68]">·</span>
         <span>Period Max: <b class="text-[#ffd76a]">{{ maxRangePtt.toFixed(3) }}</b></span>
-      </div>
-      <div>
-        <span class="text-[#9a99a8]">{{ plotPoints.length }} point(s) recorded</span>
       </div>
     </div>
 
@@ -277,7 +267,7 @@ const props = withDefaults(defineProps<{
   playerName: 'Player',
 });
 
-export type TimeFilterKey = '1d' | '3d' | '1w' | '1m' | '3m' | '1y';
+export type TimeFilterKey = '1d' | '1w' | '1m' | '3m' | '1y';
 
 interface TimeFilterOption {
   key: TimeFilterKey;
@@ -286,12 +276,11 @@ interface TimeFilterOption {
 }
 
 const timeFilters: TimeFilterOption[] = [
-  { key: '1d', label: '1 Hari', durationSeconds: 86400 },
-  { key: '3d', label: '3 Hari', durationSeconds: 3 * 86400 },
-  { key: '1w', label: '1 Minggu', durationSeconds: 7 * 86400 },
-  { key: '1m', label: '1 Bulan', durationSeconds: 30 * 86400 },
-  { key: '3m', label: '3 Bulan', durationSeconds: 90 * 86400 },
-  { key: '1y', label: '1 Tahun', durationSeconds: 365 * 86400 },
+  { key: '1d', label: '1d ', durationSeconds: 86400 },
+  { key: '1w', label: '1w', durationSeconds: 7 * 86400 },
+  { key: '1m', label: '1m', durationSeconds: 30 * 86400 },
+  { key: '3m', label: '3m', durationSeconds: 90 * 86400 },
+  { key: '1y', label: '1y', durationSeconds: 365 * 86400 },
 ];
 
 const activeFilter = ref<TimeFilterKey>('1m');
@@ -520,7 +509,7 @@ function formatXLabel(ts: number): string {
   if (key === '1d') {
     return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
   }
-  if (key === '3d' || key === '1w') {
+  if (key === '1w') {
     return `${d.getDate()} ${d.toLocaleString('en-US', { month: 'short' })}`;
   }
   if (key === '1m' || key === '3m') {
