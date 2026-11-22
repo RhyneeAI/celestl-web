@@ -129,6 +129,18 @@
           <option value="frag_desc">Sort: Highest Frag (Lv.20)</option>
           <option value="over_desc">Sort: Highest Overdrive (Lv.20)</option>
         </select>
+
+        <!-- Per-Page Select -->
+        <select
+          v-model.number="perPage"
+          class="rounded-xl bg-[#0c0c22] px-3 py-2 text-xs text-white border border-[#16133e] focus:border-[#f768dd] focus:outline-none cursor-pointer"
+          title="Partners per page"
+        >
+          <option :value="12">12 / page</option>
+          <option :value="24">24 / page</option>
+          <option :value="48">48 / page</option>
+          <option :value="104">All partners</option>
+        </select>
       </div>
     </div>
 
@@ -147,7 +159,7 @@
     <!-- Character Cards Grid -->
     <div v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
       <div
-        v-for="c in filteredCharacters"
+        v-for="c in paginatedCharacters"
         :key="c.characterId"
         class="rounded-3xl bg-[#151728]/95 border border-[#1f223f] shadow-2xl p-4 flex flex-col justify-between space-y-4 hover:border-[#f768dd]/50 hover:shadow-[0_8px_30px_rgba(247,104,221,0.12)] transition-all group"
       >
@@ -406,6 +418,69 @@
             </svg>
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div
+      v-if="totalPages > 1"
+      class="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl bg-[#1a1d32] px-5 py-3.5 border border-[#16133e] shadow-lg select-none"
+    >
+      <div class="text-xs text-[#9a99a8] font-mono flex items-center gap-1.5">
+        <span>Showing</span>
+        <span class="font-bold text-white">{{ (currentPage - 1) * perPage + 1 }}</span>
+        <span>–</span>
+        <span class="font-bold text-white">{{ Math.min(currentPage * perPage, filteredCharacters.length) }}</span>
+        <span>of</span>
+        <span class="font-bold text-[#f768dd]">{{ filteredCharacters.length }}</span>
+        <span>partners</span>
+        <span class="text-[#6f6e80] ml-1">(Page {{ currentPage }} of {{ totalPages }})</span>
+      </div>
+
+      <div class="flex items-center gap-1.5 flex-wrap justify-center">
+        <!-- Previous Page Button -->
+        <button
+          type="button"
+          :disabled="currentPage === 1"
+          @click="goToPage(currentPage - 1)"
+          class="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#0c0c22] hover:bg-[#16133e] text-xs font-bold text-[#fffafa] border border-[#16133e] disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-colors"
+          title="Previous page"
+        >
+          <span>‹</span>
+          <span>Prev</span>
+        </button>
+
+        <!-- Page Numbers with Ellipsis -->
+        <template v-for="(p, idx) in displayedPages" :key="idx">
+          <span v-if="p === 'ellipsis'" class="px-2 text-xs text-[#6f6e80] font-mono select-none">
+            …
+          </span>
+          <button
+            v-else
+            type="button"
+            @click="goToPage(p)"
+            :class="[
+              'min-w-8 h-8 px-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer border flex items-center justify-center',
+              currentPage === p
+                ? 'bg-[#f768dd] text-[#0c0c22] border-[#f768dd] shadow-[0_0_12px_rgba(247,104,221,0.35)] font-black scale-105'
+                : 'bg-[#0c0c22] text-[#9a99a8] hover:text-white border-[#16133e] hover:bg-[#16133e]'
+            ]"
+          >
+            {{ p }}
+          </button>
+        </template>
+
+        <!-- Next Page Button -->
+        <button
+          type="button"
+          :disabled="currentPage === totalPages"
+          @click="goToPage(currentPage + 1)"
+          class="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#0c0c22] hover:bg-[#16133e] text-xs font-bold text-[#fffafa] border border-[#16133e] disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-colors"
+          title="Next page"
+        >
+          <span>Next</span>
+          <span>›</span>
+        </button>
       </div>
     </div>
 
@@ -728,7 +803,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue';
+import { ref, computed, reactive, watch } from 'vue';
 import type { AdminCharacterItem } from '~~/server/api/admin/server/characters/index.get';
 
 definePageMeta({
@@ -874,6 +949,55 @@ const filteredCharacters = computed(() => {
 
   return list;
 });
+
+// Pagination State
+const currentPage = ref(1);
+const perPage = ref(12);
+
+watch([searchQuery, activeFilter, sortBy, perPage], () => {
+  currentPage.value = 1;
+});
+
+const totalPages = computed(() => {
+  if (perPage.value <= 0) return 1;
+  return Math.ceil(filteredCharacters.value.length / perPage.value) || 1;
+});
+
+const paginatedCharacters = computed(() => {
+  if (perPage.value <= 0) return filteredCharacters.value;
+  const start = (currentPage.value - 1) * perPage.value;
+  return filteredCharacters.value.slice(start, start + perPage.value);
+});
+
+const displayedPages = computed(() => {
+  const total = totalPages.value;
+  const current = currentPage.value;
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+  const pages: (number | 'ellipsis')[] = [1];
+  if (current > 3) {
+    pages.push('ellipsis');
+  }
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  if (current < total - 2) {
+    pages.push('ellipsis');
+  }
+  pages.push(total);
+  return pages;
+});
+
+function goToPage(page: number) {
+  if (page < 1 || page > totalPages.value) return;
+  currentPage.value = page;
+  if (typeof window !== 'undefined') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
 
 // Edit Modal State
 const editingCharacter = ref<AdminCharacterItem | null>(null);
