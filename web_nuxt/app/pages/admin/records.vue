@@ -33,13 +33,24 @@
         </NuxtLink>
       </div>
 
-      <!-- Scope: Player Selector Dropdown (Admin Switcher) -->
-      <div class="rounded-2xl bg-[#1a1d32] p-4 border border-[#16133e] shadow-xl space-y-2">
+      <!-- Scope: Active Player Profile & Search Combobox -->
+      <div class="rounded-2xl bg-[#1a1d32] p-4 border border-[#16133e] shadow-xl space-y-3">
+        <!-- Top header: Active Player summary & records count -->
         <div class="flex items-center justify-between text-xs font-brand font-bold uppercase tracking-wider text-[#9a99a8]">
-          <span>Active Player Profile</span>
+          <div class="flex items-center gap-2">
+            <span>Active Player:</span>
+            <span class="text-[#fffafa] font-black text-sm">{{ selectedPlayer?.name || 'Loading…' }}</span>
+            <span v-if="selectedPlayer" class="font-mono text-[11px] px-2 py-0.5 rounded-full bg-[#79287a]/40 text-[#f768dd] border border-[#f768dd]/30">
+              PTT {{ selectedPlayer.ratingPtt?.toFixed(2) }}
+            </span>
+            <span v-if="selectedPlayer?.userCode" class="font-mono text-[10px] text-[#6f6e80]">
+              #{{ selectedPlayer.userCode }}
+            </span>
+          </div>
           <span class="text-[#acff82] font-mono">{{ sortedScores.length }} record(s)</span>
         </div>
 
+        <!-- Controls: Avatar + Search Input + Actions -->
         <div class="flex items-center gap-3">
           <!-- Active Player Avatar Diamond -->
           <div class="h-11 w-11 rotate-45 overflow-hidden rounded-xl bg-gradient-to-tr from-[#79287a] to-[#03a8e6] p-0.5 shadow-md shrink-0 border border-white/20">
@@ -53,20 +64,92 @@
             </div>
           </div>
 
-          <!-- Select Input Dropdown -->
-          <select
-            v-model="activeUserId"
-            class="flex-1 rounded-xl bg-[#0c0c22] px-3 py-2 text-sm font-bold text-[#fffafa] border border-[#3f3c68]/50 focus:outline-none focus:ring-2 focus:ring-[#f768dd] transition font-brand cursor-pointer"
-          >
-            <option
-              v-for="p in players"
-              :key="p.userId"
-              :value="p.userId"
-              class="bg-[#1a1d32] text-white"
+          <!-- Search Player Combobox (No massive select option dump) -->
+          <div ref="searchContainerRef" class="relative flex-1">
+            <div class="relative">
+              <input
+                v-model="playerSearchQuery"
+                type="text"
+                placeholder="Search player name, code, or UID…"
+                class="w-full rounded-xl bg-[#0c0c22] pl-10 pr-9 py-2 text-sm font-medium text-[#fffafa] placeholder:text-[#6f6e80] border border-[#3f3c68]/50 focus:outline-none focus:ring-2 focus:ring-[#f768dd] transition font-brand"
+                @focus="onSearchFocus"
+                @input="onSearchInput"
+                @keydown.down.prevent="highlightNext"
+                @keydown.up.prevent="highlightPrev"
+                @keydown.enter.prevent="selectHighlighted"
+                @keydown.esc="isSearchOpen = false"
+              />
+              <!-- Search Icon -->
+              <svg class="absolute left-3 top-2.5 h-4 w-4 text-[#6f6e80]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <!-- Clear / Close button -->
+              <button
+                v-if="playerSearchQuery || isSearchOpen"
+                type="button"
+                @click="clearPlayerSearch"
+                class="absolute right-2.5 top-2.5 text-[#6f6e80] hover:text-[#fffafa] p-0.5 rounded-md transition cursor-pointer"
+                title="Clear Search"
+              >
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Autocomplete Dropdown Menu -->
+            <div
+              v-if="isSearchOpen"
+              class="absolute left-0 right-0 top-full mt-1.5 z-50 max-h-64 overflow-y-auto rounded-2xl bg-[#16133e]/95 backdrop-blur-md p-1.5 border border-[#3f3c68] shadow-2xl space-y-1"
             >
-              {{ p.name }}
-            </option>
-          </select>
+              <!-- Searching Indicator -->
+              <div v-if="isSearchingPlayers" class="p-3 text-center text-xs text-[#9a99a8] flex items-center justify-center gap-2">
+                <div class="h-3 w-3 animate-spin rounded-full border-2 border-[#f768dd] border-t-transparent"></div>
+                Searching players…
+              </div>
+
+              <!-- No Results -->
+              <div v-else-if="searchedPlayers.length === 0" class="p-3 text-center text-xs text-[#9a99a8]">
+                No players found matching "{{ playerSearchQuery }}"
+              </div>
+
+              <!-- Matching Players List -->
+              <button
+                v-for="(p, idx) in searchedPlayers"
+                :key="p.userId"
+                type="button"
+                @click="selectPlayer(p)"
+                :class="[
+                  'w-full flex items-center justify-between p-2 rounded-xl transition-colors cursor-pointer text-left group',
+                  highlightedIndex === idx ? 'bg-[#1e203a] ring-1 ring-[#f768dd]/50' : 'hover:bg-[#1a1d32]',
+                  p.userId === activeUserId ? 'bg-[#79287a]/30 border border-[#f768dd]/40' : ''
+                ]"
+              >
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="h-8 w-8 rounded-lg overflow-hidden bg-slate-900 shrink-0 border border-white/10">
+                    <img :src="p.characterAvatar" class="h-full w-full object-cover" @error="onAvatarError" />
+                  </div>
+                  <div class="min-w-0">
+                    <div class="text-xs font-bold text-[#fffafa] group-hover:text-[#f768dd] truncate transition">
+                      {{ p.name }}
+                    </div>
+                    <div class="text-[10px] text-[#6f6e80] font-mono">
+                      UID: {{ p.userId }} · Code: {{ p.userCode }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                  <span class="text-[10px] font-mono text-[#acff82] bg-[#acff82]/10 px-1.5 py-0.5 rounded border border-[#acff82]/20">
+                    {{ p.totalScores }} records
+                  </span>
+                  <span class="text-[11px] font-mono font-bold text-[#ffd76a]">
+                    {{ p.ratingPtt ? p.ratingPtt.toFixed(2) : '0.00' }}
+                  </span>
+                </div>
+              </button>
+            </div>
+          </div>
 
           <!-- Export Top 50 B50 Image Button -->
           <button
@@ -401,8 +484,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import type { PlayerProfile, PlayerScoreItem, PotentialHistoryPoint } from '~/types/leaderboard';
+import type { PlayerSearchResult } from '~~/server/api/admin/server/players/search.get';
 import LampBadge from '~/components/LampBadge.vue';
 import JudgmentDiamond from '~/components/JudgmentDiamond.vue';
 import Top50Modal from '~/components/Top50Modal.vue';
@@ -413,6 +497,7 @@ definePageMeta({
   middleware: 'admin',
 });
 
+const router = useRouter();
 const route = useRoute();
 const queryUser = route.query.user || route.query.userId;
 const activeUserId = ref<number | null>(queryUser ? Number(queryUser) : null);
@@ -420,6 +505,82 @@ const selectedDiff = ref<number | null>(null);
 const sortMode = ref<'rating' | 'date' | 'score'>('rating');
 const search = ref('');
 const showTop50Modal = ref(false);
+
+// Player Search States
+const playerSearchQuery = ref('');
+const isSearchOpen = ref(false);
+const isSearchingPlayers = ref(false);
+const searchedPlayers = ref<PlayerSearchResult[]>([]);
+const highlightedIndex = ref(-1);
+const searchContainerRef = ref<HTMLElement | null>(null);
+
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+async function performPlayerSearch(q = '') {
+  isSearchingPlayers.value = true;
+  try {
+    const res = await $fetch<{ success: boolean; players: PlayerSearchResult[] }>('/api/admin/server/players/search', {
+      query: { q: q.trim(), limit: 12 },
+    });
+    searchedPlayers.value = res.players || [];
+    highlightedIndex.value = -1;
+  } catch (err) {
+    console.error('Failed to search players:', err);
+    searchedPlayers.value = [];
+  } finally {
+    isSearchingPlayers.value = false;
+  }
+}
+
+function onSearchInput() {
+  isSearchOpen.value = true;
+  if (debounceTimer) clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    performPlayerSearch(playerSearchQuery.value);
+  }, 250);
+}
+
+function onSearchFocus() {
+  isSearchOpen.value = true;
+  if (searchedPlayers.value.length === 0) {
+    performPlayerSearch(playerSearchQuery.value);
+  }
+}
+
+function clearPlayerSearch() {
+  playerSearchQuery.value = '';
+  isSearchOpen.value = false;
+  searchedPlayers.value = [];
+  highlightedIndex.value = -1;
+}
+
+function selectPlayer(player: PlayerSearchResult | PlayerProfile) {
+  activeUserId.value = player.userId;
+  router.replace({ query: { ...route.query, userId: player.userId } });
+  clearPlayerSearch();
+}
+
+function highlightNext() {
+  if (!isSearchOpen.value || searchedPlayers.value.length === 0) return;
+  highlightedIndex.value = (highlightedIndex.value + 1) % searchedPlayers.value.length;
+}
+
+function highlightPrev() {
+  if (!isSearchOpen.value || searchedPlayers.value.length === 0) return;
+  highlightedIndex.value = (highlightedIndex.value - 1 + searchedPlayers.value.length) % searchedPlayers.value.length;
+}
+
+function selectHighlighted() {
+  if (highlightedIndex.value >= 0 && highlightedIndex.value < searchedPlayers.value.length) {
+    selectPlayer(searchedPlayers.value[highlightedIndex.value]!);
+  }
+}
+
+function handleClickOutside(event: MouseEvent) {
+  if (searchContainerRef.value && !searchContainerRef.value.contains(event.target as Node)) {
+    isSearchOpen.value = false;
+  }
+}
 
 // Expand / collapse state
 const expandedCards = ref<Record<string, boolean>>({});
@@ -471,7 +632,6 @@ const { data, pending } = await useFetch('/api/admin/server/player-scores', {
   })),
 });
 
-const players = computed<PlayerProfile[]>(() => data.value?.players || []);
 const selectedPlayer = computed(() => data.value?.selectedPlayer || null);
 const rawScores = computed<PlayerScoreItem[]>(() => (data.value?.scores as PlayerScoreItem[]) || []);
 const potentialHistory = computed<PotentialHistoryPoint[]>(() => {
@@ -479,16 +639,21 @@ const potentialHistory = computed<PotentialHistoryPoint[]>(() => {
 });
 
 // Auto set active user if none set
-watch(players, (list) => {
-  if (!activeUserId.value && list.length > 0) {
-    activeUserId.value = list[0]!.userId;
+watch(selectedPlayer, (sp) => {
+  if (!activeUserId.value && sp?.userId) {
+    activeUserId.value = sp.userId;
   }
 }, { immediate: true });
 
 onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
   if (route.query.export === 'b50') {
     showTop50Modal.value = true;
   }
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
 });
 
 const filteredScores = computed(() => {

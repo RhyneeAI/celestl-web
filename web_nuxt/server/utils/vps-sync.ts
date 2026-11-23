@@ -1082,6 +1082,61 @@ print(json.dumps({'success': True}))
     return Boolean(res?.success);
 }
 
+/**
+ * Search players on VPS live database by name, user code, or user_id.
+ */
+export async function searchPlayersFromVps(searchQuery: string, limit = 15): Promise<any[] | null> {
+    const pyScript = `
+payload = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+q = payload.get('q', '').strip()
+lim = int(payload.get('limit', 15))
+
+conn = sqlite3.connect('${VPS_DB_PATH}')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+
+if q:
+    sql = '''
+        SELECT 
+            u.user_id, 
+            u.name, 
+            u.user_code, 
+            u.rating_ptt, 
+            u.character_id,
+            COUNT(b.song_id) as total_scores
+        FROM user u
+        LEFT JOIN best_score b ON u.user_id = b.user_id
+        WHERE u.name LIKE ? OR u.user_code LIKE ? OR CAST(u.user_id AS TEXT) = ?
+        GROUP BY u.user_id
+        ORDER BY u.rating_ptt DESC
+        LIMIT ?
+    '''
+    pattern = f"%{q}%"
+    rows = c.execute(sql, (pattern, pattern, q, lim)).fetchall()
+else:
+    sql = '''
+        SELECT 
+            u.user_id, 
+            u.name, 
+            u.user_code, 
+            u.rating_ptt, 
+            u.character_id,
+            COUNT(b.song_id) as total_scores
+        FROM user u
+        LEFT JOIN best_score b ON u.user_id = b.user_id
+        GROUP BY u.user_id
+        ORDER BY u.rating_ptt DESC
+        LIMIT ?
+    '''
+    rows = c.execute(sql, (lim,)).fetchall()
+
+res = [dict(r) for r in rows]
+print(json.dumps(res))
+`;
+    return await queryVpsPython<any[]>(pyScript, { q: searchQuery, limit });
+}
+
+
 
 
 
