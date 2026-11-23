@@ -37,6 +37,16 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.7.7` — 2026-11-23
+- **Divine Oblivion (`konzetsu`) Pack Carousel Integration & Deinos EN Search Indexing**:
+  - Moved pack `konzetsu` (*Divine Oblivion*) from `"section": "mainstory2"` to `"section": "variety"` in `packlist` and `patch_arcaea.py`, placing it directly in the primary song carousel with its native pack banner `1080_select_konzetsu.png`.
+  - Added English search titles (`"DEINOS PHAINEIN"`, `"deinos phainein"`, `"deinosphainein"`, `"deinos"`, `"phainein"`) and artists to `deinosphainein` in `songlist`.
+- **Chart & Jacket Refinements (`finorza`, `dollmadness`, `blackswan`)**:
+  - **`finorza` (FTR)**: Updated `2.aff` timing events and audio offset (`AudioOffset:1250`), normalized zero BPMs to `0.01` (`celest-audit --fix`).
+  - **`dollmadness`**: Replaced jacket artwork with high-res 1080p source (`base.png`) and regenerated full 4-variant RGB JPEG set (`1080_base.jpg`, `base.jpg`, `1080_base_256.jpg`, `base_256.jpg`).
+  - **`blackswan`**: Updated `base.jpg` artwork and regenerated full 4-variant set.
+  - Bumped `date` timestamps (`1795413469`) for `finorza`, `blackswan`, and `dollmadness` in `songlist`.
+
 ### `v1.7.6` — 2026-11-20
 - **Batch 1–5 Extreme BPM Restoration & Non-Opening `groupalpha` → `hidegroup` Conversion (`70` Songs)**:
   - Restored **`17,467`** over-clamped `timing()` lines across `70` Batch 1–5 songs (including `merikurilostinthesnowstorm/2.aff`, `terabyteconnection/2.aff`, `tsunagite/2.aff`, `veil/2.aff`/`3.aff`, `arcaeamashup`, `artemibility`, `somioncernullset`, `lostrequiem`, `mixxion`, `xaleidoscopix`, `aegleseeker`, etc.) back to original BPMs within `[-16000000.00, 16000000.00]` while keeping segment-level Scudo OOM protection (`12` dense segments kept at `±10000.00`).
