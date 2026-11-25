@@ -44,9 +44,43 @@ export interface VpsSyncResult {
 }
 
 /**
+ * Fetch songlist JSON directly from live VPS celest-server (cached briefly).
+ */
+export async function fetchSonglistFromVps(): Promise<{ songs: any[] } | null> {
+    const cacheKey = 'vps:songlist';
+    const cached = getVpsCache<{ songs: any[] }>(cacheKey);
+    if (cached) return cached;
+
+    if (!fs.existsSync(VPS_PEM_KEY)) return null;
+
+    try {
+        const { stdout } = await execFileAsync('ssh', [
+            '-i', VPS_PEM_KEY,
+            '-o', 'BatchMode=yes',
+            '-o', 'StrictHostKeyChecking=no',
+            '-o', 'ConnectTimeout=5',
+            `${VPS_USER}@${VPS_HOST}`,
+            `cat "${VPS_SONGS_DIR}/songlist"`,
+        ], { maxBuffer: 15 * 1024 * 1024 });
+
+        if (stdout && stdout.trim()) {
+            const parsed = JSON.parse(stdout);
+            if (parsed && Array.isArray(parsed.songs)) {
+                setVpsCache(cacheKey, parsed, 15000);
+                return parsed;
+            }
+        }
+    } catch (err) {
+        console.warn('[VPS Fetch Warning] Could not fetch songlist from VPS:', err);
+    }
+    return null;
+}
+
+/**
  * Push local songlist JSON file to VPS celest-server container volume.
  */
 export async function syncSonglistToVps(localSonglistPath: string): Promise<VpsSyncResult> {
+    vpsCache.delete('vps:songlist');
     if (!fs.existsSync(VPS_PEM_KEY)) {
         return {
             success: true,
@@ -204,6 +238,7 @@ export async function saveChartAff(
             ]);
 
             // SCP updated songlist for hot-reload date
+            vpsCache.delete('vps:songlist');
             await execFileAsync('scp', [
                 '-i', VPS_PEM_KEY,
                 '-o', 'BatchMode=yes',

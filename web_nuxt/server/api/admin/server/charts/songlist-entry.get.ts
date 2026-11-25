@@ -1,6 +1,7 @@
 import { defineEventHandler, getQuery, createError } from 'h3';
 import fs from 'fs';
 import { getServerSonglistPath } from '../../../../utils/server-paths.ts';
+import { fetchSonglistFromVps } from '../../../../utils/vps-sync.ts';
 
 export default defineEventHandler(async (event) => {
     const query = getQuery(event);
@@ -13,16 +14,22 @@ export default defineEventHandler(async (event) => {
         });
     }
 
-    const songlistPath = getServerSonglistPath();
-    if (!songlistPath || !fs.existsSync(songlistPath)) {
-        throw createError({
-            statusCode: 500,
-            statusMessage: 'Server songlist not found',
-        });
-    }
-
     try {
-        const raw = JSON.parse(fs.readFileSync(songlistPath, 'utf-8'));
+        let raw: any = await fetchSonglistFromVps();
+        let source: 'vps' | 'local' = 'vps';
+        const songlistPath = getServerSonglistPath();
+
+        if (!raw) {
+            source = 'local';
+            if (!songlistPath || !fs.existsSync(songlistPath)) {
+                throw createError({
+                    statusCode: 500,
+                    statusMessage: 'Server songlist not found',
+                });
+            }
+            raw = JSON.parse(fs.readFileSync(songlistPath, 'utf-8'));
+        }
+
         const songs: any[] = raw.songs || [];
         const found = songs.find((s: any) => s.id === songId);
 
@@ -38,7 +45,8 @@ export default defineEventHandler(async (event) => {
             id: songId,
             entry: found,
             formatted: JSON.stringify(found, null, 2),
-            songlistPath,
+            source,
+            songlistPath: source === 'vps' ? '/home/sefeo-english/celest-server/database/songs/songlist' : songlistPath,
         };
     } catch (err: any) {
         if (err.statusCode) throw err;

@@ -120,13 +120,16 @@
             Change the search text or set filter.
           </div>
 
-          <!-- Song Items -->
-          <button
+          <!-- Song Items (use div[role="button"] to avoid invalid nested <button> inside <button> hydration mismatch) -->
+          <div
             v-for="song in filtered"
             :key="song.id"
-            type="button"
+            role="button"
+            tabindex="0"
             :aria-current="song.id === selectedId"
             @click="selectedId = song.id"
+            @keydown.enter.self="selectedId = song.id"
+            @keydown.space.prevent.self="selectedId = song.id"
             :class="[
               'flex w-full items-center gap-3 border-t border-[#0c0c22] px-4 py-2.5 text-left first:border-t-0 hover:bg-[#1e203a] transition-colors cursor-pointer group',
               song.id === selectedId ? 'bg-[#16133e] border-l-2 border-l-[#f768dd]' : ''
@@ -169,13 +172,13 @@
               <button
                 type="button"
                 @click.stop="openSonglistModal(song)"
-                class="size-6 rounded-lg bg-[#1e203a] hover:bg-[#ffd76a] text-[#ffd76a] hover:text-[#0c0c22] border border-white/5 flex items-center justify-center text-[10px] font-mono font-bold transition-all opacity-0 group-hover:opacity-100 shrink-0 ml-1"
+                class="size-6 rounded-lg bg-[#1e203a] hover:bg-[#ffd76a] text-[#ffd76a] hover:text-[#0c0c22] border border-white/5 flex items-center justify-center text-[10px] font-mono font-bold transition-all opacity-0 group-hover:opacity-100 shrink-0 ml-1 cursor-pointer"
                 title="Lihat potongan songlist JSON"
               >
                 { }
               </button>
             </div>
-          </button>
+          </div>
         </div>
       </section>
 

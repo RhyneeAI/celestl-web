@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { getServerSonglistPath } from '../../../utils/server-paths.ts';
+import { fetchSonglistFromVps } from '../../../utils/vps-sync.ts';
 
 export interface ServerDifficulty {
     ratingClass: number;
@@ -57,19 +58,25 @@ function getDiffCode(rc: number): string {
 }
 
 export default defineEventHandler(async () => {
-    // Read directly from ArcaeaServerFork/database/songs/songlist
-    const serverSonglistPath = getServerSonglistPath();
-    
-    if (!serverSonglistPath) {
-        return {
-            songs: [] as ServerSongItem[],
-            total: 0,
-            message: 'Server songlist not found'
-        };
+    // 1. Try reading live songlist from VPS first, then fallback to local ArcaeaServerFork/database/songs/songlist
+    let raw: any = await fetchSonglistFromVps();
+    let source: 'vps' | 'local' = 'vps';
+
+    if (!raw) {
+        source = 'local';
+        const serverSonglistPath = getServerSonglistPath();
+        if (!serverSonglistPath) {
+            return {
+                songs: [] as ServerSongItem[],
+                total: 0,
+                source: 'local',
+                message: 'Server songlist not found'
+            };
+        }
+        raw = JSON.parse(fs.readFileSync(serverSonglistPath, 'utf-8'));
     }
 
     try {
-        const raw = JSON.parse(fs.readFileSync(serverSonglistPath, 'utf-8'));
         const songs: ServerSongItem[] = (raw.songs || []).map((s: any) => {
             const difficulties: ServerDifficulty[] = (s.difficulties || []).map((d: any) => ({
                 ratingClass: d.ratingClass,
@@ -119,6 +126,7 @@ export default defineEventHandler(async () => {
 
         return {
             total: songs.length,
+            source,
             songs
         };
     } catch (e: any) {
