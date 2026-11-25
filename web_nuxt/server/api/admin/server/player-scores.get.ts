@@ -2,9 +2,10 @@ import { defineEventHandler, getQuery } from 'h3';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
 import fs from 'fs';
-import { getServerDbPath, getServerLogDbPath, getServerSonglistPath } from '../../../utils/server-paths.ts';
+import { getServerDbPath, getServerLogDbPath } from '../../../utils/server-paths.ts';
 import { playRating, grade, type Lamp } from '../../../../app/utils/arcaea-rating.ts';
 import { fetchPlayerScoresFromVps } from '../../../utils/vps-sync.ts';
+import { loadSongMetadataLookup } from '../../../utils/song-metadata.ts';
 
 function clearTypeToLamp(clearType: number): { lamp: Lamp; lampShort: string } {
     switch (clearType) {
@@ -93,30 +94,7 @@ export default defineEventHandler(async (event) => {
         ? Number(query.difficulty)
         : null;
 
-    const songlistPath = getServerSonglistPath();
-    const songConstants: Record<string, Record<number, number>> = {};
-    const songRatings: Record<string, Record<number, string>> = {};
-    const songTitles: Record<string, string> = {};
-    const songArtists: Record<string, string> = {};
-
-    if (songlistPath && fs.existsSync(songlistPath)) {
-        try {
-            const raw = JSON.parse(fs.readFileSync(songlistPath, 'utf-8'));
-            for (const s of raw.songs || []) {
-                songTitles[s.id] = s.title_localized?.en || s.id;
-                songArtists[s.id] = s.artist || 'Unknown Artist';
-                const diffMap: Record<number, number> = {};
-                songConstants[s.id] = diffMap;
-                const ratingMap: Record<number, string> = {};
-                songRatings[s.id] = ratingMap;
-                for (const d of s.difficulties || []) {
-                    diffMap[d.ratingClass] = d.constant || d.rating || 0;
-                    const rVal = d.rating !== undefined ? d.rating : Math.floor(d.constant || 0);
-                    ratingMap[d.ratingClass] = d.ratingPlus ? `${rVal}+` : `${rVal}`;
-                }
-            }
-        } catch { }
-    }
+    const { songTitles, songArtists, songConstants, songRatings } = await loadSongMetadataLookup();
 
     const currentYear = new Date().getFullYear();
 

@@ -1,10 +1,10 @@
 import { defineEventHandler, getQuery } from 'h3';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
-import fs from 'fs';
-import { getServerDbPath, getServerSonglistPath } from '../../../utils/server-paths.ts';
+import { getServerDbPath } from '../../../utils/server-paths.ts';
 import { playRating, grade, type Lamp } from '../../../../app/utils/arcaea-rating.ts';
 import { fetchLeaderboardFromVps } from '../../../utils/vps-sync.ts';
+import { loadSongMetadataLookup } from '../../../utils/song-metadata.ts';
 
 function clearTypeToLamp(clearType: number): Lamp {
     switch (clearType) {
@@ -40,23 +40,7 @@ export default defineEventHandler(async (event) => {
         ? Number(query.difficulty)
         : null;
 
-    const songlistPath = getServerSonglistPath();
-    const songConstants: Record<string, Record<number, number>> = {};
-    const songTitles: Record<string, string> = {};
-
-    if (songlistPath && fs.existsSync(songlistPath)) {
-        try {
-            const raw = JSON.parse(fs.readFileSync(songlistPath, 'utf-8'));
-            for (const s of raw.songs || []) {
-                songTitles[s.id] = s.title_localized?.en || s.id;
-                const diffMap: Record<number, number> = {};
-                songConstants[s.id] = diffMap;
-                for (const d of s.difficulties || []) {
-                    diffMap[d.ratingClass] = d.constant || d.rating || 0;
-                }
-            }
-        } catch { }
-    }
+    const { songTitles, songConstants } = await loadSongMetadataLookup();
 
     const processEntries = (users: any[], scores: any[]): LeaderboardEntry[] => {
         const userStats: Record<number, {

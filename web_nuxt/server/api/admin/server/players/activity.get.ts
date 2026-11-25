@@ -1,9 +1,9 @@
 import { defineEventHandler, getQuery, createError } from 'h3';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
-import fs from 'fs';
-import { getServerDbPath, getServerSonglistPath } from '../../../../utils/server-paths.ts';
+import { getServerDbPath } from '../../../../utils/server-paths.ts';
 import { fetchPlayerActivityFromVps } from '../../../../utils/vps-sync.ts';
+import { loadSongMetadataLookup } from '../../../../utils/song-metadata.ts';
 import { grade } from '../../../../../app/utils/arcaea-rating.ts';
 
 function difficultyCode(rc: number): string {
@@ -72,17 +72,7 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, statusMessage: 'Valid userId parameter required' });
     }
 
-    // Load song titles
-    const songlistPath = getServerSonglistPath();
-    const songTitles: Record<string, string> = {};
-    if (songlistPath && fs.existsSync(songlistPath)) {
-        try {
-            const raw = JSON.parse(fs.readFileSync(songlistPath, 'utf-8'));
-            for (const s of raw.songs || []) {
-                songTitles[s.id] = s.title_localized?.en || s.id;
-            }
-        } catch {}
-    }
+    const { songTitles } = await loadSongMetadataLookup();
 
     // 1. Try VPS first
     try {

@@ -1,9 +1,9 @@
 import { defineEventHandler } from 'h3';
 // @ts-ignore: better-sqlite3 uses export = Database CommonJS syntax
 import Database from 'better-sqlite3';
-import fs from 'fs';
-import { getServerDbPath, getServerSonglistPath } from '../../../../utils/server-paths.ts';
+import { getServerDbPath } from '../../../../utils/server-paths.ts';
 import { fetchAdminPlayersFromVps } from '../../../../utils/vps-sync.ts';
+import { loadSongMetadataLookup } from '../../../../utils/song-metadata.ts';
 import { grade } from '../../../../../app/utils/arcaea-rating.ts';
 
 export interface ClearStats {
@@ -163,17 +163,7 @@ function assignWorldRanks(players: AdminPlayerItem[]): void {
 }
 
 export default defineEventHandler(async () => {
-    // Resolve song titles from songlist.json
-    const songlistPath = getServerSonglistPath();
-    const songTitles: Record<string, string> = {};
-    if (songlistPath && fs.existsSync(songlistPath)) {
-        try {
-            const raw = JSON.parse(fs.readFileSync(songlistPath, 'utf-8'));
-            for (const s of raw.songs || []) {
-                songTitles[s.id] = s.title_localized?.en || s.id;
-            }
-        } catch {}
-    }
+    const { songTitles } = await loadSongMetadataLookup();
 
     // 1. Try fetching from VPS live database first (Option A)
     try {

@@ -76,6 +76,38 @@ export async function fetchSonglistFromVps(): Promise<{ songs: any[] } | null> {
     return null;
 }
 
+export interface VpsChartRow {
+    song_id: string;
+    name: string;
+    rating_pst: number;
+    rating_prs: number;
+    rating_ftr: number;
+    rating_byn: number;
+    rating_etr: number;
+}
+
+/**
+ * Fetch chart constants table directly from live VPS arcaea_database.db (cached briefly).
+ */
+export async function fetchChartsFromVps(): Promise<VpsChartRow[] | null> {
+    const cacheKey = 'vps:charts';
+    const cached = getVpsCache<VpsChartRow[]>(cacheKey);
+    if (cached) return cached;
+
+    const pyScript = `
+conn = sqlite3.connect('${VPS_DB_PATH}')
+conn.row_factory = sqlite3.Row
+rows = conn.execute('SELECT song_id, name, rating_pst, rating_prs, rating_ftr, rating_byn, rating_etr FROM chart').fetchall()
+print(json.dumps([dict(r) for r in rows]))
+`;
+    const res = await queryVpsPython<VpsChartRow[]>(pyScript);
+    if (res && Array.isArray(res)) {
+        setVpsCache(cacheKey, res, 30000);
+        return res;
+    }
+    return null;
+}
+
 /**
  * Push local songlist JSON file to VPS celest-server container volume.
  */
