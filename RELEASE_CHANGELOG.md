@@ -37,6 +37,13 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.7.9` — 2026-11-26
+- **Constant & Pricing Adjustments (`eltaw`, `blanoir`, `heavensrain`)**:
+  - **`eltaw` (FTR `2`)**: Updated constant from `10.3` → **`10.4`** (`rating: 10`, `ratingPlus: false`), synced `unlocks` credit (`104` Fragments) and `purchase` price (`104` Memories).
+  - **`blanoir` (FTR `2`)**: Updated constant from `10.6` → **`10.5`** (`rating: 10`, `ratingPlus: false`), synced `unlocks` credit (`105` Fragments) and `purchase` price (`105` Memories).
+  - **`heavensrain` (FTR `2`)**: Updated constant from `11.6` → **`11.7`** (`rating: 11`, `ratingPlus: false`), synced `unlocks` credit (`117` Fragments; `purchase` remains `1200` Memories based on ETR `12.0`).
+  - Synchronized `chart` table and recalculated user PTT on both local and live VPS databases.
+
 ### `v1.7.8` — 2026-11-26
 - **Mass Constant Rebalance & Chart Designer Formatting (`23` Songs)**:
   - Updated chart constants and `ratingPlus` flags across `vengeanceofthev` (FTR `11.6`), `secretillumination` (FTR `10.5`), `deicide` (FTR `10.9`), `retribution` (FTR `11.0`), `tvsshark` (FTR `10.8`), `deceiver` (FTR `10.8`), `blanoir` (FTR `10.6`), `1nception` (FTR `10.8`), `eltaw` (FTR `10.3`), `abyssgazer` (BYD `11.7` / `11`), `lyricalstrike` (ETR `10.6`), `dualdoom` (ETR `10.3`), `journeywithyou` (ETR `9.9`), `kakuriyo` (FTR `10.5`), `terabyteconnection` (FTR `11.6`), `anemonecrown` (FTR `11.1`), `c0pyf0x` (BYD `11.9`), `blinfmin` (BYD `11.8`), `i` (FTR `10.9`), and `amara` (ETR `11.7`).
