@@ -96,7 +96,7 @@ $$\text{Total Score} = \text{Base Score} + \text{Shiny Pure Bonus} \quad (\text{
 
 The integrity audit verifies 8 comprehensive suites before packaging or pushing updates:
 1. **Poin 1**: Songlist & Difficulty Completeness (Mandatory 0.aff, 1.aff, 2.aff base diffs).
-2. **Poin 2**: Mandatory Song Asset Structure (`base.ogg`, `preview.ogg`, 4 JPEG RGB jackets, valid `bg`).
+2. **Poin 2**: Mandatory Song Asset Structure (`base.ogg`, `preview.ogg`, 4 JPEG RGB jackets, valid `bg` + `bg_inverse`, `arccreate_*` substituted with vanilla native BGs — using `single_light`/`single_conflict` rather than `base_*` on custom songs, `.arcproj` `side` mapping `light=0` / `conflict=1` / `colorless=2`, dB audio loudness boost on high-rating/boss songs, and explicit user confirmation for `>= 11.0` charts missing custom BG/side).
 3. **Poin 3**: AffParser Supported Syntax & Extended Lanes (-3..6, decimal floats, negative BPM).
 4. **Poin 4**: AffParser Prohibited Elements (Zero BPM division-by-zero, extreme BPM Scudo OOM).
 5. **Poin 5**: Arc & Hold Minimum Duration Normalization (0ms Arcs & $\le$1ms Holds).

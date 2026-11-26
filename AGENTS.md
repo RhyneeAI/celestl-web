@@ -41,22 +41,26 @@ Before packaging the APK or pushing server updates, verify these 5 core requirem
 Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
 - Chart files: `0.aff`, `1.aff`, `2.aff` (and `3.aff`/`4.aff` if declared).
 - Audio:
-  - `base.ogg`: valid Vorbis audio, size > 4 KB, duration > 0s.
-  - `preview.ogg`: valid Vorbis audio, non-truncated (no EOF error), 15–25s duration.
+  - `base.ogg`: valid Vorbis audio, size > 4 KB, duration > 0s. For high-rating (`10+` / `11.0+`) or boss-vibe songs, boost/normalize audio loudness (dB) with peak limiting to avoid clipping.
+  - `preview.ogg`: valid Vorbis audio, non-truncated (no EOF error), 15–25s duration (matching boosted loudness if applied).
   - `{rc}_preview.ogg`: if difficulty has `"audioOverride": true`.
 - Jackets: 4 JPEG RGB files (never PNG or RGBA):
   - `base.jpg` (512×512)
   - `base_256.jpg` (256×256)
   - `1080_base.jpg` (768×768)
   - `1080_base_256.jpg` (384×384)
-- Backgrounds:
+- Backgrounds & `side` Mapping:
   - `bg` is **MANDATORY** in [songlist](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/database/songs/songlist).
-  - `bg_inverse` is optional (used for light/conflict inversion).
+  - `bg_inverse` is paired automatically for `_light` / `_conflict` sets.
+  - **`arccreate_*` Native Substitution**: Any non-custom background named `arccreate_*` (or generic template copy) that has an equivalent in the original vanilla APK (`assets/img/bg/`) MUST be replaced with the native vanilla BG name (e.g. `single_light`/`single_conflict` for `arccreate_base_*` — never `base_light`/`base_conflict` on fanmade songs; `chuni-worldvanquisher`, `chunithmnew_light`/`chunithmnew_conflict`, `lanota-light`/`lanota-conflict`, `nijuusei2_conflict`, etc.).
+  - **`.arcproj` `side` Mapping**: Map `skin.side` directly as `light` → `0`, `conflict` → `1`, `colorless` → `2` (and `lephon` → `3` / `4`).
+  - **Mandatory Prompt for Rating `>= 11.0` Without Custom BG/Side**: For any imported chart with `rating >= 11` (`constant >= 11.0`) that lacks a custom background or explicit custom `side`, ask the user first before assigning defaults.
   - Quality Standard: Custom backgrounds must be $\ge 1080$p ($1920\times 1440$ or $1920\times 1080$) and file size $\ge 100\text{ KB}$ (images $< 100\text{ KB}$ are low-res 720p and auto-enhanced with Lanczos 95).
   - Background names must exist in vanilla APK (`assets/img/bg/`) or as custom files in the song folder. Watch for known typos:
     - Use `lanota-light` and `lanota-conflict` (hyphens, not underscores).
     - Use `chunithmnew_light` and `chunithmnew_conflict` (no underscore after chunithm).
-    - Use `base_conflict` (not `conflict`).
+    - Use `chuni-worldvanquisher` (hyphen, not underscore).
+    - Use `single_conflict` / `single_light` for custom fanmade songs (reserve `base_conflict` / `base_light` for official base songs).
     - Use `base_light` (not `pentiment_light`).
 - Custom `.wav` sounds: Any audio trigger referenced in the chart (`sound_wav` or `arc(...,name_wav)`) must have `name.wav` in the song folder.
 
@@ -163,7 +167,7 @@ celest-audit --bg
 
 # 6. Rebuild patched APK (Pre-build integrity hook will automatically run; bump version on songs/metadata/lib changes)
 cd /home/luhung/Documents/project/Celestl
-/home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.7.9_release.apk
+/home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.8.1_release.apk
 
 # 7. Connect ADB to Waydroid and install patched APK
 celest-apk-update

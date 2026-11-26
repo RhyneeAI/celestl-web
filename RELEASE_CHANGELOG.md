@@ -37,6 +37,23 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.8.1` — 2026-11-27
+- **`synthesis_ext` (`Synthesis.`) Expansion to FTR + BYD (`audioOverride`) & Exclusive Blender Background**:
+  - Restored `2.aff` as **FTR `10` (`10.5`, `S2erp5ent`)** paired with **`basecut.ogg`** (`164.02s`, boosted/limited cleanly) and `preview.ogg` (`49333..60000 ms`).
+  - Migrated `5.aff` (`11.0`, `<color=#DDDDFF>S2erp5ent`) from ETR `4.aff` to **BYD `3.aff`** with native **`audioOverride: true`**, full-length **`3.ogg`** (`236.02s`, boosted/limited cleanly), and `3_preview.ogg` (`174667..185333 ms`), removing `4.aff`.
+  - Converted `arccreate-blender_rei_conflict.png` (`2290×1720`) to `1920×1440` RGB JPEG **`synthesis_ext.jpg`** with **`bg_inverse: "rei"`** (`side: 1`).
+  - Synchronized `unlocks` (`ratingClass: 2` credit `105`, stripped `4` and prohibited `3`), SQLite `chart` (`rating_ftr: 105`, `rating_byn: 110`, `rating_etr: -10`), and `SongFileCache`. All 8 integrity suites passed.
+
+### `v1.8.0` — 2026-11-27
+- **Batch 7 (`1batch7`) + Official Chart Pack Expansion (`407` Songs / `1,363` Charts)**:
+  - Imported `211` new songs across `single` (`+184`) and `kurumi` (`+27` unique charts -> `38` songs total, `3,800` Memories pack price) via `execute_import_batch7.py`, plus merged official packages (`halcyon` + MRM REMIX BYD `11.4`, `trrricksters` + ETR `10.7`, `vector` + BYD `10.3`) and `synthesis_ext` (`Synthesis.` ETR `11.0`).
+  - Merged `12` server collision charts (`anemonecrown`, `millionpp`, `blinfmin`, `bloody`, `lyrith`, `tsunagite`, `blanoir`, `miu3`, `amara`, `eltaw`, `i`, `ravenemperor`) and `16` internal multi-charter songs (`anu`, `cryptarithm`, `disorder`, `energytrixxx`, `exitium`, `fft`, `malkuth`, `marenol`, `mukurojunohakamori`, `parvorbital`, `rtx20000`, `satellite`, `sense`, `shukuseishinpan`, `solips`, `soundchimera`) with FFT waveform `AudioOffset` alignment and native BYD (`3.aff`/`3.ogg`) `audioOverride` support.
+  - Applied special chart fixes: `flugel` BPM x2 scaling (`120 -> 240`, `60 -> 120`, `90 -> 180`), `ka` `-1.aff` removal + `single_glitch.jpg` 1080p background, `lagtrain` Player 1/2 split (`2.aff`/`3.aff`), `midvinter` BYD `12.8` & ETR `9.7`, `symphonyofthenight` (`3.ogg`/`3.jpg` BYD), `aragami` BYD `11.5`, `oniichanhitech` BYD `9.3`, `nyarlathotepsdreamland` FTR `11.3`, and updated `fix_charts.py` to preserve native arc colors `0..3` (`>= 4` -> `2` green).
+- **Audio Gain, Previews, HD Jackets & SDVX Backgrounds**:
+  - Detected and sliced `20s` drop/chorus `preview.ogg` windows for `55+` short/missing-preview songs and official merges; applied anti-clipping `alimiter` loudness boost to `24` quiet high-rating (`>= 10.7`) / boss tracks.
+  - Replaced `terabyteconnection` WEBP jacket with 4x center-cropped JPEG RGB variants, installed uncropped `satellite` HD cover, white-padded `oiiaoiia`, fetched/upscaled HD covers and `1920x1440` custom backgrounds (named after `song_id`), and bundled `sdvx_conflict.jpg` (`triplesix`, `zenith`, `reetenshi`, `lachrymare`, `kaitan`) via `extra_bgs`.
+  - Synchronized `unlocks` (`1,281` entries, zero `ratingClass: 3`), SQLite `chart`/`item`/`purchase`/`purchase_item`, and `SongFileCache`. All 8 integrity suites (`celest-audit --fix` & `--check`) passed cleanly.
+
 ### `v1.7.9` — 2026-11-26
 - **Constant & Pricing Adjustments (`eltaw`, `blanoir`, `heavensrain`)**:
   - **`eltaw` (FTR `2`)**: Updated constant from `10.3` → **`10.4`** (`rating: 10`, `ratingPlus: false`), synced `unlocks` credit (`104` Fragments) and `purchase` price (`104` Memories).
