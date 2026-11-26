@@ -37,6 +37,19 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.8.2` — 2026-11-27
+- **Difficulty Tier Migrations (`midvinter` & `parvorbital`)**:
+  - Migrated `midvinter` (`4.aff`, `9.7` `9+` by `Adro`) from Eternal (`4`) to Future (`2.aff`) while preserving Beyond (`3.aff`, `12.8`).
+  - Migrated `parvorbital` (`4.aff`, `10.7` `10+` by `Foahh`) from Eternal (`4`) to Future (`2.aff`) while preserving Beyond (`3.aff`, `11.5` by `MitakeCocoa`).
+  - Updated `songlist`, `unlocks` (`ratingClass: 2` credits `97` / `107`), `arcaea_database.db` (`chart`), and `execute_import_batch7.py`.
+- **`eligos` Audio Clarity & Loudness Remaster**:
+  - Re-mastered `eligos/base.ogg` from original `lam.eligos.arcpkg` with subtle mud trim (`150 Hz` `-1.5 dB`), presence clarity boost (`2.2 kHz` `+1.8 dB`, `5.5 kHz` high-shelf `+3.0 dB`), `+3.5 dB` gain, and anti-clipping limiter (`0.93`), raising overall loudness from `-12.1 dB` (`-9.0 LUFS`) → **`-10.0 dB` (`-6.6 LUFS`)**, and re-sliced `eligos/preview.ogg`.
+- **`reblossia` & `konzetsu` Metadata Updates**:
+  - Updated `reblossia` to **`side: 1`** (Conflict) and **`track: "dark_vs"`**.
+  - Moved `konzetsu` (*Divine Oblivion*) pack `"section"` from `"variety"` to **`"mainstory"`** in `packlist` and `patch_arcaea.py`.
+- **`outerheaven` Per-Difficulty `jacketOverride` (`0.jpg`, `1.jpg`, `2.jpg`)**:
+  - Generated 4-resolution RGB JPEGs (`*.jpg`, `*_256.jpg`, `1080_*.jpg`, `1080_*_256.jpg`) for `0` (`OUTERHEAVEN_ADV.jpg`), `1` (`OUTERHEAVEN_EXH.jpg`), and `2` / `base` (`base.jpg`), enabled `"jacketOverride": true` across difficulties `0, 1, 2`, and expanded `patch_arcaea.py` `allowed_jackets` to bundle `0*/1*/2*.jpg` into `dl_outerheaven/`.
+
 ### `v1.8.1` — 2026-11-27
 - **`synthesis_ext` (`Synthesis.`) Expansion to FTR + BYD (`audioOverride`) & Exclusive Blender Background**:
   - Restored `2.aff` as **FTR `10` (`10.5`, `S2erp5ent`)** paired with **`basecut.ogg`** (`164.02s`, boosted/limited cleanly) and `preview.ogg` (`49333..60000 ms`).
