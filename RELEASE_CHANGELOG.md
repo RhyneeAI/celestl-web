@@ -37,6 +37,21 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.7.8` — 2026-11-26
+- **Mass Constant Rebalance & Chart Designer Formatting (`23` Songs)**:
+  - Updated chart constants and `ratingPlus` flags across `vengeanceofthev` (FTR `11.6`), `secretillumination` (FTR `10.5`), `deicide` (FTR `10.9`), `retribution` (FTR `11.0`), `tvsshark` (FTR `10.8`), `deceiver` (FTR `10.8`), `blanoir` (FTR `10.6`), `1nception` (FTR `10.8`), `eltaw` (FTR `10.3`), `abyssgazer` (BYD `11.7` / `11`), `lyricalstrike` (ETR `10.6`), `dualdoom` (ETR `10.3`), `journeywithyou` (ETR `9.9`), `kakuriyo` (FTR `10.5`), `terabyteconnection` (FTR `11.6`), `anemonecrown` (FTR `11.1`), `c0pyf0x` (BYD `11.9`), `blinfmin` (BYD `11.8`), `i` (FTR `10.9`), and `amara` (ETR `11.7`).
+  - Formatted `ki` (Inori) `chartDesigner` with a clean newline split (`Tefrish vs Telamation vs\nTracol vs Terfish vs Roatamax`).
+- **Difficulty Migrations & Chart Bugfixes (`amara`, `mopemope`, `angelhalo`, `terabyteconnection`)**:
+  - **`amara`**: Migrated FTR (`2.aff`) to ETR (`4.aff`, `11.7`) with dummy placeholder `2.aff`, preserving `unlocks` conditions (`ratingClass: 4`, `type: 5, rating: 1100`, `credit: 117`).
+  - **`mopemope`**: Migrated FTR `9+` (`2.aff`) to BYD `10` (`3.aff`, `10.0`), replaced `2.aff` with placeholder, removed `ratingClass: 3` from `unlocks`, and added `camera(99951,0.00,0.00,0.00,0.00,0.00,0.00,reset,1);` to restore normal camera view after the `t=99950` shake sequence.
+  - **`angelhalo`**: Switched to Conflict (`side: 1`, `bg: "wacca_boss"`), kept chart in ETR (`4.aff`), removed incompatible `audioOverride` (`4.ogg` unsupported natively by `libcocos2dcpp.so`), and synced `4.aff` to `AudioOffset:-865` matching `base.ogg` waveform alignment (`-864.69 ms`).
+  - **`terabyteconnection`**: Switched to Lephon Dark (`side: 4`) with `anima_conflict` / `anima_light`, and removed 11 stray post-audio main-group trace arcs (`t=204964..205681 ms`) past the `168,010 ms` song duration so the chart ends properly with the music.
+- **Background Inversion & Brightness Refinements**:
+  - Darkened upper diamond glare on custom backgrounds `noxsilva.jpg` (obsidian v1), `frozenette.jpg`, and `freedomdive.jpg`, and softly dimmed `blinfmin.jpg` & `straysoularound.jpg`.
+  - Replaced `eltaw` `base_conflict`/`base_light` with `single_conflict`/`single_light`, set `sigma` to `single2_light`/`single2_conflict`, and completed missing `bg_inverse` pairs + `side` alignment across `maholova`, `luminositydyw`, `arscantate`, `deceiver`, `masqueraderhapsodyrequest`, `vorpalize`, `phony`, `triplesix`, `blooddrunkern4giremix`, and `cirnomede`.
+- **Full Memories & Fragment Pricing Synchronization**:
+  - Synchronized all `623` `unlocks` fragment prices (`round(constant * 10)`) and all `purchase` Memories prices across both local and live VPS databases without modifying existing player unlocks.
+
 ### `v1.7.7` — 2026-11-23
 - **Divine Oblivion (`konzetsu`) Pack Carousel Integration & Deinos EN Search Indexing**:
   - Moved pack `konzetsu` (*Divine Oblivion*) from `"section": "mainstory2"` to `"section": "variety"` in `packlist` and `patch_arcaea.py`, placing it directly in the primary song carousel with its native pack banner `1080_select_konzetsu.png`.
