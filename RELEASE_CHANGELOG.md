@@ -37,6 +37,16 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.10.0` — 2026-11-28
+- **Batch 9 Import (`1chart9`), New Packs (`milthm`, `rizline`), & Pack Banner Enhancements (`496` Songs / `24` Packs)**:
+  - Added collaboration packs **`milthm`** (*Milthm*, `3` songs: `rei` `11.9` BYD, `sakutorei` *Sakuyahime* `12.8` BYD, `hypermemories` `11.3` ETR) and **`rizline`** (*Rizline*, `braveroad` moved from `kurumi` + new ETR `11.2` via `audioOverride` + `jacketOverride`).
+  - Overwrote enhanced pack banners for `sdvx`, `orzmic`, and `vstasis`, and bundled new `milthm` and `rizline` banners (`select_*.png` & `1080_select_*.png`) in `patch_arcaea.py`.
+  - Expanded **`vstasis`** (`1` → `6` songs): imported `supernova` (`12.3` BYD), `unravelingstasis` (`11.6` FTR, exclusive BG `vividstasis_yuri`), merged `thrinospygmalion` (`10.6` FTR + `11.6` BYD, custom BG `vivid_thrinos`, `track: "arcana"`), `heptagramme` (`10.6` FTR, custom BG `heptagramme`, `track: "rei"`), and `evenattheend` (`9.9` FTR, BG `vivid_light`, `+8.2 dB` audio normalization).
+  - Expanded **`phigros`** (`18` → `19`): blended `spasmodic` (`10.8` FTR + migrated `spasmodichaocoremix` `10.5` to BYD `3.aff` with `audioOverride`/`jacketOverride`/`title_localized`) and imported `bangingstrike` (`11.6` FTR, `single2_conflict`/`single2_light`).
+  - Expanded **`rotaeno`** (`14` → `15`: `triadofdryad` `10.3`) and **`virtualsingers`** (`19` → `21`: `tetorisu` `10.3`, `gimme` `10.1` with corrected artist `八王子P × Giga feat. 初音ミク & 鏡音リン`).
+  - Expanded **`single`** & updated multi-diff entries: imported `metamorphose` (`10.7` ETR from clean `(1)` archive), `chariot` (`10.0` BYD, custom BG `chariot` from `chariot.webp`, `track: "tempestissimo"`), `odysseia` (`10.6` BYD), `unmeiron` (`11.7` BYD, `side: 4`, `konzetsu-a`/`konzetsu-b`, `track: "dark_vs"`), `lingeringsouls` (`12.5` BYD using `3.aff` `100.00` BPM, `eclipse_conflict`/`eclipse_light`), `nameofoath` (`10.4` FTR), `abyssalduality` (`11.7` Inscribed BYD `ratingClassAlias: 1` `legacy11: true`, `side: 3`, `track: "pentiment"`), `hydra` (`10.6` FTR, `cytus_conflict`/`cytus_light`); blended `altersist` (`176s` Cut Ver. `10.4` FTR + `462s` Album Ver. `10.7` BYD via `audioOverride`); updated `ultimateforce` (existing `Adr` `11.8` moved to ETR `4.aff`, `Rended-Ash` `11.6` installed at FTR `2.aff`).
+  - Fixed all `.aff` ArcCreate extensions (`thrinospygmalion` `174M` BPM clamp, `angley` × 10 `0.1°`, `0ms+AT` extensions across `thrinos`/`heptagramme`/`hypermemories`, stripped `.lua`/`.sc.json`/non-native SC, Swin2SR x2/x4 jackets & BGs, normalized loudnesses, and generated 15–25s `preview.ogg` for all songs), passed `celest-audit --fix`, synced SQLite (`chart`, `purchase`, `purchase_item`, `item`), rebuilt `arcelest_1.10.0_release.apk`, and deployed to VPS.
+
 ### `v1.9.6` — 2026-11-28
 - **New Collaboration Packs (`sdvx`, `orzmic`, `vstasis`) & `hate` → `phigros` Reorganization (`475` Songs / `22` Packs)**:
   - Registered `sdvx` (*SOUND VOLTEX*, `25` songs), `orzmic` (*Orzmic*, `4` songs), and `vstasis` (*vivid/stasis*, `1` initial original `surtrswish` pending `1chart9` expansion in `v1.10`) in `database/songs/packlist` (`"section": "collab"`), `core/download.py` (`DYNAMIC_PRICE_PACKS`), and `tools/update_purchase_prices.py` (`cnt × 100` Memories).
