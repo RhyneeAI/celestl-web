@@ -37,6 +37,44 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.9.5` (Hotfix Server) — 2026-11-28
+- **Somniomancer Full Chart Restoration (Server OTA / `remote_dl` Hotfix — No APK Rebuild Required)**:
+  - Restored `somioncernullset` (`2.aff` and `3.aff`, all `50` timinggroups / `10,078` lines) directly from its original [SomniomancerNullSet/3.aff](file:///home/luhung/Documents/Chart/somioncernullset/SomniomancerNullSet/3.aff) source via `fix_charts.py --songs somioncernullset`, preserving all ending visual animations & beatline timings, and bumped `"date"` + synced `SongFileCache` on VPS so `remote_dl` clients re-download the updated `.aff` directly from server.
+
+### `v1.9.5` — 2026-11-28
+- **Updated Level 12 `ratingPlus` Rule (`12.7` → `12+`)**:
+  - Updated repository `ratingPlus` rule across `AGENTS.md`, `ArcaeaServerFork/AGENTS.md`, `CHART_FIX_DOCUMENTATION.md`, and `execute_import_batch6.py`: Lv. 11 keeps `.8+` for `+`, while Lv. 12+ (`rating >= 12`) uses `.7+` (`12.7` → `12+`, `12.6` → `12`).
+- **Chart Constant, Track, Background, BPM & Performance Adjustments**:
+  - `calamitytempest`: Lowered FTR (`2.aff`) constant from `12.6` to **`12.4`** (`12`, `unlocks` credit `124`, purchase `1240`).
+  - `vvelcome`: Lowered BYD (`3.aff`) constant from `12.8` to **`12.7`** (`12+`, `ratingPlus: true`, purchase `1270`).
+  - `midvinter`: Lowered BYD (`3.aff`) constant from `12.4` to **`12.3`** (`12`, purchase `1230`).
+  - `exitium`: Raised FTR (`2.aff`) constant from `11.0` to **`11.1`** (`11`, `unlocks` credit `111`), and switched `bg` from `single_conflict`/`single_light` to **`wacca_boss`**.
+  - `entrancetothechaos`: Lowered ETR (`4.aff`) constant from `11.5` to **`11.4`** (`11`, `unlocks` credit `114`, purchase `114`).
+  - `bayonex`: Lowered BYD (`3.aff`) constant from `12.5` (`12`) to **`11.6`** (**`11`**, `ratingPlus: false`, purchase `116`), and set `track` → **`"tempestissimo"`**.
+  - `melodiniq`: Lowered BYD (`3.aff`) constant from `11.9` to **`11.8`** (`11+`, purchase `118`).
+  - `apocalypseray`: Lowered BYD (`3.aff`) constant from `11.8` (`11+`) to **`11.7`** (**`11`**, `ratingPlus: false`, purchase `117`), and set `track` → **`"pentiment"`**.
+  - `hate`: Raised BYD (`3.aff`) constant from `11.9` (`11+`) to **`12.0`** (**`12`**, `ratingPlus: false`, purchase `1200`), and set `track` → **`"tempestissimo"`**.
+  - `rtx20000`: Updated `"bpm_base"` from `156.25` to **`312.5`**, and upscaled all `21` `timing(..., 156.25, ...)` entries in FTR (`2.aff`) to **`312.50`**.
+  - `somioncernullset`: Reduced ending render overhead in `3.aff` (and synced `2.aff`, `10,076` → `5,741` lines) by removing permanently hidden decorative groups (`TG#45` `867` traces, `TG#49` `36` traces) and simplifying `TG#46` from `3,534` stacked Bezier `b` traces across 16 cycles down to a single linear `s` frame (`226` traces).
+
+### `v1.9.4` — 2026-11-28
+- **ARM64 Patch 45 — Global Unlock for `ArcTap` Angles (`anglex`/`angley`) & `0ms color=3` Trace Blocks**:
+  - Unlocked `[LogicChart + 0x110]` guards in `libcocos2dcpp.so` at `0x0862E90` (`ArcTap` `anglex`/`angley`), `0x0863008` (`0ms` `color == 3` horizontal trace bar conversion), and `0x0863098` (`0ms` `color == 3` trace `anglex`/`angley` rotation) by patching their `cbz` instructions to `NOP` (`1f2003d5`) without enabling global random arc color shuffling (`0x861A18`), restoring missing AF gimmicks on `hivemindrmx`, `mismal`, and fanmade angled charts.
+- **Native `0.1°` `anglex`/`angley` Scale Fix (`× 10`) & Non-Destructive Official Chart Restoration**:
+  - Fixed [fix_charts.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/fix_charts.py) (`normalize_timinggroup_header`) after verifying `LogicChart::loadChart` (`0x862e94..0x862ebc`, `0x86309c..0x8630c4`) divides `anglex`/`angley` integers by `10.0`: ArcCreate float degrees (`anglex=180.00`, `angley=-2.50`, `angley=-0.10`, `angley=-357.50`) now scale `× 10` to native `0.1°` integers (`anglex1800`, `angley-25`, `angley-1`, `angley-3575`).
+  - Fixed `finalize_group_events` so duplicate-timestamp `timing()` beatline resets (`hivemindrmx`, `overdead`) are never deleted and missing `timing(0,...)` entries are never injected into non-root `timinggroup`s (`mismal` `TG#53`–`#54`).
+  - Added `preserve_official_arccreate_aff()` (`fix_charts.py --official`) to re-import all `9` official April Fools charts (`hivemindrmx`, `ifirmx`, `ignotusafterburn`, `lfdyrmx`, `mismal`, `overdead`, `redandblueandgreen`, `singularityvvvip`, `unknownrmx`) and `deinosphainein` (`0.aff`–`3.aff`) verbatim with only native `timinggroup(...)` header adaptation, restoring `45` custom `.wav` triggers in `ifirmx/2.aff` and `unknownfx_wav` in `unknownrmx/2.aff`.
+  - Restored full `× 10`-scaled `anglex`/`angley` timinggroups from source charts for `finalphasedelayedit`, `heir`, `walpurugisnachT`, `pasyattocheese`, and `thecoloroftaintedsorrow`.
+- **Official Original Chart `celest-audit` Exemption (`OFFICIAL_CHART_DIFFS`)**:
+  - Updated [tests/context.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tests/context.py), [test_03_aff_syntax.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tests/test_03_aff_syntax.py), [test_04_prohibited_elements.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tests/test_04_prohibited_elements.py), [test_05_arc_hold_normalization.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tests/test_05_arc_hold_normalization.py), `AGENTS.md`, `CLAUDE.md`, and `CHART_FIX_DOCUMENTATION.md` to exempt official original charts (`is_official_chart()`) from mutative `.aff` normalization/audits.
+
+### `v1.9.3` — 2026-11-27
+- **Native Custom Sky Note Width (`arctap(t, width)`) Support (ARM64 Patch 44)**:
+  - Restored upsized/downsized Sky Note gimmicks by patching `libcocos2dcpp.so` (`0x780CD0..0x780EB4` cave + `parseArc` `0x10F5C50`/`0x10F612C`/`0x10F62F8`/`0x10F6398`/`0x10F6678`, `~ArcEvent` `0x0DB7B9C`/`0x15D61E4`, and `LogicChart::loadChart` `0x0862E70`) to parse optional float width arguments in `arctap(t, width)` and scale `LogicArcTapNote + 0xB0` dynamically during gameplay.
+- **Full Chart Gimmick Restoration (11-Arg Arc Smoothness, `arctap(t, width)`, and Native `0.00` BPM Stops)**:
+  - Fixed [fix_charts.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/fix_charts.py) (alongside [test_03_aff_syntax.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tests/test_03_aff_syntax.py), [test_04_prohibited_elements.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tests/test_04_prohibited_elements.py), and [test_05_arc_hold_normalization.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tests/test_05_arc_hold_normalization.py)) to preserve `arctap(t, width)`, preserve native 11th `arc(..., smoothness)` float arguments without corrupting `is_trace`, and retain native `bpm == 0.00` stop gimmicks for `t > 0` (clamping zero BPM strictly at `t <= 0`).
+  - Re-sanitized from raw sources all `9` April Fools (`1official/AF`) charts, all `7` affected Batch 6/8 `arctap(t, width)` charts (`chuten`, `hiasobi`, `somioncernullset`, `heir`, `finalphasedelayedit`, `nightparadeofonehundreddemons`, `prey`), and all `9` extra `11-arg` arc smoothness charts (`tokonagi`, `deinosphainein`, `hakujitsumukirisame`, `moodswing`, `chronosvisionia`, `fightagainstthepast`, `reverseclock`, `soraviii`, `usousodoki`), plus restored `0.01 -> 0.00` BPM stops from original sources/git across `176+` songs (`topia/3.aff` included) and bumped `"date"` in `songlist` for automatic `remote_dl` refresh.
+
 ### `v1.9.2` — 2026-11-27
 - **April Fools Official Special Import (`1official/AF` → `set: "base"`, Unrated / No CC)**:
   - Imported all `9` official April Fools charts into `set: "base"` (`purchase: ""`, `rating: 0`, `constant: 0` unranked `-10` in SQLite `chart` table so `Future ?` renders cleanly without affecting Best 50 / Recent 30 PTT; `475` total songs / `1,593` charts) via [execute_import_af.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/execute_import_af.py): `hivemindrmx` (*HIVEMIND INTERLINKED*), `ifirmx` (*0xe0e1ccull*, with 6 custom `.wav` hitsounds), `ignotusafterburn` (*Ignotus Afterburn*), `lfdyrmx` (*Live Faster Die Younger*), `mismal` (*Mistempered Malignance*), `overdead` (*overdead.*), `redandblueandgreen` (*Red and Blue and Green*), `singularityvvvip` (*Singularity VVVIP*), and `unknownrmx` (*UNUSED LEVELS*, with `unknownfx.wav`).

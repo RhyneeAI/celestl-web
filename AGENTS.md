@@ -11,6 +11,7 @@ This document provides mandatory guidance and automated verification procedures 
 3. **Always preserve base difficulties [0, 1, 2]**: In Arcaea, every single song must have entries for Past (0), Present (1), and Future (2) in [songlist](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/database/songs/songlist) and valid `.aff` files on disk. Missing base difficulties will cause `nullptr` dereference crashes in the game's native C++ engine (`libcocos2dcpp.so`).
 4. **Always bump the App Release Version on any songs, metadata, or lib changes**: Whenever modifying `database/songs/` charts/assets, metadata (`songlist`, `unlocks`, `packlist`), or especially native libraries/patcher (`libcocos2dcpp.so`, `patch_arcaea.py`), you MUST increment the release version (`arcelest_<X.Y.Z>_release.apk`), update `DEFAULT_OUTPUT_APK` in `patch_arcaea.py`, update `RELEASE_CHANGELOG.md`, and rebuild the APK (see [RELEASE_CHANGELOG.md](file:///home/luhung/Documents/project/Celestl/RELEASE_CHANGELOG.md)).
 5. **NEVER overwrite live VPS `arcaea_database.db` with a local copy**: Players actively submit scores and register on the VPS (`139.190.96.194`). Uploading local `arcaea_database.db` wipes live `best_score`, `recent30`, `user.rating_ptt`, and newly registered accounts. Always run DB migrations (`recalculate_ratings.py` / SQL updates) against the live VPS database directly (or pull a live `sqlite3.backup()` first, back it up on VPS, update, and verify).
+6. **Skip mutative chart audit & normalization on Official Original Charts (`OFFICIAL_CHART_DIFFS`)**: Official Arcaea charts (`deinosphainein` `[0..3]`, all `9` AF `2.aff` charts, and official base `[0..2]` diffs of `aegleseeker`, `dualdoom`, `halcyon`, `rabbitintheblackroom`, `trrricksters`, `tsukinimurakumo`, `vector`) MUST preserve their chart body events, timings, duplicate beatline resets, sub-timinggroups, stops, camera, and hitsounds verbatim. Automated `.aff` content rules (`test_03_aff_syntax.py`, `test_04_prohibited_elements.py`, `test_05_arc_hold_normalization.py` via `celest-audit`) skip official difficulties (`is_official_chart()`), and `fix_charts.py --official` only adapts ArcCreate `timinggroup(...)` wrapper syntax (`=`, `,`, degree floats $\times 10 \to$ `0.1°` ints).
 
 ---
 
@@ -35,7 +36,7 @@ Before packaging the APK or pushing server updates, verify these 5 core requirem
   (1000,1);
   ```
 - **Prohibit ratingClass: 3 in `unlocks`**: Never declare entries for `ratingClass: 3` (Beyond) in `database/songs/unlocks`. Beyond difficulty has no native fragment purchase UI; declaring it in `unlocks` locks the 4th difficulty diamond, forces label to `"?"`, and hides unplayed charts from the BEYOND tab in Song Select.
-- **`ratingPlus` Threshold Rule**: For `rating < 11`, set `"ratingPlus": true` when the constant decimal is `>= .7` (e.g. `10.7` → `10+`); for `rating >= 11`, set `"ratingPlus": true` only when the constant decimal is `>= .8` (e.g. `11.7` → `11`, `11.8` → `11+`). See [CHART_FIX_DOCUMENTATION.md](file:///home/luhung/Documents/project/Celestl/CHART_FIX_DOCUMENTATION.md#L58-L68).
+- **`ratingPlus` Threshold Rule**: For `rating < 11` (Lv. 1–10) and `rating >= 12` (Lv. 12+), set `"ratingPlus": true` when the constant decimal is `>= .7` (e.g. `10.7` → `10+`, `12.7` → `12+`, `12.6` → `12`); for `rating == 11` (Lv. 11), set `"ratingPlus": true` only when the constant decimal is `>= .8` (e.g. `11.7` → `11`, `11.8` → `11+`). See [CHART_FIX_DOCUMENTATION.md](file:///home/luhung/Documents/project/Celestl/CHART_FIX_DOCUMENTATION.md#L58-L68).
 
 ### Check 2: Song Asset Structure
 Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
@@ -77,9 +78,10 @@ Every song folder in `ArcaeaServerFork/database/songs/<song_id>/` must contain:
 
 ### Check 4: Prohibited Elements (Crash Prevention)
 - **Extreme BPM & Scientific Notation**: Reject scientific notation (e.g. `7E+08` or `1.5e7`). Extreme BPMs ($\ge 10^8$) trigger Android `Scudo OOM` from millions of tick allocations if active holds/playable arcs exist. For visual gimmicks, preserve BPM up to the IEEE 754 24-bit mantissa limit $[-16000000.00, 16000000.00]$. Clamped extreme BPMs must be formatted as decimal `%.2f`.
-- **Zero BPM**: `bpm == 0.00` causes division by zero. Replace at $t = 0$ with base BPM (initial tempo), and at $t > 0$ with `0.01` (`timing(t, 0.01, beats);` to preserve visual stop gimmick).
+- **Zero BPM**: `bpm == 0.00` at $t \le 0$ causes invalid initial scroll speed; replace at $t \le 0$ with `base_bpm`. At $t > 0$, `timing(t, 0.00, beats);` visual stop gimmicks are natively supported and preserved without forcing `0.01` (`v1.9.3+`).
+- **Arc Features (`arctap(t, width)` & Smoothness)**: Native client **Patch 44** (`v1.9.3+`) parses and scales per-note `arctap(t, width)` widths cleanly; preserve both `arctap(t, width)` and 11th `arc(..., smoothness)` float arguments.
 - **Anomaly SceneControls**: Strip non-native commands (e.g. ArcCreate extensions: `groupalpha`, `charterswitch`, `bgshow`, `hudalpha`, etc.).
-- **Timinggroup Attributes**: Strip non-native timinggroup arguments (e.g. `name="..."`, `light`, `noclip`). Only native parameters (`noinput`, `fadingholds`, `anglex<deg>`, `angley<deg>`) are permitted. In native Arcaea (`libcocos2dcpp.so` 0x145b5b8), multiple attributes are concatenated with `'_'` (e.g. `noinput_fadingholds`); commas trigger fatal parser exceptions (`expected RPAREN, got RPAREN instead`). Always normalize comma-separated timinggroup parameters to underscore (e.g. `noinput,fadingholds` -> `noinput_fadingholds`).
+- **Timinggroup Attributes**: Strip non-native timinggroup arguments (e.g. `name="..."`, `light`, `noclip`). Only native parameters (`noinput`, `fadingholds`, `anglex<deg_tenths>`, `angley<deg_tenths>`) are permitted. Native `libcocos2dcpp.so` divides `anglex`/`angley` integers by `10.0` (`0x862eb4`, `0x8630bc` — `0.1°` units), so ArcCreate float degree attributes (`anglex=180.00`, `angley=-2.50`) MUST be scaled `× 10` (`anglex1800`, `angley-25`). Multiple attributes concatenate with `'_'` (e.g. `noinput_fadingholds`); commas trigger fatal parser exceptions (`expected RPAREN, got RPAREN instead`).
 
 ### Check 5: Hot Reload & Remote DL
 - All server charts (except offline `infinityheaven`) must have `"remote_dl": true` in [songlist](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/database/songs/songlist).
@@ -167,7 +169,7 @@ celest-audit --bg
 
 # 6. Rebuild patched APK (Pre-build integrity hook will automatically run; bump version on songs/metadata/lib changes)
 cd /home/luhung/Documents/project/Celestl
-/home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.9.2_release.apk
+/home/luhung/.venvs/arcaea-server/bin/python ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.9.5_release.apk
 
 # 7. Connect ADB to Waydroid and install patched APK
 celest-apk-update

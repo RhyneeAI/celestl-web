@@ -1206,7 +1206,7 @@ lalu profile dengan 4 play sungguhan menampilkan best play Extradimensional **13
 
 ## Mandatory Pre-Build Chart & Asset Integrity Workflow
 
-Whenever importing charts, fixing bugs, or updating assets/libraries before rebuilding the patched client APK (`arcelest_<X.Y.Z>_release.apk`, currently `arcelest_1.9.0_release.apk`), follow these mandatory rules (full details also in [AGENTS.md](file:///home/luhung/Documents/project/Celestl/AGENTS.md), [RELEASE_CHANGELOG.md](file:///home/luhung/Documents/project/Celestl/RELEASE_CHANGELOG.md), and `dokumentasi_fix_chart.md`):
+Whenever importing charts, fixing bugs, or updating assets/libraries before rebuilding the patched client APK (`arcelest_<X.Y.Z>_release.apk`, currently `arcelest_1.9.5_release.apk`), follow these mandatory rules (full details also in [AGENTS.md](file:///home/luhung/Documents/project/Celestl/AGENTS.md), [RELEASE_CHANGELOG.md](file:///home/luhung/Documents/project/Celestl/RELEASE_CHANGELOG.md), and `dokumentasi_fix_chart.md`):
 
 0. **Mandatory App Release Version Bump Rule**:
    - **Every change to `songs/`** (charts `.aff`, audio `.ogg`/`.wav`, jackets, backgrounds), **metadata** (`songlist`, `unlocks`, `packlist`), **and especially `lib` / APK patching** (`libcocos2dcpp.so`, `patch_arcaea.py`, manifest/resources) **MUST bump the app release version (`arcelest_<MAJOR.MINOR.PATCH>_release.apk`)**.
@@ -1226,19 +1226,23 @@ Whenever importing charts, fixing bugs, or updating assets/libraries before rebu
    - Negative BPMs are supported natively. Format as decimal `%.2f` (e.g. `-120.00`). No negative timestamps before $t=0$.
    - Native SceneControls only (9 official commands). Use `1`/`0` for booleans; normalize `trackdisplay` to scale 255.
    - Camera events: 9 arguments, float coordinates `%.2f`, valid easing, non-negative duration.
-   - Mandatory decimal values: All float parameters (`bpm`, `beats`, `p3`, `arc` coordinates) must contain decimal points (`%.2f`).
+   - Arc features: Native **Patch 44** parses and scales per-note `arctap(t, width)` widths (`0x780CD0` cave); preserve both `arctap(t, width)` and 11th `arc(..., smoothness)` float arguments.
+   - Mandatory decimal values: All float parameters (`bpm`, `beats`, `p3`, `arc` coordinates, `arctap` width) must contain decimal points (`%.2f`).
 
 4. **Prohibited Elements (Crash Prevention)**:
-   - Extreme BPM & scientific notation (`7E+08`): clamp to safe range $[-10000.00, 10000.00]$ to prevent `Scudo OOM`.
-   - Zero BPM: replace with base BPM at $t=0$ or `0.01` at $t>0$ to prevent divide-by-zero crashes.
-   - Strip non-native ArcCreate SceneControls (`groupalpha`, `charterswitch`, `bgshow`, etc.).
+   - Extreme BPM & scientific notation (`7E+08`): preserve up to IEEE 754 24-bit mantissa $[-16000000.00, 16000000.00]$ (or $[-10000.00, 10000.00]$ across active holds/arcs to prevent `Scudo OOM`).
+   - Zero BPM: replace with base BPM at $t \le 0$; at $t > 0$, `timing(t, 0.00, beats);` visual stops are preserved natively (`v1.9.3+`).
+   - Strip non-native ArcCreate SceneControls (`groupalpha`, `charterswitch`, `bgshow`, etc.) and convert ArcCreate `timinggroup(...)` parameters (`=`, `,`, `anglex`/`angley` degrees $\times 10 \to$ `0.1°` integer joined with `_`).
 
 5. **Hot Reload & Remote DL**:
    - All server songs (except `infinityheaven`) must have `"remote_dl": true`.
    - Bump `"date": int(time.time())` in `songlist` when editing `.aff` files so the client detects the change and re-downloads.
    - Re-sync server cache: `from core.download import SongFileCache; SongFileCache.sync_all()`.
 
-6. **Automated Verification CLI**:
+6. **Official Original Chart Exemption & `anglex`/`angley` Scale (`0.1°`)**:
+   - Official charts in `OFFICIAL_CHART_DIFFS` (`deinosphainein` `[0..3]`, all 9 AF `2.aff` charts, and `[0..2]` of `aegleseeker`, `dualdoom`, `halcyon`, `rabbitintheblackroom`, `trrricksters`, `tsukinimurakumo`, `vector`) are bypassed by `celest-audit` `.aff` rules (`test_03..test_05`) so their gimmicks stay verbatim; only ArcCreate `timinggroup(...)` header wrappers are adapted at import time (`=`, `,`, `anglex`/`angley` degrees $\times 10 \to$ `0.1°` integers).
+
+7. **Automated Verification CLI**:
    ```bash
    VENV_PY="/home/luhung/.venvs/arcaea-server/bin/python"
 
@@ -1247,8 +1251,8 @@ Whenever importing charts, fixing bugs, or updating assets/libraries before rebu
 
    # Rebuild APK (always bump release version on songs/metadata/lib changes):
    cd /home/luhung/Documents/project/Celestl
-   $VENV_PY ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.9.2_release.apk
+   $VENV_PY ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.9.5_release.apk
 
    # Install without incremental error:
-   adb install -r --no-incremental arcelest_1.9.2_release.apk
+   adb install -r --no-incremental arcelest_1.9.5_release.apk
    ```
