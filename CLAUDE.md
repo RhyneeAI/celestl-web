@@ -1247,8 +1247,8 @@ Whenever importing charts, fixing bugs, or updating assets/libraries before rebu
 
    # Rebuild APK (always bump release version on songs/metadata/lib changes):
    cd /home/luhung/Documents/project/Celestl
-   $VENV_PY ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.9.1_release.apk
+   $VENV_PY ArcaeaServerFork/tools/patch_arcaea.py --output arcelest_1.9.2_release.apk
 
    # Install without incremental error:
-   adb install -r --no-incremental arcelest_1.9.1_release.apk
+   adb install -r --no-incremental arcelest_1.9.2_release.apk
    ```

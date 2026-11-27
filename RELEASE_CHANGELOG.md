@@ -37,6 +37,17 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.9.2` — 2026-11-27
+- **April Fools Official Special Import (`1official/AF` → `set: "base"`, Unrated / No CC)**:
+  - Imported all `9` official April Fools charts into `set: "base"` (`purchase: ""`, `rating: 0`, `constant: 0` unranked `-10` in SQLite `chart` table so `Future ?` renders cleanly without affecting Best 50 / Recent 30 PTT; `475` total songs / `1,593` charts) via [execute_import_af.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/execute_import_af.py): `hivemindrmx` (*HIVEMIND INTERLINKED*), `ifirmx` (*0xe0e1ccull*, with 6 custom `.wav` hitsounds), `ignotusafterburn` (*Ignotus Afterburn*), `lfdyrmx` (*Live Faster Die Younger*), `mismal` (*Mistempered Malignance*), `overdead` (*overdead.*), `redandblueandgreen` (*Red and Blue and Green*), `singularityvvvip` (*Singularity VVVIP*), and `unknownrmx` (*UNUSED LEVELS*, with `unknownfx.wav`).
+  - Normalized all `2.aff` charts via [fix_charts.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/fix_charts.py) (converting ArcCreate float `anglex=`/`angley=` attributes, stripping non-native `noconnection`, preserving `color=0..3`, zero-BPM stops `0.01`, camera & custom `.wav` triggers), paired vanilla `_conflict`/`_light` BGs, generated 4 JPEG RGB jacket variants + dummy `[0, 1]` `.aff` charts, sliced 20s `preview.ogg` clips, applied boss loudness normalization (`-9.5 dBFS` with peak limiter), and injected all missing April Fools Unicode symbols into APK L2 fonts.
+- **Difficulty, Constant & Track Override Adjustments**:
+  - `tokonagi`: Migrated Eternal (`4.aff`, `11.2` by `DJC`) to Future (`2.aff`), removed slot `4`, moved unlock rule `(tokonagi, 4)` → `(tokonagi, 2)` (`credit: 112`).
+  - `midvinter`: Lowered Beyond (`3.aff`) constant from `12.8` (`12+`) down to `12.4` (`12`, `ratingPlus: false`) and updated single purchase price (`1240` Memories).
+  - `calamitytempest`: Raised Future (`2.aff`) constant from `12.5` to `12.6` (`12`, `ratingPlus: false`), updated unlock credit (`126`) + single purchase price (`1260` Memories), and switched `track` → `"tempestissimo"`.
+  - `lostrequiem` & `lostrequiembyd`: Set `track` → `"tempestissimo"`.
+  - `sigmachuni` (*Σ*): Set `track` → `"pentiment"`.
+
 ### `v1.9.1` — 2026-11-27
 - **Counter Clockwise Chart Parser Fix (ARM64 Patch 43)**:
   - Fixed fatal `expected RPAREN, got INT:-90 instead` crash on `Counter Clockwise` charts using negative angle timinggroup modifiers (`timinggroup(anglex-90)`, `angley-90`, `noinput_anglex-30_angley90`, `noinput_anglex56_angley-90`) in `finalphasedelayedit` and `heir`.
