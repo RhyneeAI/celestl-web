@@ -37,6 +37,33 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.9.1` — 2026-11-27
+- **Counter Clockwise Chart Parser Fix (ARM64 Patch 43)**:
+  - Fixed fatal `expected RPAREN, got INT:-90 instead` crash on `Counter Clockwise` charts using negative angle timinggroup modifiers (`timinggroup(anglex-90)`, `angley-90`, `noinput_anglex-30_angley90`, `noinput_anglex56_angley-90`) in `finalphasedelayedit` and `heir`.
+  - Installed **Patch 43** (`0x138D3D4 -> 0xA46D08`) in `libcocos2dcpp.so` (`Parser::nextToken` identifier continuation loop) to accept `'-'` inside AFF identifiers so negative timinggroup angles parse natively as single identifier tokens.
+- **Per-Song Side & Track Overrides (`songlist` + `patch_arcaea.py` Cave)**:
+  - `avenoir`: `side: 4`, `track: "arcana"` (`img/track_arcana.png`)
+  - `heavenlywhispers`: `side: 3`, `track: "darklephon"` (`img/track_darklephon.png`)
+  - `mirrorparticledispersion`: `side: 4` (native Konzetsu / `side: 4` track `img/track_darklephon.png`, matching `deinosphainein`; `track_konzetsu.png` does not exist in vanilla 7.1.0c assets)
+  - `finalphasedelayedit`: `side: 4`, `track: "dark_vs"` (`img/track_dark_vs.png`)
+  - `theplatinumtrophy`: `track: "tempestissimo"` (`img/track_tempestissimo.png`)
+  - `hakujitsumukirisame`: `track: "rei"` (`img/track_rei.png`)
+  - `tokonagi`: `side: 4`, `track: "tempestissimo"` (`img/track_tempestissimo.png`)
+  - `sacredruin`: `track: "pentiment"` (`img/track_pentiment.png`)
+- **Pack Section Reclassification (`packlist`)**:
+  - Moved `liminality` to `"collab"`, and `dismalengram` + `splatteredvirtue` to `"sidestory"`.
+- **FTR (`ratingClass: 2`) Clear Unlock Chains (`unlocks`)**:
+  - Added clear prerequisite chains (`type: 2`) for 14 FTR charts across 6 Batch 8 packs (`splatteredvirtue`, `counterclockwise`, `rediscoveredpath`, `dismalengram`, `liminality`, `kiko1year`).
+
+### `v1.9.0` — 2026-11-27
+- **Batch 8 (`1batch8`) Import & Curated Pack Expansion (`466` Songs / `1,567` Charts)**:
+  - Imported `59` unique Batch 8 songs across `single` (`+8`) and `8` new custom packs via [execute_import_batch8.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/execute_import_batch8.py): `maleficentkismet` (`10`), `taiko` (`10`), `kiko1year` (`6`), `splatteredvirtue` (`5`), `counterclockwise` (`5`), `rediscoveredpath` (`5`), `dismalengram` (`5`), and `liminality` (`5`), stripping all `Amorta` `Entry.aff` Story Logs and `*.sc.json` files.
+  - Applied special Batch 8 merges, slot shifts & user-confirmed constant calibrations: merged `tokonagi.askira` + `▓/` into `tokonagi` (`side: 4` Lephon, custom `tokonagi` BG, `3.aff` BYD `12.8` by Askira∞ + `4.aff` ETR `11.2` by DJC), shifted `kousokusoryushi` (`1.aff`→`2.aff` FTR `11.5`, `2.aff`→`3.aff` BYD `12.5`), imported `nevergod` bonus `3.aff` as ETR `10.6`, preserved `turquoisetachometer` FTR `9.4` + ETR `10.5`, set `alterstrife` FTR `11.5`, `angledust` FTR `11.7`, `fallensymphony` BYD `12.4`, `theplatinumtrophy` FTR `11.6`, `soraviii` FTR `10.4`, `cristears` FTR `9.3`, `suhouteni` (`side: 0`, `vs_light`/`vs_conflict`), `bewithu` BYD (`jacketOverride` + `audioOverride`), and `prometheus` BYD (`jacketOverride`).
+  - Normalized native `anglex`/`angley` attributes and `flick()` handling in [fix_charts.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tools/fix_charts.py) and [test_03_aff_syntax.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/tests/test_03_aff_syntax.py) so `counterclockwise` camera/angle gimmicks parse cleanly without errors.
+- **Pack Overhaul, Swin2SR Banners/Jackets, Custom 1080p BGs & Audio Enhancement**:
+  - Re-activated `rotaeno` (`14` songs) & `virtualsingers` (`19` songs, `limitedSaleEndTime` removed) and launched `phigros` (`17` true originals/explicit moves incl. `rrhar`, `merikurilostinthesnowstorm`, `jinglebell`) and `kalpa` (`4` originals: `opheliaphantasm`, `dontneveraround`, `avataar`, `mistilteinn`), moving `54` existing songs out of `single`/`yue`/`kurumi` and extending dynamic `cnt * 100` Memories pack pricing in [download.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/core/download.py) and [purchase.py](file:///home/luhung/Documents/project/Celestl/ArcaeaServerFork/core/purchase.py).
+  - Cropped `select_phigros.png` (`256×503` → `252×503`), generated `1080_select_<pack>.png` (`378×754`) banners via `swin2SR_classical_x2`, upscaled `6` low-res jackets (`< 450px`) via halo-free `swin2SR_realworld_x4`, exported `1920×1440` RGB custom BGs (`tokonagi`, `amorta_*`, `machi_*_arccreate`, `dismalengram_*`, `counterclockwise`, etc.) + vanilla BG substitutions (`single2_*` for Rediscovered Path, `aegleseeker_grey`/`aegleseeker`, `wacca_*`), boosted `32` quiet/boss audio tracks with `alimiter`, and rebuilt `arcelest_1.9.0_release.apk` with all packs & banners bundled.
+
 ### `v1.8.5` — 2026-11-27
 - **Official Arcaea Wiki Chart Constant Alignment (`halcyon`, `vector`, `trrricksters`, `dualdoom`, `aegleseeker`)**:
   - Synchronized decimal chart constants, `rating` / `ratingPlus` flags, `unlocks` fragment credits, and SQLite `chart` table (`×10`) with official Arcaea Wiki / vanilla `7.1.0c` values across all unmodified official difficulties while preserving custom fanmade difficulty additions:
