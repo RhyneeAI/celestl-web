@@ -37,6 +37,14 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.9.6` — 2026-11-28
+- **New Collaboration Packs (`sdvx`, `orzmic`, `vstasis`) & `hate` → `phigros` Reorganization (`475` Songs / `22` Packs)**:
+  - Registered `sdvx` (*SOUND VOLTEX*, `25` songs), `orzmic` (*Orzmic*, `4` songs), and `vstasis` (*vivid/stasis*, `1` initial original `surtrswish` pending `1chart9` expansion in `v1.10`) in `database/songs/packlist` (`"section": "collab"`), `core/download.py` (`DYNAMIC_PRICE_PACKS`), and `tools/update_purchase_prices.py` (`cnt × 100` Memories).
+  - Moved `21` wiki-verified SOUND VOLTEX originals from `single` (`triplesix`, `illnesslilin`, `mayhem`, `memoria`, `mixxion`, `blinfmin`, `vvelcome`, `xeroa`, `akasha`, `failnaught`, `finarcdear`, `gloryoffighters`, `guinevere`, `heavensrain`, `xhronoxapsule`, `apocalypseray`, `avalanx`, `bayonex`, `calamitytempest`, `oniichanhitech`, `outerheaven`) plus `4` SOUND VOLTEX originals from `kurumi` (`lachrymare`, `flugel`, `reetenshi`, `suddendeath`) → `sdvx` (`2,500` Memories); `kurumi` updated to `33` songs (`3,300` Memories).
+  - Moved `4` wiki-verified Orzmic originals from `single` (`eligos`, `splatterdoll`, `queenofwhite`, `vorpalize`) → `orzmic` (`400` Memories), preserving `emanantglass` (`avys` + `zenith` unlock chain) and `kurumi/collapse` (Laur feat. 藍月なくる, not CS4W).
+  - Moved `surtrswish` → `vstasis` (`100` Memories) and `hate` (Phigros Ch. 9 original) → `phigros` (`18` songs / `1,800` Memories).
+  - Downscaled `select_orzmic.png` (`504×1006` → `252×503` + `378×754`), generated `1080_select_sdvx.png` and `1080_select_vstasis.png` (`378×754` via Swin2SR x2 + Lanczos alpha), bundled all 6 banner PNGs in `patch_arcaea.py`, synced SQLite (`item`, `purchase`, `purchase_item`) on both local and live VPS databases, cleaned caches/previous `v1.9.5` APK, and rebuilt `arcelest_1.9.6_release.apk`.
+
 ### `v1.9.5` (Hotfix Server) — 2026-11-28
 - **Somniomancer Full Chart Restoration (Server OTA / `remote_dl` Hotfix — No APK Rebuild Required)**:
   - Restored `somioncernullset` (`2.aff` and `3.aff`, all `50` timinggroups / `10,078` lines) directly from its original [SomniomancerNullSet/3.aff](file:///home/luhung/Documents/Chart/somioncernullset/SomniomancerNullSet/3.aff) source via `fix_charts.py --songs somioncernullset`, preserving all ending visual animations & beatline timings, and bumped `"date"` + synced `SongFileCache` on VPS so `remote_dl` clients re-download the updated `.aff` directly from server.
