@@ -188,6 +188,13 @@
                 >
                   {{ p.isBanned ? 'BANNED' : 'ACTIVE' }}
                 </span>
+                <span
+                  v-if="p.isMockAccount"
+                  class="px-2 py-0.5 rounded-full text-[9.5px] font-mono font-bold tracking-wider border bg-[#03a8e6]/15 text-[#03a8e6] border-[#03a8e6]/35"
+                  title="Generated mock account (@celest.local)"
+                >
+                  MOCK
+                </span>
               </div>
 
               <div class="flex items-center gap-2 mt-1 text-xs text-[#9a99a8] font-mono">
@@ -363,6 +370,16 @@
               </svg>
               <span>B50 Scores</span>
             </NuxtLink>
+
+            <!-- Edit Profile (Nickname + Mock PTT) -->
+            <button
+              type="button"
+              @click="openProfileModal(p)"
+              class="px-2.5 py-1.5 rounded-xl bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-bold text-[#ffd76a] border border-[#ffd76a]/30 transition-colors cursor-pointer shadow-sm"
+              :title="p.isMockAccount ? 'Edit nickname & mock PTT' : 'Edit player nickname'"
+            >
+              Edit Profile
+            </button>
 
             <!-- Adjust Memories -->
             <button
@@ -739,6 +756,109 @@
         </div>
       </div>
     </Teleport>
+
+    <!-- MODAL 4: Edit Profile (Nickname & Mock PTT) -->
+    <Teleport to="body">
+      <div
+        v-if="editingProfilePlayer"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in duration-150"
+        @click.self="editingProfilePlayer = null"
+      >
+        <div class="w-full max-w-md rounded-3xl bg-[#1a1d32] p-6 border border-[#16133e] text-[#fffafa] shadow-2xl space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <h3 class="text-base font-bold font-brand">Edit Profile</h3>
+              <span
+                v-if="editingProfilePlayer.isMockAccount"
+                class="px-2 py-0.5 rounded-full text-[9.5px] font-mono font-bold tracking-wider border bg-[#03a8e6]/15 text-[#03a8e6] border-[#03a8e6]/35"
+              >
+                MOCK
+              </span>
+            </div>
+            <button type="button" @click="editingProfilePlayer = null" class="text-[#9a99a8] hover:text-white">✕</button>
+          </div>
+
+          <p class="text-xs text-[#9a99a8]">
+            Update profile for <b class="text-white">{{ editingProfilePlayer.name }}</b> (UID {{ editingProfilePlayer.userId }}).
+          </p>
+
+          <!-- Nickname Field -->
+          <div>
+            <label class="block text-[11px] font-bold text-[#6f6e80] uppercase mb-1">Nickname (user.name)</label>
+            <input
+              v-model="profileName"
+              type="text"
+              maxlength="64"
+              placeholder="Enter nickname"
+              class="w-full px-3 py-2 bg-[#0c0c22] border border-[#16133e] focus:border-[#f768dd] rounded-xl text-sm font-bold text-white focus:outline-none"
+            />
+            <p class="mt-1 text-[11px] text-[#9a99a8]">
+              Note: Changing nickname also changes the username used to log in from the Arcaea APK.
+            </p>
+          </div>
+
+          <!-- Potential (PTT) Field: Restricted to Mock Accounts -->
+          <div v-if="editingProfilePlayer.isMockAccount" class="space-y-2 pt-2 border-t border-[#16133e]">
+            <div class="flex items-center justify-between">
+              <label class="block text-[11px] font-bold text-[#ffd76a] uppercase">Potential Rating (rating_ptt)</label>
+              <span class="text-[11px] font-mono text-[#9a99a8]">Current: {{ editingProfilePlayer.ratingPttFormatted }}</span>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5">
+              <button
+                v-for="preset in [8.5, 10.0, 11.5, 12.5, 13.0]"
+                :key="preset"
+                type="button"
+                @click="profilePtt = preset"
+                class="px-2.5 py-1 rounded-lg bg-[#1e203a] hover:bg-[#3f3c68] text-xs font-mono font-bold text-[#ffd76a] border border-[#3f3c68]/40 transition-colors cursor-pointer"
+              >
+                {{ preset.toFixed(2) }}
+              </button>
+            </div>
+
+            <input
+              v-model.number="profilePtt"
+              type="number"
+              min="0"
+              max="15"
+              step="0.001"
+              class="w-full px-3 py-2 bg-[#0c0c22] border border-[#16133e] focus:border-[#ffd76a] rounded-xl text-sm font-mono font-bold text-[#ffd76a] focus:outline-none"
+            />
+            <p class="text-[11px] text-[#9a99a8]">
+              Available only for generated mock accounts (<span class="font-mono">@celest.local</span>). Stored up to 3 decimals (0.000–15.000).
+            </p>
+          </div>
+
+          <div
+            v-else
+            class="p-3 rounded-2xl bg-[#0c0c22] border border-[#16133e] text-[11px] text-[#9a99a8]"
+          >
+            Potential (PTT) cannot be edited manually for app-registered accounts; it is automatically computed via B50 scores.
+          </div>
+
+          <div
+            v-if="profileError"
+            class="p-2.5 rounded-xl bg-[#e14763]/15 border border-[#e14763]/40 text-xs text-[#e14763]"
+          >
+            {{ profileError }}
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#16133e]">
+            <button type="button" @click="editingProfilePlayer = null" class="px-4 py-2 rounded-xl bg-[#1e203a] text-xs font-bold text-[#9a99a8] hover:text-white">
+              Cancel
+            </button>
+            <button
+              type="button"
+              :disabled="savingProfile || !profileName.trim()"
+              @click="submitProfile"
+              class="px-4 py-2 rounded-xl bg-[#ffd76a] hover:bg-[#fbbf24] text-xs font-bold text-[#0c0c22] transition-colors cursor-pointer disabled:opacity-50"
+            >
+              {{ savingProfile ? 'Saving…' : 'Save Profile' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -782,6 +902,7 @@ export interface PlayerItem {
   characterId: number;
   characterAvatar: string;
   isBanned: boolean;
+  isMockAccount: boolean;
   banReason: string | null;
   joinDate: string;
   joinTimestamp: number;
@@ -1038,6 +1159,57 @@ async function submitPassword() {
     alert(err?.data?.statusMessage || 'Failed to reset password');
   } finally {
     savingPassword.value = false;
+  }
+}
+
+// Modal 4: Edit Profile (Nickname & Mock Account PTT)
+const editingProfilePlayer = ref<PlayerItem | null>(null);
+const profileName = ref('');
+const profilePtt = ref<number>(0);
+const savingProfile = ref(false);
+const profileError = ref('');
+
+function openProfileModal(p: PlayerItem) {
+  editingProfilePlayer.value = p;
+  profileName.value = p.name;
+  profilePtt.value = p.ratingPtt;
+  profileError.value = '';
+}
+
+async function submitProfile() {
+  if (!editingProfilePlayer.value) return;
+  const trimmedName = profileName.value.trim();
+  if (!trimmedName) {
+    profileError.value = 'Nickname cannot be empty.';
+    return;
+  }
+  if (editingProfilePlayer.value.isMockAccount) {
+    if (typeof profilePtt.value !== 'number' || !Number.isFinite(profilePtt.value) || profilePtt.value < 0 || profilePtt.value > 15) {
+      profileError.value = 'Potential must be between 0.000 and 15.000.';
+      return;
+    }
+  }
+
+  savingProfile.value = true;
+  profileError.value = '';
+  try {
+    const payload: { userId: number; name: string; ratingPtt?: number } = {
+      userId: editingProfilePlayer.value.userId,
+      name: trimmedName,
+    };
+    if (editingProfilePlayer.value.isMockAccount) {
+      payload.ratingPtt = profilePtt.value;
+    }
+    await $fetch('/api/admin/server/players/update-profile', {
+      method: 'POST',
+      body: payload,
+    });
+    await refresh();
+    editingProfilePlayer.value = null;
+  } catch (err: any) {
+    profileError.value = err?.data?.statusMessage || 'Failed to update profile.';
+  } finally {
+    savingProfile.value = false;
   }
 }
 

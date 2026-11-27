@@ -621,6 +621,56 @@ print('Player scores wiped on VPS')`;
 }
 
 /**
+ * Sync Player Profile (nickname and optionally mock rating_ptt) to VPS celest-server database.
+ */
+export async function syncPlayerProfileToVps(
+    userId: number,
+    updates: { name?: string; ratingPtt?: number },
+): Promise<VpsSyncResult> {
+    const pyScript = `data = json.loads(base64.b64decode(sys.argv[1]).decode('utf-8'))
+conn = sqlite3.connect('${VPS_DB_PATH}')
+c = conn.cursor()
+uid = data['userId']
+row = c.execute('SELECT user_id, email FROM user WHERE user_id = ?', (uid,)).fetchone()
+if not row:
+    print(json.dumps({'ok': False, 'error': 'Player not found on VPS'}))
+    sys.exit(0)
+if data.get('name') is not None:
+    dup = c.execute('SELECT user_id FROM user WHERE name = ? COLLATE NOCASE AND user_id != ?', (data['name'], uid)).fetchone()
+    if dup:
+        print(json.dumps({'ok': False, 'error': 'Nickname is already taken on VPS'}))
+        sys.exit(0)
+    c.execute('UPDATE user SET name = ? WHERE user_id = ?', (data['name'], uid))
+if data.get('ratingPtt') is not None:
+    email = (row[1] or '').strip().lower()
+    if not (email.endswith('@celest.local') or (2000000 <= uid <= 2000004)):
+        print(json.dumps({'ok': False, 'error': 'PTT adjustment is only allowed for generated mock accounts'}))
+        sys.exit(0)
+    c.execute('UPDATE user SET rating_ptt = ? WHERE user_id = ?', (float(data['ratingPtt']), uid))
+conn.commit()
+print(json.dumps({'ok': True}))`;
+
+    const res = await runVpsPythonWithPayload(pyScript, {
+        userId,
+        name: updates.name ?? null,
+        ratingPtt: updates.ratingPtt ?? null,
+    });
+    if (res.synced_vps && res.message) {
+        try {
+            const parsed = JSON.parse(res.message);
+            if (!parsed.ok) {
+                return {
+                    success: false,
+                    synced_vps: false,
+                    error: parsed.error || 'VPS rejected profile update',
+                };
+            }
+        } catch { }
+    }
+    return res;
+}
+
+/**
  * Fetch all Redeem Codes directly from VPS database.
  */
 export async function fetchRedeemCodesFromVps(): Promise<any[] | null> {
@@ -804,9 +854,9 @@ conn.row_factory = sqlite3.Row
 c = conn.cursor()
 row = None
 if isinstance(val, int) or (isinstance(val, str) and val.isdigit() and len(val) <= 7):
-    row = c.execute('SELECT user_id, name, user_code, rating_ptt, character_id, ticket FROM user WHERE user_id = ? LIMIT 1', (int(val),)).fetchone()
+    row = c.execute('SELECT user_id, name, user_code, rating_ptt, character_id, ticket, email FROM user WHERE user_id = ? LIMIT 1', (int(val),)).fetchone()
 if not row:
-    row = c.execute('SELECT user_id, name, user_code, rating_ptt, character_id, ticket FROM user WHERE name = ? COLLATE NOCASE OR user_code = ? LIMIT 1', (str(val), str(val))).fetchone()
+    row = c.execute('SELECT user_id, name, user_code, rating_ptt, character_id, ticket, email FROM user WHERE name = ? COLLATE NOCASE OR user_code = ? LIMIT 1', (str(val), str(val))).fetchone()
 print(json.dumps(dict(row) if row else None))
 `;
     const res = await queryVpsPython<any>(pyScript, { identifier });

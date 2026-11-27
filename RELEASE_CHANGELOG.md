@@ -37,6 +37,42 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.8.5` — 2026-11-27
+- **Official Arcaea Wiki Chart Constant Alignment (`halcyon`, `vector`, `trrricksters`, `dualdoom`, `aegleseeker`)**:
+  - Synchronized decimal chart constants, `rating` / `ratingPlus` flags, `unlocks` fragment credits, and SQLite `chart` table (`×10`) with official Arcaea Wiki / vanilla `7.1.0c` values across all unmodified official difficulties while preserving custom fanmade difficulty additions:
+    - `halcyon`: PST `5.0` → **`5.5`**, PRS `8.0` → **`8.2`**, FTR `10.0` → **`10.5`** (BYD `11.4` custom preserved).
+    - `vector`: FTR `9.0` → **`9.4`** (PST `3.0`, PRS `7.0`, BYD `10.3` custom preserved).
+    - `trrricksters`: PST `4.0` → **`4.5`**, PRS `7.0` → **`7.5`**, FTR `10.0` → **`10.1`** (ETR `10.7` `10+` custom preserved).
+    - `dualdoom`: PST `3.0` → **`3.5`**, PRS `6.0` → **`6.5`**, FTR `10.3` (`10`) → **`8.9` (`8+`)** (`ratingPlus: true`; ETR `10.3` & BYD `11.4` custom preserved).
+    - `aegleseeker`: PST `5.0` → **`5.5`** (PRS `9.1`, FTR `11.2`, BYD `11.4` custom preserved).
+  - Synced updated `songlist`, `unlocks`, `chart` constants, `SongFileCache`, and recalculated player ratings/PTT on both local and live VPS databases.
+
+### `v1.8.4` — 2026-11-27
+- **No-Sharpen HD Jacket Overhaul, AI Super-Resolution (`swin2SR`) & Client Asset Restoration (`34` Songs)**:
+  - Fixed `athaza` crop framing (`left=363`) so the full `"ATHAZA"` / `"LeaF"` title and character art fit cleanly without clipping the trailing `"A"`.
+  - Converted and regenerated pure `RGB JPEG` variants (`LANCZOS` without `UnsharpMask`) for `malkuth`, `hainuwele`, `surtrswish`, and all `11` user-replaced masters (`sage`, `folern`, `luminescence`, `maholova`, `omg`, `weleavetheworldtogether`, `amenohoakarinomikoto`, `adam`, `scatteredrose`, `neo`, `monitoring`), applying `swin2SR-realworld-sr-x4` on `< 740px` sources and soft square padding on `omg`.
+  - Re-rendered `13` target jackets (`ultimateforce` native `1080×1080`, `magicalpanicadventure` native `1000×1000`, and `swin2SR` 4× → `LANCZOS` downscale for `makear`, `anu`, `stardustray`, `squadphvntom`, `apocalypserebellion`, `crackpotevangelist`, `angelsladder`, `angelikvice`, `ravenemperor`, `hibiki`, `kagami`) for dense, halo-free pixels.
+  - Restored original vanilla client `1080_base.jpg` / `1080_base_256.jpg` directly from `arcaea_7.1.0c.apk` (`assets/songs/dl_<id>/`) for `halcyon`, `vector`, `tsukinimurakumo`, `jump`, `dualdoom`, and `trrricksters` (PST/PRS/FTR).
+- **VPS Production Sync, Nginx Reverse Proxy & `web_nuxt` Profile Editing**:
+  - Deployed Nginx SSL + HTTP/2 + Keep-Alive + `X-Accel-Redirect` sidecar (`celest-arcaea-nginx`) on VPS port `8765`, synced full `v1.8.3`–`v1.8.4` song assets (`407` songs / `408` charts) & store catalog tables without touching player accounts/scores.
+  - Added Admin `Edit Profile` modal & `/api/admin/server/players/update-profile` in `web_nuxt` to edit `user.name` and mock account (`@celest.local`) `rating_ptt`.
+
+### `v1.8.3` — 2026-11-27
+- **Difficulty, Rating & Localization Fixes (`dame`, `avantgarde`, `nocturneop9no2`, `snowmagic`, `halcyon`)**:
+  - Normalized `dame` (`"ダメッッッッッ！！！！！ feat. 初音ミク"`) from broken NFD (`タ + \u3099`) to precomposed NFC across `songlist` (`title_localized` + `search_title`) and SQLite `chart.name` so `L2` bitmap fonts render `"メ"` cleanly instead of truncating on combining dakuten.
+  - Migrated `avantgarde` chart (`2.aff`) to Beyond (`3.aff`) (`rating: 10`, `ratingPlus: true`, `constant: 10.8`), added minimal dummy `2.aff`, synced `unlocks` (`ratingClass: 2` credit `1`, no `ratingClass: 3`), and updated SQLite `chart` (`rating_ftr: -10, rating_byn: 108`).
+  - Adjusted `nocturneop9no2` FTR (`ratingClass: 2`) to `4+` (`constant: 4.9`, `rating: 4`, `ratingPlus: true`), synced `unlocks` (`49`), and SQLite `chart` / `purchase` (`49`).
+  - Downgraded `snowmagic` FTR constant from `9.8` (`9+`) to **`9.5` (`9`)**, syncing `unlocks` (`95`) and SQLite `chart` / `purchase` (`95`).
+  - Restored `halcyon` vanilla Arcaea base jackets (`0`, `1`, `2`), removed the `rc=3` `bg: "yugamu"` override so both base and Beyond (`Halcyon (MRM REMIX)`) use `bg: "rei"` / `bg_inverse: "yugamu"`, and upgraded BYD `3.jpg` variants cleanly from iTunes `1400×1400`.
+- **11-Track Clarity & Loudness Audio Remaster**:
+  - Remastered `base.ogg` and re-sliced `preview.ogg` with balanced EQ clarity and anti-clipping `alimiter=level=disabled`:
+    - Normal tier (`~-8.1 to -9.6 dB`): `folern`, `failnaught`, `chuten`, `deadlocked`, `electrodynamix`, `squadphvntom`.
+    - Boss tier (`~-8.5 to -9.9 dB`): `bayonex`, `destruction321`, `eligos`, `astaroth`, `malkuth`.
+- **42-Song Clean HD Jacket Overhaul & Anti-Halo Re-Render**:
+  - Upgraded Group 1 (`11` songs: `distortedheavens`, `alfheim`, `monitoring`, `sigmachuni`, `xeno`, `reblossia`, `chuten`, `kaleidosc0pe`, `kakuriyo`, `theendlessfortraveler`, `jannedaruku`) from verified `1024–2048px` masters.
+  - Replaced Group 3 confirmed cross-game covers (`quaoar` Rotaeno, `athaza`/`eltaw`/`tsukiyomininaru`/`dontneveraround` Phigros, `eligos` Orzmic `1920×1080`) and cleanly re-rendered Group 2 (`7` local masters) + `zenithalize`/`astaroth`.
+  - Upgraded Group 4 (`16` songs) from authentic lossless masters (`lowiro.trrricksters.arcpkg` `768×768`, `sdvx.in` `608×608` lossless PNGs for `failnaught`/`guinevere`/`bayonex`, `sdvx.in/chunithm` `300–400px` lossless PNGs for `swiftswing`/`makear`/`squadphvntom`/`malkuth`/`anu`/`hainuwele`/`qliphothgear`, `647×647` clean YouTube crop for `crackpotevangelist`) with gentle zero-halo Lanczos scaling, eliminating prior over-sharpening artifacts.
+
 ### `v1.8.2` — 2026-11-27
 - **Difficulty Tier Migrations (`midvinter` & `parvorbital`)**:
   - Migrated `midvinter` (`4.aff`, `9.7` `9+` by `Adro`) from Eternal (`4`) to Future (`2.aff`) while preserving Beyond (`3.aff`, `12.8`).

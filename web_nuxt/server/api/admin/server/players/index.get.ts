@@ -34,6 +34,7 @@ export interface AdminPlayerItem {
     characterId: number;
     characterAvatar: string;
     isBanned: boolean;
+    isMockAccount: boolean;
     banReason: string | null;
     joinDate: string;
     joinTimestamp: number;
@@ -101,6 +102,8 @@ function mapPlayerRow(r: any, playCount: number, songTitles: Record<string, stri
     const isPasswordEmpty = !r.password || r.password === '';
     const isBanFlagSet = r.ban_flag && String(r.ban_flag).trim() !== '' && String(r.ban_flag) !== '0';
     const isBanned = Boolean(isPasswordEmpty || isBanFlagSet);
+    const emailStr = String(r.email || '').trim().toLowerCase();
+    const isMockAccount = emailStr.endsWith('@celest.local') || (Number(r.user_id) >= 2000000 && Number(r.user_id) <= 2000004);
 
     let joinTs = 0;
     const parsed = parseInt(String(r.join_date || '0'), 10);
@@ -141,6 +144,7 @@ function mapPlayerRow(r: any, playCount: number, songTitles: Record<string, stri
         characterId: charId,
         characterAvatar: `/storage/characters/${charId}_icon.png`,
         isBanned,
+        isMockAccount,
         banReason: isBanFlagSet ? String(r.ban_flag) : (isPasswordEmpty ? 'Account locked' : null),
         joinDate: joinTs > 0 ? new Date(joinTs).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—',
         joinTimestamp: joinTs,
