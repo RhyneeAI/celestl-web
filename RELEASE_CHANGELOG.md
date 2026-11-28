@@ -37,6 +37,15 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.10.1` — 2026-11-28
+- **Batch 9 Additions, `Paradigm: Reboot` Pack (`paraboot`), Official `ΟΔΥΣΣΕΙΑ` Merge & `source_copyright` Sync (`498` Songs / `25` Packs)**:
+  - **Added Pack `paraboot` (*Paradigm: Reboot*, `6` songs / `600` Memories)**: Built custom pack banners (`select_paraboot.png` & `1080_select_paraboot.png`) bundled into `patch_arcaea.py` + added `paraboot` to `DYNAMIC_PRICE_PACKS`, imported merged **`observatory`** (かめりあ — `0: 6.5` [Pooh5821], `2: 11.8` [Knight, custom BG `observatory.jpg`, `track: dark_vs`], `4: 10.7` [Pluncks, `track: dark_nijuusei`]) using Knight's audio/jacket/artwork, and migrated the `5` Wiki-verified *Paradigm: Reboot* originals from `single`: `cyberneticvampire`, `trainnozero1`, `abyssgazer`, `rebellion`, and `noxsilva`.
+  - **Expanded `rizline` (`1` → `2` songs / `200` Memories)**: Imported **`neversaygoodbye`** (*Never Say Goodbye* by 黒魔, `2: 10.7+` FTR, `bg: nijuusei2_light`, `bg_inverse: nijuusei2_conflict`, `© Pigeon Games`).
+  - **Expanded `phigros` (`19` → `20` songs) & `rotaeno` (`15` → `16` songs)**: Moved verified Wiki originals `pixelrebelz` → `phigros` and `aclock` → `rotaeno`, cleaning stale single purchases from SQLite.
+  - **Official `odysseia` `[0, 1, 2]` Merge & Audit Exemption**: Merged official charts (`PST 4.0`, `PRS 7.8+`, `FTR 9.5`) verbatim from `lowiro.odysseia.arcpkg` alongside preserved fanmade `3.aff` (`BYD 10.6`), updated `unlocks` (`40/78/95`), and exempted `odysseia: {0, 1, 2}` in `OFFICIAL_CHART_DIFFS` (`tests/context.py`) and `OFFICIAL_RAW_SONGS` (`tools/fix_charts.py`).
+  - **`source_copyright` Enrichment**: Added/corrected copyright notices across `paraboot` (`© TunerGames`, fixing `rebellion` from `© SEGA`), `phigros`/`rizline` (`© Pigeon Games`), `milthm` (`© Morizero`), `vstasis` (`© Hajime`), `orzmic` (`© Big_True / Orzmic`), `rotaeno` (`© Dream Engine Games`), `sdvx` (`© Konami Amusement`), `taiko` (`© Bandai Namco Entertainment Inc.`), `kalpa` (`© QueseraGames`), official `lowiro` entries (`© lowiro`), and verified `single` game tracks (including *TAKUMI³* originals `omg` & `rendajoceky` as `© THIQXIS`).
+  - Passed `celest-audit --fix` (`8/8 [PASSED]`), synced `SongFileCache` & SQLite (`chart`, `purchase`, `purchase_item`, `item`), rebuilt `arcelest_1.10.1_release.apk`, migrated live VPS, and removed `arcelest_1.10.0_release.apk*`.
+
 ### `v1.10.0` — 2026-11-28
 - **Batch 9 Import (`1chart9`), New Packs (`milthm`, `rizline`), & Pack Banner Enhancements (`496` Songs / `24` Packs)**:
   - Added collaboration packs **`milthm`** (*Milthm*, `3` songs: `rei` `11.9` BYD, `sakutorei` *Sakuyahime* `12.8` BYD, `hypermemories` `11.3` ETR) and **`rizline`** (*Rizline*, `braveroad` moved from `kurumi` + new ETR `11.2` via `audioOverride` + `jacketOverride`).

@@ -216,4 +216,22 @@ Sesuai aturan repo, seluruh chart `>= 11.0` wajib mendapat persetujuan BG & `sid
 2. **Pack Baru `milthm` & `rizline`:**
    - **`milthm`** (`select_milthm.png`): `Rei`, `Sakuyahime` (`BYD 12+`, `12.8`), dan `Hyper Memories` (`ETR 11.3`, `bg: "byd_2_conflict"`, `bg_inverse: "byd_light"`). *(Konfirmasi BG `Sakuyahime`: pakai custom `YES.png` atau `macula_conflict_a`?)*
    - **`rizline`** (`select_rizline.png`): pindahkan `braveroad` (*BRAVE：ROAD* + ETR `11.2`) dari `kurumi` ke `rizline`? *(Dan apakah `nooneyesman` tetap di `phigros` atau pindah ke `rizline`?)*
+
+---
+
+## 7. Tambahan Batch 9 & Pemetaan `v1.10.1`
+
+### A. Chart Baru & Merge Official
+1. **`Observatory` — かめりあ (`observatory`, Pack `paraboot`, `© TunerGames`):**
+   - Menggabungkan 3 chart (`Pooh5821` PST `6.5`, `Knight` FTR `11.8`, `Pluncks` ETR `10.7`) dengan audio, jacket, dan BG kustom milik Knight (`observatory.jpg`), `track: "dark_vs"` (FTR) / `"dark_nijuusei"` (ETR).
+2. **`Never Say Goodbye` — 黒魔 (`neversaygoodbye`, Pack `rizline`, `© Pigeon Games`):**
+   - Ditempatkan di **`rizline`** (final boss Disc 2 Rizline menurut Wiki), FTR `10+` (`10.7`, `2.aff`), BG `nijuusei2_light` + `bg_inverse: nijuusei2_conflict`.
+3. **`ΟΔΥΣΣΕΙΑ` — Sober Bear (`odysseia`, `© lowiro`):**
+   - Chart resmi PST `4.0`, PRS `7.8+`, dan FTR `9.5` di-merge verbatim dari `1official/lowiro.odysseia.arcpkg` tanpa menyentuh chart fanmade `3.aff` (`BYD 10.6`), dan didaftarkan di `OFFICIAL_CHART_DIFFS` / `OFFICIAL_RAW_SONGS` untuk diff `{0, 1, 2}`.
+
+### B. Pack `Paradigm: Reboot` (`paraboot`), Pemindahan Pack & Audit *TAKUMI³*
+- **`paraboot` (`6` lagu):** `observatory` + 5 original dari `single` (`cyberneticvampire`, `trainnozero1`, `abyssgazer`, `rebellion`, `noxsilva`).
+- **`phigros` & `rotaeno`:** `pixelrebelz` → `phigros`, `aclock` → `rotaeno` (`chronologika` sudah berada di `phigros`).
+- **Temuan *TAKUMI³* (`© THIQXIS`):** `omg` (*OMG*) dan `rendajoceky` (*RENDA JOCEKY*) terverifikasi original *TAKUMI³* di `songlist` (`single`).
+- **`source_copyright`:** Ditambahkan/dirapikan pada pack & single berlisensi game (`paraboot`, `phigros`, `rizline`, `milthm`, `vstasis`, `orzmic`, `rotaeno`, `sdvx`, `taiko`, `kalpa`, `lowiro`, serta single game terverifikasi).
 3. **Metadata Kecil:** Setuju koreksi artist *Gimme x Gimme* ke **`八王子P × Giga feat. 初音ミク & 鏡音リン`**, bersihkan embel meme *Spasmodic*, dan pakai ID **`spasmodic`**?
