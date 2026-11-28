@@ -37,6 +37,12 @@ Before distributing or installing a new build:
 
 ## Release History
 
+### `v1.10.2` — 2026-11-28
+- **Boss Audio Mastering (`cyberneticvampire`, `observatory`), `braveroad` FTR Reuse & Smooth-Loop Preview Overhaul**:
+  - **Boss Audio Enhancement**: Mastered `cyberneticvampire/base.ogg` (`-12.7 LUFS` → boss-grade LUFS) and `observatory/base.ogg` (`-7.5 LUFS` → boss-grade LUFS) with zero-latency (`0.00 ms` lag) low-end punch, presence EQ, dynamic compression, and soft-clip saturation; updated `cyberneticvampire` preview to the climax drop (`95863 ms`) and `observatory` preview to an exact 16-bar phrase (`117846–137538 ms`).
+  - **`braveroad` ETR Reuse**: Removed `jacketOverride` (`4*.jpg`) and reused FTR's `preview.ogg` as `4_preview.ogg` on `braveroad` ETR (`4`).
+  - **Global Smooth-Loop Preview Fix**: Eliminated abrupt `< 18s` / exact `15s` preview cuts and missing fade-in/fade-out loops across server previews & `audioOverride` `{rc}_preview.ogg` files by snapping endpoints to BPM musical bar boundaries (`19.0–24.8s`) with `0.45s` fade-in + `2.5s` fade-out (`curve=hsin`); updated `patch_arcaea.py` & `execute_import_batch8.py` defaults cleanly.
+
 ### `v1.10.1` — 2026-11-28
 - **Batch 9 Additions, `Paradigm: Reboot` Pack (`paraboot`), Official `ΟΔΥΣΣΕΙΑ` Merge & `source_copyright` Sync (`498` Songs / `25` Packs)**:
   - **Added Pack `paraboot` (*Paradigm: Reboot*, `6` songs / `600` Memories)**: Built custom pack banners (`select_paraboot.png` & `1080_select_paraboot.png`) bundled into `patch_arcaea.py` + added `paraboot` to `DYNAMIC_PRICE_PACKS`, imported merged **`observatory`** (かめりあ — `0: 6.5` [Pooh5821], `2: 11.8` [Knight, custom BG `observatory.jpg`, `track: dark_vs`], `4: 10.7` [Pluncks, `track: dark_nijuusei`]) using Knight's audio/jacket/artwork, and migrated the `5` Wiki-verified *Paradigm: Reboot* originals from `single`: `cyberneticvampire`, `trainnozero1`, `abyssgazer`, `rebellion`, and `noxsilva`.
